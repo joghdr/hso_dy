@@ -154,8 +154,8 @@ Aternatively, the new model filename may be specified in the variable
 running it
 
 
-Refs:
-[1]: Phys.Rev.D 110 (2024) 7, 074016  (DOI: 10.1103/PhysRevD.110.074016)
+Refs:\
+[1]: Phys.Rev.D 110 (2024) 7, 074016  (DOI: 10.1103/PhysRevD.110.074016)\
 [2]: Phys.Rev.D 106 (2022) 3, 034002  (DOI: 10.1103/PhysRevD.106.034002)
 
 
