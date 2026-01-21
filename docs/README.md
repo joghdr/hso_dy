@@ -21,13 +21,13 @@ sample programs.
 The code relies on several external libraries and packages, which the
 user must install
 
-  - i.   gnu compiler collection, in particular g++ (g++ 13.3.0 or later)
-  - ii.  gnu scientific libraries (libgsl-dev 2.7.1 or later)
-  - iii. boost libraries (libboost-all-dev 1.83.0.1 or later)
-  - iv.  gnuplot (version 6.0 or later)
-  - v.   cuba integration libraries (version 4.2.2)
-  - vi.  lhapdf (version 6.5.4 and later)
-  - vii. Minuit2 (standalone, version 5.28.00 or later)
+  i.   gnu compiler collection, in particular g++ (g++ 13.3.0 or later)
+  ii.  gnu scientific libraries (libgsl-dev 2.7.1 or later)
+  iii. boost libraries (libboost-all-dev 1.83.0.1 or later)
+  iv.  gnuplot (version 6.0 or later)
+  v.   cuba integration libraries (version 4.2.2)
+  vi.  lhapdf (version 6.5.4 and later)
+  vii. Minuit2 (standalone, version 5.28.00 or later)
 
 The code has been developed in Ubuntu 24.04 (noble), but it should work in other
 Linux distributions that use gcc compilers.
