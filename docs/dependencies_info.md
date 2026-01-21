@@ -19,6 +19,8 @@ Linux distributions that support gcc compilers version 13.3.0 or later
 
 ## Installation guide for dependencies
 
+### Things to install using `apt`
+
   If not already present, libraries 1-4 can be installed from
   the terminal. In Ubuntu (or other debian system), run the commands:
 
@@ -29,7 +31,7 @@ Linux distributions that support gcc compilers version 13.3.0 or later
   sudo apt install libboost-all-dev
   sudo apt install gnuplot
   ```
- ## 5. Cuba
+### Cuba
 
   For full instructions how to install Cuba, see documentation:
 
