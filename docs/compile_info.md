@@ -15,8 +15,8 @@ The code has the following directory structure:
 The code can be compiled by simply running the bash script `scripts/compile.sh`,
 which will produce
 
-      - `.o` binary files, stored inside `src/`
-      - executable, stored in `exe/`
+  - `.o` binary files, stored inside `src/`
+  - executable, stored in `exe/`
 
 Binary files are compiled from their respective `.cpp` source files
 only if not already present inside `src/`. For instance, running
@@ -31,7 +31,7 @@ will only produce the executable.
 
 The script takes either zero, one, two or three arguments.
 
- - mode 0:\ Running the command\
+ - mode 0: Running the command\
   `bash scripts/compile.sh`\
    will print a message with the different arguments that the script can take.
 
