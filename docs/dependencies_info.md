@@ -22,12 +22,12 @@ Linux distributions that support gcc compilers version 13.3.0 or later
   If not already present, libraries i-iv can be installed from
   the terminal. In Ubuntu (or other debian system), run the commands:
 
-    sudo apt install gcc
-    sudo apt install g++
-    sudo apt install libgsl-dev
-    sudo apt install libboost-all-dev
-    sudo apt install gnuplot
-
+  ```sudo apt install gcc
+  sudo apt install g++
+  sudo apt install libgsl-dev
+  sudo apt install libboost-all-dev
+  sudo apt install gnuplot
+  ```
   v) Cuba
 
   For full instructions how to install Cuba, see documentation:
