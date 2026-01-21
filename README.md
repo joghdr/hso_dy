@@ -1,5 +1,7 @@
 
-############### Hadron Structure Oriented (HSO) approach to TMDs
+# hso_dy
+
+Hadron Structure Oriented approach to TMD phenomenology - Drell-Yan
 
 1) Description
 
