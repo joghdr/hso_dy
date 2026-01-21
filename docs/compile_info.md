@@ -36,49 +36,42 @@ The script takes either zero, one, two or three arguments.
   `bash scripts/compile.sh`\
    will print a message with the different arguments that the script can take.
 
-#### mode 1:
+   - *mode 1*\
+   Running the command\
+   `bash src/compile.sh <MAIN_FILE_C>`\
+   will compile the program  `<MAIN_FILE_C>` (extension `.c`) using the
+   default models for TMDPDF and Collins-Soper kernel, contained in
+   `src/models_fcn-tmd-gaussx1-CS-gauss.cpp`, producing an executable
+   named after `<MAIN_FILE_C>` but without the extension `.c`
 
-Running the command
+   - *mode 2*\
+   Running the command\
+   `bash src/compile.sh <MAIN_FILE_C> <MODEL_FILE_CPP>`\
+   will perform the same tasks as *mode 1*, but using the given model file `<MODEL_FILE_CPP>`
+   (extension `.cpp`). This is intended for the user to change the models for the
+   TMDPDF and the Collins-Soper kernel. If the model file is not found, the script
+   will print a warning message and use the default one.
 
-  `bash src/compile.sh <MAIN_FILE_C>`
+   - *mode 3*\
+   Running the command\
+   `bash src/compile.sh <MAIN_FILE_C> <MODEL_FILE_CPP> <EXEC_FILENAME>`\
+   will perform the same tasks as mode 2, but naming the executable `<EXEC_FILENAME>`
 
-will compile the program  `<MAIN_FILE_C>` (extension `.c`) using the
-default models for TMDPDF and Collins-Soper kernel, contained in
-`src/models_fcn-tmd-gaussx1-CS-gauss.cpp`, producing an executable
-named <MAIN_FILE_C> but without the extension .c
-
-1.1.2) mode 2:
-
-Running the command
-
-bash src/compile.sh <MAIN_FILE_C> <MODEL_FILE_CPP>
-
-will perform the same tasks as mode 1, but using the given model file <MODEL_FILE_CPP>
-(extension .cpp). This is intended for the user to change the models for the
-TMDPDF and the Collins-Soper kernel. If the model file is not found, the script
-will print a warning message and use the default one.
-
-1.1.3) mode 3:
-
-Running the command
-
-bash src/compile.sh <MAIN_FILE_C> <MODEL_FILE_CPP> <EXEC_FILENAME>
-
-will perform the same tasks as mode 2, but naming the executable <EXEC_FILENAME>
-
-3) Modifying the code
+## Modifying the code
 
 Usually, the user would need to change only (if needed)
 
 - the main program
 - the model file
 
-and compile using the script (see 1.1.2 and 1.1.3 above). If some of the other
-source files (extension .cpp) need to be modified as well, the user should
-produce a new binary for that part of the code. This is simply done by removing the
-existing version of the binary. For instance, if the user wants to modify the code
-in `src/pqcd.cpp`, they should also remove `src/pqcd.o`. Then, running
-`script/compile.sh` (with mode 1, 2 or 3) will produce the new version of `src/pqcd.o`
+and compile using the `script/compile.sh`
+(*mode 2* or *3* if the user made a new model file, see details [here](Functionalities-of-src/compile.sh)).
+If some of the other source files need to be modified as well,
+the user should produce a new binary for that part of the code. This is simply done
+by removing the existing version of the binary before compilation.
+For instance, if the user wants to modify the code in `src/pqcd.cpp`,
+they should also remove `src/pqcd.o`. Then, running
+`script/compile.sh` (with *mode 1*, *2* or *3*) will produce the new version of `src/pqcd.o`
 
 
 
