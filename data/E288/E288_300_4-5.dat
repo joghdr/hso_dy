@@ -1,0 +1,52 @@
+#: table_doi: 10.17182/hepdata.24076.v1/t10
+#: name: Table 10
+#: description: No description provided.
+#: data_file: Table10.yaml
+#: keyword reactions: P NUCLEUS --> MU- MU+ X
+#: keyword observables: D3SIG/DP**3
+#: keyword phrases: Inclusive | Triple Differential Cross Section | Di-Muon Production | Muon production
+#: P [GeV]			300.0
+#: RE			P NUCLEUS --> MU+ MU- X
+#: W(P=3 4) [GEV]			4.TO5.
+#: YRAP(P=3 4	RF=CM)			0.21
+#"PT(P=3 4	RF=CM) [GEV]"	"PT(P=3 4	RF=CM) [GEV] LOW"	"PT(P=3 4	RF=CM) [GEV] HIGH"	"1/A*E(P=3 4	RF=CM)*D3(SIG)/D3(P(P=3 4	RF=CM)) [FB/GEV**2]"	error +	error -
+#
+#
+#
+#
+# varavg:E:300
+# varavg:sqrt_s:23.7
+# varavg:y:0.21
+# varint:Q:4:5
+#
+#
+#
+###key:: varbin:qT:avg varbin:qT:min varbin:qT:max meas:csec err:stat+ err:stat-
+#
+#
+#
+#
+#
+0.1	0.0	0.2	9160.0	420.0	-420.0
+0.30000000000000004	0.2	0.4	7650.0	300.0	-300.0
+0.5	0.4	0.6	6610.0	300.0	-300.0
+0.7	0.6	0.8	5580.0	300.0	-300.0
+0.9	0.8	1.0	3910.0	270.0	-270.0
+1.1	1.0	1.2	2730.0	230.0	-230.0
+1.2999999999999998	1.2	1.4	1850.0	200.0	-200.0
+1.5	1.4	1.6	1580.0	200.0	-200.0
+1.7000000000000002	1.6	1.8	838.0	155.0	-155.0
+1.9	1.8	2.0	503.0	136.0	-136.0
+2.1	2.0	2.2	397.0	102.0	-102.0
+2.3	2.2	2.4	189.0	84.0	-84.0
+2.5	2.4	2.6	58.0	101.0	-101.0
+2.7	2.6	2.8	212.0	194.0	-194.0
+2.9	2.8	3.0	-139.0	108.0	-108.0
+3.1	3.0	3.2	-	0	0
+3.3	3.2	3.4	-	0	0
+3.5	3.4	3.6	-	0	0
+3.7	3.6	3.8	-	0	0
+3.9	3.8	4.0	-	0	0
+4.1	4.0	4.2	-	0	0
+4.300000000000001	4.2	4.4	-	0	0
+4.5	4.4	4.6	-	0	0

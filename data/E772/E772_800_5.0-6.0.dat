@@ -1,0 +1,47 @@
+#: table_doi: 10.17182/hepdata.42501.v1/t5
+#: name: Table 5
+#: description: No description provided.
+#: data_file: Table5.yaml
+#: keyword reactions: P DEUT --> MU+ MU- X
+#: keyword observables: E*D3SIG/DP**3
+#: keyword phrases: Inclusive | Invariant Cross Section | Di-Muon Production | Muon production
+#: M [GeV]  5.5
+#: RE  P DEUT --> MU+ MU- X
+#: XL  0.1 TO 0.3
+#PT [GEV]  E*D3(SIG)/DP**3 [NB/GEV**2/NUCLEON]  error +  error -
+
+##BEGIN MY KEY
+#
+#
+#varavg:E:800
+#varavg:sqrt_s:38.8
+#varint:xF:0.1:0.3
+#varint:Q:5.0:6.0
+#NOTES:
+#
+#err acceptance 8%
+#err luminosity 5%
+#err trigger efficiency 3% 
+#err reconstruction efficiency 1%
+#err syst total = 10%
+#
+#
+###key:: varavg:qT meas:csec err:stat+  err:stat-
+0.125  6.75  0.305  -0.305
+0.375  5.59  0.156  -0.156
+0.625  4.84  0.122  -0.122
+0.875  3.5  0.0903  -0.0903
+1.125  2.56  0.0768  -0.0768
+1.375  1.78  0.0672  -0.0672
+1.625  1.12  0.0535  -0.0535
+1.875  0.817  0.0627  -0.0627
+2.125  0.259  0.0298  -0.0298
+2.375  0.346  0.0575  -0.0575
+2.625  0.147  0.0345  -0.0345
+2.875  0.0457  0.0154  -0.0154
+3.125  -  0  0
+3.375  -  0  0
+3.625  -  0  0
+3.875  -  0  0
+
+

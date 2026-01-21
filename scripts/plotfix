@@ -1,0 +1,23 @@
+#!/bin/bash/
+
+
+dir="$1/gnufiles/"
+
+for file in $(ls $dir) ; do 
+
+echo $file
+
+ sed -i  -E "s/'sqrt_s(=.+)'/'√s\1 GeV'/g" $dir/$file
+ sed -i  -E "s/'(.+<Q<.+)'/'\1 GeV'/g" $dir/$file
+ sed -i  -E "s/'(E=.+)'/'\1 GeV'/g"    $dir/$file
+ sed -i  -E "s/'xF'/'x_F'/g"    $dir/$file
+ sed -i    "s/\"qT\"/\"q_T[GeV]\"/g"          $dir/$file
+ 
+
+done 
+
+# cat $file \
+# | sed    "s/qT/q_T[GeV]/g"\
+# | sed -r "s/'(Q2=.+)'/'\1 GeV^2'/g"\
+# | sed -r "s/'(E=.+)'/'\1 GeV'/g"\
+# | sed -r "s/_/ /g"

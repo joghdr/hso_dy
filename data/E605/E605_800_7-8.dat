@@ -1,0 +1,41 @@
+#: table_doi: 10.17182/hepdata.22831.v1/t17
+#: name: Table 17
+#: description: No description provided.
+#: data_file: Table17.yaml
+#: keyword reactions: P CU --> MU+ MU- X | P NUCLEUS --> MU+ MU- X
+#: keyword observables: E*D3SIG/DP**3
+#: keyword phrases: Inclusive | Invariant Cross Section | Di-Muon Production | Muon production
+#: keyword cmenergies: 38.8
+#: M(P=3 4) [GEV]  7 TO 8
+#: RE  P CU --> MU+ MU- X
+#: SQRT(S) [GeV]  38.8
+#: XL  -0.1
+#PT [GEV]  E*D3(SIG)/D(P**3) [PB/GEV**2/NUCLEON]  error +  error -  "sys  Normalisation error +"  "sys  Normalisation error -"  "sys  Point-to-point systematic error +"  "sys  Point-to-point systematic error -"
+##BEGIN MY KEY
+#
+#
+# varavg:E:800
+# varavg:sqrt_s:38.8
+# varbin:xF:0.1:-0.1:0.2
+# varint:Q:7:8
+#NOTES:
+#
+#err norm = +/- 15%
+#err syst unc +/- 5% (add in quadrature to stat+)
+# source files report only avg qT. Here, bins are assumed to be the same as for E288.
+#
+#
+###key:: varbin:qT:avg varbin:qT:min varbin:qT:max meas:csec err:stat+  err:stat-
+  
+0.1  0  0.2  0.785  0.115  -0.115  
+0.3  0.2  0.4  0.973  0.0861  -0.0861  
+0.5  0.4  0.6  0.825  0.0616  -0.0616  
+0.7  0.6  0.8  0.805  0.057  -0.057  
+0.9  0.8  1.0  0.569  0.0422  -0.0422  
+1.1  1.0  1.2  0.537  0.0447  -0.0447  
+1.3  1.2  1.4  0.388  0.039  -0.039  
+1.5  1.4  1.6  0.312  0.038  -0.038  
+1.7  1.6  1.8  0.229  0.0373  -0.0373  
+1.9  1.8  2.0  0.136  0.0307  -0.0307  
+2.1  2.0  2.2  0.137  0.0433  -0.0433  
+  

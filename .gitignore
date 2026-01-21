@@ -1,0 +1,14 @@
+src/.doc
+src/*.o
+exe/*
+results/*
+.results
+.devtools
+control
+todo
+dev
+
+
+
+
+
