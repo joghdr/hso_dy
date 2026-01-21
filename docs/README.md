@@ -8,8 +8,6 @@ The code allows to reproduce results analogous to those published in:
 
   - [Phys.Rev.D 110 (2024) 7, 074016](https://inspirehep.net/literature/2751355)
 
-  > Phys.Rev.D 110 (2024) 7, 074016  (DOI: 10.1103/PhysRevD.110.074016)
-
 Other relevant publications are on the HSO approach are:
 
   - [Phys.Rev.D 106 (2022) 3, 034002](https://inspirehep.net/literature/2080521)
