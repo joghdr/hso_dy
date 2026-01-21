@@ -38,10 +38,12 @@ Linux distributions that support gcc compilers version 13.3.0 or later
   - website (source code): https://feynarts.de/cuba/
 
   - publication (installation instructions):\
-          Comput.Phys.Commun. 168 (2005) 78-95 (e-Print: https://arxiv.org/abs/hep-ph/0404043)
+          Comput.Phys.Commun. 168 (2005) 78-95\
+          (e-Print: https://arxiv.org/abs/hep-ph/0404043)
 
   - other publications:\
-          J.Phys.Conf.Ser. 608 (2015) 1, 012066  Contribution to: ACAT 2014 (e-Print: https://arxiv.org/abs/1408.6373)
+          J.Phys.Conf.Ser. 608 (2015) 1, 012066  Contribution to: ACAT 2014\
+          (e-Print: https://arxiv.org/abs/1408.6373)
 
 #### Installation summary (It is recommended to check full instructions in publication above):
 
@@ -65,7 +67,8 @@ Linux distributions that support gcc compilers version 13.3.0 or later
   - source: https://lhapdf.hepforge.org/downloads/
 
   - main publication:\
-        Eur.Phys.J.C 75 (2015) 132 (e-Print: https://arxiv.org/abs/1412.7420)
+        Eur.Phys.J.C 75 (2015) 132\
+        (e-Print: https://arxiv.org/abs/1412.7420)
 
 #### Installation summary (It is recommended to check full instructions from website above):
 
