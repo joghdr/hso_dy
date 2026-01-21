@@ -18,18 +18,21 @@ sample programs.
 
 ## Dependencies (see [dependencies](https://github.com/joghdr/hso_dy/blob/main/docs/dependencies_info.md) for further information)
 
-The code relies on several external libraries and packages, which the
-user must install
+The code relies on several external libraries and packages, which the user must install
 
-  1.   gnu compiler collection, in particular g++ (g++ 13.3.0 or later)
-  2.  gnu scientific libraries (libgsl-dev 2.7.1 or later)
+  1. gnu compiler collection, in particular g++ (g++ 13.3.0 or later)
+  2. gnu scientific libraries (libgsl-dev 2.7.1 or later)
   3. boost libraries (libboost-all-dev 1.83.0.1 or later)
-  4.  gnuplot (version 6.0 or later)
-  5.   cuba integration libraries (version 4.2.2)
-  6.  lhapdf (version 6.5.4 and later)
+  4. gnuplot (version 6.0 or later)
+  5. cuba integration libraries (version 4.2.2)
+  6. lhapdf (version 6.5.4 and later)
   7. Minuit2 (standalone, version 5.28.00 or later)
 
-The code has been developed in Ubuntu 24.04 (noble), but it should work in other
+The code has been developed in
+
+>Ubuntu 24.04 (noble)
+
+but it should work in other
 Linux distributions that use gcc compilers.
 
 ## Compiling the HSO code (see [compile](https://github.com/joghdr/hso_dy/blob/main/docs/compile_info.md) for further information)
