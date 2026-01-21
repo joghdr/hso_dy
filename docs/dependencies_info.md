@@ -31,7 +31,7 @@ Linux distributions that support gcc compilers version 13.3.0 or later
   sudo apt install libboost-all-dev
   sudo apt install gnuplot
   ```
-### Cuba
+### Installing `Cuba`
 
   For full instructions how to install Cuba, see documentation:
 
