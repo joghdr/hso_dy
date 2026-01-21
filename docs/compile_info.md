@@ -31,7 +31,7 @@ will only produce the executable.
 
 The script takes either zero, one, two or three arguments.
 
- - mode 0:
+ - *mode 0*\
    Running the command\
   `bash scripts/compile.sh`\
    will print a message with the different arguments that the script can take.
