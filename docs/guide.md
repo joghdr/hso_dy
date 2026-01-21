@@ -94,8 +94,7 @@ directory structure:
 
 | subdirectory                     | contains                                   |
 | -------------------------------- |:------------------------------------------ |
-| `results/out_dir_name/cov/`      |     files with information on the parameter-covariance matrix,
-                                         and corresponding Cholesky matrix, eigenvectors and eigenvalues
+| `results/out_dir_name/cov/`      |     files with information on the parameter-covariance matrix,\ and corresponding Cholesky matrix, eigenvectors and eigenvalues
 |                                  |                                            |
 |`results/out_dir_name/gnufiles/`  |     scripts to plot data included          |
 |                                  |     in the fit                             |
