@@ -1,9 +1,7 @@
 
-# hso_dy
+# Hadron Structure Oriented approach to TMD phenomenology - Drell-Yan
 
-Hadron Structure Oriented approach to TMD phenomenology - Drell-Yan
-
-1) Description
+## Description
 
 Language: C++ (Tested with gcc compilers, i.e. Linux)
 The code allows to reproduce results analogous to those published in:
@@ -18,7 +16,7 @@ Other relevant publications are:
 Some bash scripts are included for certain tasks, like compiling and running the
 sample programs.
 
-2) Dependencies (see 'doc/dependencies_info.txt' for further information)
+## Dependencies (see 'doc/dependencies_info.txt' for further information)
 
 The code relies on several external libraries and packages, which the
 user must install
@@ -34,7 +32,7 @@ user must install
 The code has been developed in Ubuntu 24.04 (noble), but it should work in other
 Linux distributions that use gcc compilers.
 
-3) Compiling the HSO code (see 'doc/compile_info.txt' for further information)
+## Compiling the HSO code (see 'doc/compile_info.txt' for further information)
 
 The code has the following directory structure:
 
@@ -53,7 +51,7 @@ running in the terminal the command
 
 will create all binaries inside 'src/' and the main program 'exe/fit_fixed_target_DY.c'.
 
-4) Use cases (see 'doc/guide.txt' for further information)
+## Use cases (see 'doc/guide.txt' for further information)
 
 The current version of the code allows the user to
 
