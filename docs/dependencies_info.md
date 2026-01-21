@@ -80,8 +80,8 @@ Linux distributions that support gcc compilers version 13.3.0 or later
     make
     make install
     ```
-  - Note that `--prefix=<PATH_FOR_INSTALLATION>` above is only necessary to choose
-    an installation path other than standard ones (see full LHAPDF documentation)
+  - Note that `--prefix=<PATH_FOR_INSTALLATION>` above is optional. To install
+    in standard path, there is no need to use the flag (see full LHAPDF documentation)
   - Take note of the path where the different PDF grids should be stored
 
 ### Installing Minuit2 (standalone version)
