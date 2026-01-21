@@ -46,7 +46,7 @@ Linux distributions that support gcc compilers version 13.3.0 or later
 
   Installation summary (It is recommended to check full instructions in publication above):
 
-  - download tarball Cuba-4.2.2.tar.gz from https://feynarts.de/cuba/
+  - download tarball `Cuba-4.2.2.tar.gz` from https://feynarts.de/cuba/
   - go to the directory where you want to build the package
   - run the commands:
     ```
