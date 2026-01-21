@@ -35,12 +35,12 @@ Linux distributions that use gcc compilers.
 
 The code has the following directory structure:
 
-  - `src/`       source files and binaries (after first compilation)
-  - include/     header files
-  - programs/    sample programs
-  - scripts/     bash scripts for different tasks
-  - exe/         executables (after compilation)
-  - input/       sample input files for parameters and kinematical cuts
+  - `src/`         source files and binaries (after first compilation)
+  - `include/`     header files
+  - `programs/`    sample programs
+  - `scripts/`     bash scripts for different tasks
+  - `exe/`         executables (after compilation)
+  - `input/`       sample input files for parameters and kinematical cuts
 
 The code can be compiled by simply running the bash script 'compile.sh',
 which requires at least one argument, the name of a .c main file. For instance,
