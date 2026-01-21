@@ -1,87 +1,87 @@
 
-############### Hadron Structure Oriented (HSO) approach to TMDs  ##############
+#Hadron Structure Oriented (HSO) approach to TMDs
 
--- Compiling the code --
+## Compiling the code
 
 The code has the following directory structure:
 
-  src/         source files and binaries (after first compilation)
-  include/     header files
-  programs/    sample programs
-  scripts/     bash scripts for different tasks
-  exe/         executables (after compilation)
-  input/       sample input files for parameters and kinematical cuts
+  - `src/`         source files and binaries (after first compilation)
+  - `include/`     header files
+  - `programs/`    sample programs
+  - `scripts/`     bash scripts for different tasks
+  - `exe/`         executables (after compilation)
+  - `input/`       sample input files for parameters and kinematical cuts
 
-The code can be compiled by simply running the bash script 'compile.sh',
+The code can be compiled by simply running the bash script `scripts/compile.sh`,
 which will produce
 
-      - binary files (.o), stored inside 'src/'
-      - executable, stored in 'exe/'
+      - `.o` binary files, stored inside `src/`
+      - executable, stored in `exe/`
 
-Binary files are compiled from their respective source files (extention .cpp)
-only if not aready present inside 'src/'. For instance, running
+Binary files are compiled from their respective `.cpp` source files
+only if not already present inside `src/`. For instance, running
 the script for the first time with the command
 
-      bash scripts/compile.sh programs/fit_fixed_target_DY.c
+  `bash scripts/compile.sh programs/fit_fixed_target_DY.c`
 
 will produce both binaries and executable. A scecond run of the command,
 will only produce the executable.
 
-1.1) Functionalities of 'src/compile.sh'
+### Functionalities of `src/compile.sh`
 
 The script takes either zero, one, two or three arguments.
 
-  1.1.0) mode 0:
+#### mode 0:
 
-  Running the command
+Running the command
 
-      bash scripts/compile.sh
+  `bash scripts/compile.sh`
 
-  will print a message with the different arguments that the script can take.
+will print a message with the different arguments that the script can take.
 
-  1.1.1) mode 1:
+#### mode 1:
 
-  Running the command
+Running the command
 
-      bash src/compile.sh <MAIN_FILE_C>
+  `bash src/compile.sh <MAIN_FILE_C>`
 
-  the script will compile the program <MAIN_FILE_C> (extension .c) using the
-  default models for TMDPDF and Collins-Soper kernel, contained in
-  'src/models_fcn-tmd-gaussx1-CS-gauss.cpp', producing an executable
-  named <MAIN_FILE_C> but without the extension .c
+will compile the program  `<MAIN_FILE_C>` (extension `.c`) using the
+default models for TMDPDF and Collins-Soper kernel, contained in
+`src/models_fcn-tmd-gaussx1-CS-gauss.cpp`, producing an executable
+named <MAIN_FILE_C> but without the extension .c
 
-  1.1.2) mode 2:
+1.1.2) mode 2:
 
-  Running the command
+Running the command
 
-      bash src/compile.sh <MAIN_FILE_C> <MODEL_FILE_CPP>
+bash src/compile.sh <MAIN_FILE_C> <MODEL_FILE_CPP>
 
-  will perform the same tasks as mode 1, but using the given model file <MODEL_FILE_CPP>
-  (extension .cpp). This is intended for the user to change the models for the
-  TMDPDF and the Collins-Soper kernel. If the model file is not found, the script
-  will print a warning message and use the default one.
+will perform the same tasks as mode 1, but using the given model file <MODEL_FILE_CPP>
+(extension .cpp). This is intended for the user to change the models for the
+TMDPDF and the Collins-Soper kernel. If the model file is not found, the script
+will print a warning message and use the default one.
 
-  1.1.3) mode 3:
+1.1.3) mode 3:
 
-  Running the command
+Running the command
 
-      bash src/compile.sh <MAIN_FILE_C> <MODEL_FILE_CPP> <EXEC_FILENAME>
+bash src/compile.sh <MAIN_FILE_C> <MODEL_FILE_CPP> <EXEC_FILENAME>
 
-  will perform the same tasks as mode 2, but naming the executable <EXEC_FILENAME>
+will perform the same tasks as mode 2, but naming the executable <EXEC_FILENAME>
 
 3) Modifying the code
 
 Usually, the user would need to change only (if needed)
 
-  - the main program
-  - the model file
+- the main program
+- the model file
 
 and compile using the script (see 1.1.2 and 1.1.3 above). If some of the other
 source files (extension .cpp) need to be modified as well, the user should
 produce a new binary for that part of the code. This is simply done by removing the
 existing version of the binary. For instance, if the user wants to modify the code
-in 'src/pqcd.cpp', they should also remove 'src/pqcd.o'. Then, running
-'script/compile.sh' (with mode 1, 2 or 3) will produce the new version of 'src/pqcd.o'
+in `src/pqcd.cpp`, they should also remove `src/pqcd.o`. Then, running
+`script/compile.sh` (with mode 1, 2 or 3) will produce the new version of `src/pqcd.o`
 
 
 
