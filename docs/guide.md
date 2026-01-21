@@ -92,8 +92,8 @@ The program will store results in `results/out_dir_name`, inside the following
 directory structure:
 
 
-  :subdirectory                     |     :contains
-  ----------------------------------|-------------------------------------------------
+  subdirectory                      |     contains
+  :---------------------------------|:---------------------------------------------
   results/out_dir_name/cov/         |     files with information
                                     |     on the parameter-covariance
                                     |     matrix, and corresponding
