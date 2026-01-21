@@ -35,7 +35,7 @@ Linux distributions that use gcc compilers.
 
 The code has the following directory structure:
 
-  - src/         source files and binaries (after first compilation)
+  - `src/`       source files and binaries (after first compilation)
   - include/     header files
   - programs/    sample programs
   - scripts/     bash scripts for different tasks
