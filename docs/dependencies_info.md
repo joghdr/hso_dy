@@ -35,26 +35,27 @@ Linux distributions that support gcc compilers version 13.3.0 or later
 
   For full instructions how to install Cuba, see documentation:
 
-    website (source):
-            https://feynarts.de/cuba/
+  - website (source code):
+          https://feynarts.de/cuba/
 
-    publication (installation instructions):
-            Comput.Phys.Commun. 168 (2005) 78-95 (e-Print: https://arxiv.org/abs/hep-ph/0404043)
+  - publication (installation instructions):
+          Comput.Phys.Commun. 168 (2005) 78-95 (e-Print: https://arxiv.org/abs/hep-ph/0404043)
 
-    other publications:
-            J.Phys.Conf.Ser. 608 (2015) 1, 012066  Contribution to: ACAT 2014 (e-Print: https://arxiv.org/abs/1408.6373)
+  - other publications:
+          J.Phys.Conf.Ser. 608 (2015) 1, 012066  Contribution to: ACAT 2014 (e-Print: https://arxiv.org/abs/1408.6373)
 
-    Installation summary (It is recommended to check full instructions in publication above):
+  Installation summary (It is recommended to check full instructions in publication above):
 
-      - download tarball Cuba-4.2.2.tar.gz from https://feynarts.de/cuba/
-      - go to the directory where you want to build the package
-      - run the commands:
-          tar -xzf PATH_TO_TARBALL/Cuba-4.2.2.tar.gz
-          cd Cuba-4.2.2
-      - run the commands:
-          ./configure
-          make
-          sudo make install
+  - download tarball Cuba-4.2.2.tar.gz from https://feynarts.de/cuba/
+  - go to the directory where you want to build the package
+  - run the commands:
+    ```
+    tar -xzf PATH_TO_TARBALL/Cuba-4.2.2.tar.gz
+    cd Cuba-4.2.2`
+    ./configure
+    make
+    sudo make install
+    ```
 
   vi) LHAPDF
 
