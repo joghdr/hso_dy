@@ -80,14 +80,13 @@ Linux distributions that support gcc compilers version 13.3.0 or later
     make
     make install
     ```
-  - Note that --prefix=<PATH_FOR_INSTALLATION> above is only necessary to choose
+  - Note that `--prefix=<PATH_FOR_INSTALLATION>` above is only necessary to choose
     an installation path other than standard ones (see full LHAPDF documentation)
-  - Take note of the path where the different PDF grids are stored
+  - Take note of the path where the different PDF grids should be stored
 
-  vii) Minuit2 (standalone version)
+### Installing Minuit2 (standalone version)
 
-    For source files and instructions to install Minuit2, see
+For source files and instructions to install Minuit2, see
 
-      repo:
-            https://github.com/GooFit/Minuit2
+  - repo: https://github.com/GooFit/Minuit2
 
