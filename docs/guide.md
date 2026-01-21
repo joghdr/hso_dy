@@ -101,7 +101,7 @@ directory structure:
 |`results/out_dir_name/stat/`      |     subdirectories with data files used in the fit. Each file contains also information of the minimal chi2 point by point.
 |`results/out_dir_name/status/`    |     final values of the parameters as obtained by Minuit, in the same format as `input/para_hso.input`
 
-#### Doing a fit with a custom model
+### Doing a fit with a custom model
 
 By default, the code will use the model in `src/models_fcn-tmd-gaussx1-CS-gauss.cpp`.
 The user may provide a different model by modifying a copy of the default file. The
@@ -155,7 +155,7 @@ running it
 
 
 Refs:
-[1] Phys.Rev.D 110 (2024) 7, 074016  (DOI: 10.1103/PhysRevD.110.074016)
-[2] Phys.Rev.D 106 (2022) 3, 034002  (DOI: 10.1103/PhysRevD.106.034002)
+[1]: Phys.Rev.D 110 (2024) 7, 074016  (DOI: 10.1103/PhysRevD.110.074016)
+[2]: Phys.Rev.D 106 (2022) 3, 034002  (DOI: 10.1103/PhysRevD.106.034002)
 
 
