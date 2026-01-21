@@ -16,7 +16,7 @@ Other relevant publications are on the HSO approach are:
 Some bash scripts are included for certain tasks, like compiling and running the
 sample programs.
 
-## Dependencies (see [dependencies](https://github.com/joghdr/hso_dy/blob/main/docs/dependencies_info.md) for further information)
+## Dependencies (see [dependencies](https://github.com/joghdr/hso_dy/blob/main/docs/dependencies_info.md) for details)
 
 The code relies on several external libraries and packages, which the user must install
 
@@ -28,23 +28,19 @@ The code relies on several external libraries and packages, which the user must 
   6. lhapdf (version 6.5.4 and later)
   7. Minuit2 (standalone, version 5.28.00 or later)
 
-The code has been developed in
-
->Ubuntu 24.04 (noble)
-
-but it should work in other
+The code has been developed in Ubuntu 24.04 (noble), but it should work in other
 Linux distributions that use gcc compilers.
 
-## Compiling the HSO code (see [compile](https://github.com/joghdr/hso_dy/blob/main/docs/compile_info.md) for further information)
+## Compiling the HSO code (see [compile](https://github.com/joghdr/hso_dy/blob/main/docs/compile_info.md) for details)
 
 The code has the following directory structure:
 
-  src/         source files and binaries (after first compilation)
-  include/     header files
-  programs/    sample programs
-  scripts/     bash scripts for different tasks
-  exe/         executables (after compilation)
-  input/       sample input files for parameters and kinematical cuts
+  - src/         source files and binaries (after first compilation)
+  - include/     header files
+  - programs/    sample programs
+  - scripts/     bash scripts for different tasks
+  - exe/         executables (after compilation)
+  - input/       sample input files for parameters and kinematical cuts
 
 The code can be compiled by simply running the bash script 'compile.sh',
 which requires at least one argument, the name of a .c main file. For instance,
@@ -54,7 +50,7 @@ running in the terminal the command
 
 will create all binaries inside `src/` and the main program `exe/fit_fixed_target_DY.c`.
 
-## Use cases (see 'doc/guide.txt' for further information)
+## Use cases (see 'doc/guide.txt' for details)
 
 The current version of the code allows the user to
 
