@@ -43,14 +43,14 @@ The code has the following directory structure:
   - `input/`       sample input files for parameters and kinematical cuts
 
 The code can be compiled by simply running the bash script `scripts/compile.sh`,
-which requires at least one argument, the name of a .c main file. For instance,
+which requires at least one argument, the name of a `.c` main file. For instance,
 running in the terminal the command
 
   `bash scripts/compile.sh programs/fit_fixed_target_DY.c`
 
 will create all binaries inside `src/` and the main program `exe/fit_fixed_target_DY.c`.
 
-## Use cases (see 'doc/guide.txt' for details)
+## Use cases (see [guide](https://github.com/joghdr/hso_dy/blob/main/docs/guide.md) for details)
 
 The current version of the code allows the user to
 
@@ -58,7 +58,7 @@ The current version of the code allows the user to
   - compute tmd eigensets and Hessian bands for observables
   - plot some results
 
-The current accuracy of perturbative coefficients is O(alpha_s)
+The current accuracy of perturbative coefficients is $O(\alpha_s)$
 
 
 
