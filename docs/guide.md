@@ -94,9 +94,9 @@ directory structure:
 
   subdirectory                      |     contains
   :---------------------------------|:---------------------------------------------
-  results/out_dir_name/cov/         |     files with information
+                                    |     files with information
                                     |     on the parameter-covariance
-                                    |     matrix, and corresponding
+  results/out_dir_name/cov/         |     matrix, and corresponding
                                     |     Cholesky matrix, eigenvectors
                                     |     and eigenvalues
                                     |
