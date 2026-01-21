@@ -28,8 +28,7 @@ directories:
 For the code to run, these directories should be placed in the same
 location as other LHAPDF sets. In Ubuntu, when LHAPDF is installed
 without the flag `--prefix=/path/for/installation`, it should be something like
-
-  `/usr/local/share/LHAPDF/`
+`/usr/local/share/LHAPDF/`
 
 ### Fits
 
@@ -39,7 +38,7 @@ This script summarizes in a practical example the steps
 needed to run a fit, including compiling the code from scratch.
 Further details are provided below.
 
-#### preparing the program
+#### Preparing the program
 
 The program to perform fits on E288 and E605 data is `programs/fit_fixed_target_DY.c`.
 After compiling it, i.e. running the command
@@ -52,7 +51,7 @@ TMDPDF and Collins-Soper kernel models in `src/models_fcn-tmd-gaussx1-CS-gauss.c
 See [compile](https://github.com/joghdr/hso_dy/blob/main/docs/compile_info.md)
 for more information on `scripts/compile.sh`
 
-#### running the program
+#### Running the program
 
 The program needs three arguments:
 
@@ -87,7 +86,7 @@ where
 See the file `input/para_hso.input` for an example corresponding to the
 default model file `src/models_fcn-tmd-gaussx1-CS-gauss.cpp`
 
-#### program`s output
+#### Program`s output
 
 The program will store results in `results/out_dir_name`, inside the following
 directory structure:
