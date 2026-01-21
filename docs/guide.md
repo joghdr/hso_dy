@@ -94,29 +94,29 @@ directory structure:
 
   :subdirectory                     |     :contains
   ----------------------------------|-------------------------------------------------
-  results/out_dir_name/cov/:        |     files with information
+  results/out_dir_name/cov/         |     files with information
                                     |     on the parameter-covariance
                                     |     matrix, and corresponding
                                     |     Cholesky matrix, eigenvectors
                                     |     and eigenvalues
                                     |
-  results/out_dir_name/gnufiles/:   |     scripts to plot data included
+  results/out_dir_name/gnufiles/    |     scripts to plot data included
                                     |     in the fit
                                     |
-  results/out_dir_name/input/:      |     the input files used to run the
+  results/out_dir_name/input/       |     the input files used to run the
                                     |     program, i.e. kin_file and para_file
                                     |
-  results/out_dir_name/min/:        |     eigensets according to Minuit`s final
+  results/out_dir_name/min/         |     eigensets according to Minuit`s final
                                     |     output, covariance matrix and a log
                                     |     file with information of each iteration
                                     |     in the fit
                                     |
-  results/out_dir_name/stat/:       |     subdirectories with data files used in
+  results/out_dir_name/stat/        |     subdirectories with data files used in
                                     |     the fit. Each file contains also
                                     |     information of the minimal chi2 point
                                     |     by point.
                                     |
-  results/out_dir_name/status/:     |     final values of the parameters as
+  results/out_dir_name/status/      |     final values of the parameters as
                                     |     obtained by Minuit, in the same format
                                     |     as `input/para_hso.input`
 
