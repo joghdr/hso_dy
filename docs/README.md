@@ -6,7 +6,8 @@
 Language: C++ (Tested with gcc compilers, i.e. Linux)
 The code allows to reproduce results analogous to those published in:
 
-  Phys.Rev.D 110 (2024) 7, 074016  (DOI: 10.1103/PhysRevD.110.074016)
+ [https://inspirehep.net/literature/2751355](Phys.Rev.D 110 (2024) 7, 074016)
+  > Phys.Rev.D 110 (2024) 7, 074016  (DOI: 10.1103/PhysRevD.110.074016)
 
 Other relevant publications are:
 
