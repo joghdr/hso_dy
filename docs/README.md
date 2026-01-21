@@ -42,7 +42,7 @@ The code has the following directory structure:
   - `exe/`         executables (after compilation)
   - `input/`       sample input files for parameters and kinematical cuts
 
-The code can be compiled by simply running the bash script 'compile.sh',
+The code can be compiled by simply running the bash script `scripts/compile.sh`,
 which requires at least one argument, the name of a .c main file. For instance,
 running in the terminal the command
 
