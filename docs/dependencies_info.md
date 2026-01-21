@@ -1,32 +1,32 @@
 
-############### Hadron Structure Oriented (HSO) approach to TMDs  ##############
+# Hadron Structure Oriented (HSO) approach to TMDs  ##############
 
- -- Dependencies --
+## Dependencies
 
 The code relies on several external libraries and packages, which the
 user must install (see installation summary guide below)
 
-    - i)   gnu compiler collection, in particular g++ (g++ 13.3.0 or later)
-    - ii)  gnu scientific libraries (libgsl-dev 2.7.1 or later)
-    - iii) boost libraries (libboost-all-dev 1.83.0.1 or later)
-    - iv)  gnuplot (version 6.0 or later)
-    - v)   cuba integration libraries (version 4.2.2)
-    - vi)  lhapdf (version 6.5.4 or later)
-    - vii) Minuit2 (standalone, version 5.28.00 or later)
+  1. gnu compiler collection, in particular g++ (g++ 13.3.0 or later)
+  2. gnu scientific libraries (libgsl-dev 2.7.1 or later)
+  3. boost libraries (libboost-all-dev 1.83.0.1 or later)
+  4. gnuplot (version 6.0 or later)
+  5. cuba integration libraries (version 4.2.2)
+  6. lhapdf (version 6.5.4 or later)
+  7. Minuit2 (standalone, version 5.28.00 or later)
 
 The code has been developed in Ubuntu 24.04 (noble), but it should work in other
 Linux distributions that support gcc compilers version 13.3.0 or later
 
-3) Installation summary guide for dependencies
+## Installation guide for dependencies
 
   If not already present, libraries i-iv can be installed from
   the terminal. In Ubuntu (or other debian system), run the commands:
 
-      sudo apt install gcc
-      sudo apt install g++
-      sudo apt install libgsl-dev
-      sudo apt install libboost-all-dev
-      sudo apt install gnuplot
+    sudo apt install gcc
+    sudo apt install g++
+    sudo apt install libgsl-dev
+    sudo apt install libboost-all-dev
+    sudo apt install gnuplot
 
   v) Cuba
 
