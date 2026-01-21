@@ -65,7 +65,7 @@ Usually, the user would need to change only (if needed)
 - the model file
 
 and compile using the `script/compile.sh`
-(*mode 2* or *3* if the user made a new model file, see details [here](Functionalities-of-src-compile-sh)).
+(*mode 2* or *3* if the user made a new model file, see details [here](#functionalities-of-src-compile-sh)).
 If some of the other source files need to be modified as well,
 the user should produce a new binary for that part of the code. This is simply done
 by removing the existing version of the binary before compilation.
