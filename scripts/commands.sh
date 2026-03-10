@@ -7,42 +7,50 @@
 
 # local  -a files_in=( "$dir/tmds/*input-[!b]*" )
 
-function parafix {
-local para="$1"
-local file="$2"
+function parafixorfree {
 
-sed -i -r "s/$1[[:space:]]+([[:digit:]]+\.*[[:digit:]]*)[[:space:]]+[[:digit:]]+/$1\t\1\t0 /g" $file
+  local para="$1"
+  local file="$2"
+  local free="$3"
 
+  sed -i -r "s/$para([[:space:]]+)([[:digit:].-]+)([[:space:]]+)([[:digit:]]+)/$para\1\2\3$free/g" $file
 
 
 }
 
 function parafree {
-local para="$1"
-local file="$2"
 
-sed -i -r "s/$1[[:space:]]+([[:digit:]]+\.*[[:digit:]]*)[[:space:]]+[[:digit:]]+/$1\t\1\t1 /g" $file
-
-
+  local para="$1"
+  local file="$2"
+  parafixorfree "$para" "$file" "1"
 
 }
 
-function paraset {
-local para="$1"
-local val="$2"
-local file="$3"
+function parafix {
 
-sed -i -r "s/$1[[:space:]]+([[:digit:]]+\.*[[:digit:]]*)[[:space:]]+/$1\t$val\t /g" $file
+  local para="$1"
+  local file="$2"
+  parafixorfree "$para" "$file" "0"
+
+}
+
+
+function paraset {
+
+  local para="$1"
+  local val="$2"
+  local file="$3"
+  sed -i -r "s/$para([[:space:]]+)([[:digit:].-]+)([[:space:]]+)/$para\1$val\3/g" $file
 
 
 
 }
 
 function paraget {
-local para="$1"
-local file="$2"
 
-grep -P "^[[:space:]]*""$para""[[:space:]]+"   $file | sed -E "s/[[:space:]]+/:/g" | cut -d: -f 2
+  local para="$1"
+  local file="$2"
+  grep -P "^[[:space:]]*""$para""[[:space:]]+"   $file | sed -E "s/[[:space:]]+/:/g" | cut -d: -f 2
 
 }
 
@@ -99,15 +107,30 @@ cat $file | sed -E "s/[[:space:]]+/:/g" | cut -d: -f1,2 | sed "s/:/ = /g"
 }
 
 function parafixall {
-local file="$1"
 
-local -a PARA=( $(cat $file|grep -v "\#"|sed -r "s/^[[:space:]]+//g;s/[[:space:]]+/:/g"|cut -d: -f1)   )
+  local file="$1"
 
-for para in ${PARA[@]} ; do 
+  local -a PARA=( $(cat $file|grep -v "\#"|sed -r "s/^[[:space:]]+//g;s/[[:space:]]+/:/g"|cut -d: -f1)   )
+
+  for para in ${PARA[@]} ; do
 
     parafix $para $file
 
-done 
+    done
+
+}
+
+function parafreeall {
+
+  local file="$1"
+
+  local -a PARA=( $(cat $file|grep -v "\#"|sed -r "s/^[[:space:]]+//g;s/[[:space:]]+/:/g"|cut -d: -f1)   )
+
+  for para in ${PARA[@]} ; do
+
+    parafree $para $file
+
+  done
 
 }
 
