@@ -1,7 +1,7 @@
 #include "read_data.h"
 #include <string>
 #include <vector>
-#include <cstddef>
+#include <iterator>
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -165,7 +165,7 @@ namespace hso{
 
     }
 
-    bool GetKey(std::vector<std::string> &comment_lines, std::vector<int> &dim, std::string &key){
+    bool GetKey(std::vector<std::string> &comment_lines, std::string &key){
 
       bool key_found=false;
 
@@ -259,13 +259,7 @@ namespace hso{
 
                    std::vector<std::string> &var_bin_names,
 
-                   std::vector<std::string> &VarintNames,
-
-                   std::vector<std::string> &var_avg_names,
-
-                   std::vector<std::string> &meas_names,
-
-                   std::vector<std::string> &err_names) {
+                   std::vector<std::string> &var_int_names) {
 
       bool key_is_complete=false;
 
@@ -314,7 +308,7 @@ namespace hso{
       //check varint
       bool all_varint_are_complete=true;
 
-      for(auto name : VarintNames ) {
+      for(auto name : var_int_names ) {
 
         bool varint_is_complete=true;
 
@@ -358,7 +352,7 @@ namespace hso{
 
                   std::vector<std::string> &var_bin_names,
 
-                  std::vector<std::string> &VarintNames,
+                  std::vector<std::string> &var_int_names,
 
                   std::vector<std::string> &var_avg_names,
 
@@ -372,7 +366,7 @@ namespace hso{
 
       std::vector<std::string> (0).swap(var_bin_names);
 
-      std::vector<std::string> (0).swap(VarintNames);
+      std::vector<std::string> (0).swap(var_int_names);
 
       std::vector<std::string> (0).swap(var_avg_names);
 
@@ -420,7 +414,7 @@ namespace hso{
 
             CleanLine(entry,":upper");
 
-            VarintNames.push_back(entry);
+            var_int_names.push_back(entry);
 
             break;
 
@@ -463,11 +457,11 @@ namespace hso{
       it=unique(var_bin_names.begin(),var_bin_names.end());
       var_bin_names.resize(distance(var_bin_names.begin(),it));
       //varint
-      it=unique(VarintNames.begin(),VarintNames.end());
+      it=unique(var_int_names.begin(),var_int_names.end());
 
-      VarintNames.resize(distance(VarintNames.begin(),it));
+      var_int_names.resize(distance(var_int_names.begin(),it));
 
-      key_is_complete=CheckKey(key,var_bin_names,VarintNames,var_avg_names,meas_names,err_names);
+      key_is_complete=CheckKey(key,var_bin_names,var_int_names);
       //fill In std::map for column number and variable names
       std::string current_var="";
 
@@ -485,7 +479,7 @@ namespace hso{
 
       }
 
-      for(auto var: VarintNames) {
+      for(auto var: var_int_names) {
 
         std::vector<int> Cols(0);
 
@@ -535,7 +529,7 @@ namespace hso{
 
                       std::vector<std::string> &var_bin_names,
 
-                      std::vector<std::string> &VarintNames,
+                      std::vector<std::string> &var_int_names,
 
                       std::vector<std::string> &var_avg_names,
 
@@ -555,7 +549,7 @@ namespace hso{
 
       int var_bin_names_size = static_cast<int>(var_bin_names.size());
 
-      int var_int_names_size = static_cast<int>(VarintNames.size());
+      int var_int_names_size = static_cast<int>(var_int_names.size());
 
       int var_avg_names_size = static_cast<int>(var_avg_names.size());
 
@@ -579,7 +573,7 @@ namespace hso{
 
                  <<"\tdata cols="
 
-                 <<  3*var_bin_names.size()+2*VarintNames.size() +
+                 <<  3*var_bin_names.size()+2*var_int_names.size() +
 
                      var_avg_names.size()+meas_names.size()+err_names.size()
 
@@ -591,7 +585,7 @@ namespace hso{
 
                  <<"\tdata cols="
 
-                 <<  3*var_bin_names.size()+2*VarintNames.size() +
+                 <<  3*var_bin_names.size()+2*var_int_names.size() +
 
                      var_avg_names.size()+meas_names.size()+err_names.size()
 
@@ -643,7 +637,7 @@ namespace hso{
 
                         std::vector<std::string> &var_bin_names,
 
-                        std::vector<std::string> &VarintNames,
+                        std::vector<std::string> &var_int_names,
 
                         std::vector<std::string> &var_avg_names,
 
@@ -661,7 +655,7 @@ namespace hso{
 
       GetLines(fname,comment_lines,data_lines,dim);
 
-      key_found=GetKey(comment_lines,dim,key);
+      key_found=GetKey(comment_lines,key);
 
       while(!load_complete){
 
@@ -699,11 +693,11 @@ namespace hso{
 
         }
 
-        key_is_complete = ParseKey(key,var_bin_names,VarintNames,var_avg_names,
+        key_is_complete = ParseKey(key,var_bin_names,var_int_names,var_avg_names,
 
                                    meas_names,err_names,input_column_number);
 
-        sizes_match = CheckSizes(key,var_bin_names,VarintNames,var_avg_names,
+        sizes_match = CheckSizes(key,var_bin_names,var_int_names,var_avg_names,
 
                                  meas_names,err_names,dim);
 
@@ -747,7 +741,7 @@ namespace hso{
 
                                             std::vector<std::string> &var_bin_names,
 
-                                            std::vector<std::string> &VarintNames,
+                                            std::vector<std::string> &var_int_names,
 
                                             std::vector<std::string> &var_avg_names,
 
@@ -771,7 +765,7 @@ namespace hso{
 
       }
 
-      for(auto varint: VarintNames){
+      for(auto varint: var_int_names){
 
         std::vector<std::string> varint_subtype {"lower","upper"};
 
@@ -817,11 +811,9 @@ namespace hso{
 
                         std::vector<std::string> &data_lines,
 
-                        std::vector< int> &dim,
-
                         std::vector<std::string> &var_bin_names,
 
-                        std::vector<std::string> &VarintNames,
+                        std::vector<std::string> &var_int_names,
 
                         std::vector<std::string> &var_avg_names,
 
@@ -893,7 +885,7 @@ namespace hso{
 
         }
         //get values for varint
-        for(auto var: VarintNames){
+        for(auto var: var_int_names){
 
           int col=-1;
 
@@ -903,7 +895,7 @@ namespace hso{
 
         }
 
-        for(auto var: VarintNames){
+        for(auto var: var_int_names){
 
           int col=-1;
 
@@ -961,7 +953,7 @@ namespace hso{
 
       std::vector<std::string> var_bin_names_temp(0);
 
-      std::vector<std::string> VarintNames_temp(0);
+      std::vector<std::string> var_int_names_temp(0);
 
       std::vector<std::string> var_avg_names_temp(0);
 
@@ -998,7 +990,7 @@ namespace hso{
 
               if(pos==0)
 
-                VarintNames_temp.push_back(entry);
+                var_int_names_temp.push_back(entry);
 
               else{
 
@@ -1022,7 +1014,7 @@ namespace hso{
 
         CleanLine(name,kTagVariableBin);
 
-      for(auto &name: VarintNames_temp)
+      for(auto &name: var_int_names_temp)
 
         CleanLine(name,kTagVariableRange);
 
@@ -1042,7 +1034,7 @@ namespace hso{
 
         std::cout<<"#found other key In comments::";
 
-        for(auto name: VarintNames_temp )
+        for(auto name: var_int_names_temp )
 
           std::cout<<" varint:\t"<<name<<"\t";
 
@@ -1078,7 +1070,7 @@ namespace hso{
 
       }
       //other varint
-      for(auto entry: VarintNames_temp){
+      for(auto entry: var_int_names_temp){
 
         std::vector<std::string> split(0);
 

@@ -1,9 +1,10 @@
 #ifndef _PDF_H_
 #define _PDF_H_
 
-#include "pqcd.h"
 
 namespace hso{
+
+  enum class Parton;
 
   namespace collinear{
 

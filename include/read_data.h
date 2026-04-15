@@ -43,16 +43,13 @@ namespace hso{
 
     void GetLines(std::string fname, std::vector<std::string> &comment_lines, std::vector<std::string> &data_lines, std::vector<int> &dim);
 
-    bool GetKey(std::vector<std::string> &comment_lines, std::vector<int> &dim, std::string &key);
+    bool GetKey(std::vector<std::string> &comment_lines, std::string &key);
 
     int GetEntryType(std::string sentry);
 
     bool CheckKey( std::string key,
                    std::vector<std::string> &var_bin_names,
-                   std::vector<std::string> &var_int_names,
-                   std::vector<std::string> &var_avg_names,
-                   std::vector<std::string> &meas_names,
-                   std::vector<std::string> &err_names);
+                   std::vector<std::string> &var_int_names);
 
     bool ParseKey( std::string key,
                    std::vector<std::string> &var_bin_names,
@@ -95,7 +92,6 @@ namespace hso{
 
     bool ReadLineValues(std::map<std::string,int> dictionary,
                         std::vector<std::string> &data_lines,
-                        std::vector< int> &dim,
                         std::vector<std::string> &var_bin_names,
                         std::vector<std::string> &var_int_names,
                         std::vector<std::string> &var_avg_names,

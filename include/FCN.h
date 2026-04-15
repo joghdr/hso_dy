@@ -1,12 +1,10 @@
 #ifndef _FCN_H_
 #define _FCN_H_
 
-#include "stat_class.h"
-#include "Minuit2/FCNBase.h"
+#include <iosfwd>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <fstream>
+#include "Minuit2/FCNBase.h"
 
 inline constexpr double ErrorOneSigma[] = {
   1.00, //0 parameters
@@ -56,6 +54,9 @@ inline constexpr double ErrorTwosigma[] = {
   31.80 //20 parameters
 };
 
+
+namespace hso { class Stat;}
+
 namespace ROOT{
 
   namespace Minuit2{
@@ -86,14 +87,9 @@ namespace ROOT{
 
       ~FCN(){};
 
-      void Info(){
 
-        std::cout<<__FILE__<<": "<<__LINE__<<": "<<"fit_iteration_counter"<<"="<<fit_iteration_counter<<"\n";
-
-        std::cout<<__FILE__<<": "<<__LINE__<<": "<<"stat size"<<"="<<stat_->size()<<"\n";
-
-      }
       //methods
+      void Info();
       //print/write
       void PrintToScreen(const int &npts,const double &chi2, const std::vector<double> &Parameters)const;
 

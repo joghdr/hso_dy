@@ -1,10 +1,11 @@
 #ifndef _COLLINEAR_H_
 #define _COLLINEAR_H_
 
-#include "pqcd.h"
 #include <string>
 
 namespace hso{
+
+  enum class Parton;
 
   namespace collinear{
 

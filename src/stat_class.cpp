@@ -1,4 +1,6 @@
 #include "stat_class.h"
+#include "data_class.h"
+#include "theory_class.h"
 #include "read_data.h"
 #include <vector>
 #include <iostream>
@@ -198,13 +200,13 @@ namespace hso{
 
   }
 
-  double Stat::Eval(double meas,double error,double theory,void *pointer){
+  double Stat::Eval(double meas,double error,double theory,void *){
 
     return std::pow( (meas-theory)/error , 2 );
 
   }
 
-  double Stat::EvalPenalties(void *pointer){
+  double Stat::EvalPenalties(void *){
 
     std::cout<<"\n###Error: using Stat:EvalPenalties but this (base) class"
 
@@ -460,6 +462,22 @@ namespace hso{
 
   }
 
+  StatN::StatN(std::string name_in, Theory* theory_pointer, std::vector<Data*> &data_pointers, double rel_err_sys_pp_in, double delta_N__in):
+
+  Stat(name_in, theory_pointer, data_pointers, rel_err_sys_pp_in), delta_N_(delta_N__in) {
+
+    for(auto set: *data_) {
+
+      set->normalize_=true;
+
+      std::vector<double>(set->length_,1.0).swap(set->norm_values_);
+
+    }
+
+    penalties_exist_=true;
+
+  }
+
   double StatN::Eval(double meas,double error,double theory,void *pointer){
 
     std::map<std::string,double> norm_map = *static_cast<std::map<std::string,double>**>(pointer)[0];
@@ -479,8 +497,24 @@ namespace hso{
     return std::pow( (1.0-norm)/delta_N_, 2);
 
   }
+
+  StatNMin::StatNMin(std::string name_in,Theory* theory_pointer,std::vector<Data*> &data_pointers,double rel_err_sys_pp_in,double delta_N__in):
+
+  Stat(name_in,theory_pointer,data_pointers,rel_err_sys_pp_in),delta_N_(delta_N__in) {
+
+    for(auto set: *data_) {
+
+      set->normalize_=true;
+
+      std::vector<double>(set->length_,1.0).swap(set->norm_values_);
+
+    }
+
+    penalties_exist_=true;
+
+  };
   //TODO: need to add code to save chi2 into data
-  double StatNMin::operator()(void *para,void *pointer,bool store_values){
+  double StatNMin::operator()(void *para,void *,bool store_values){
 
     int index =0;
 

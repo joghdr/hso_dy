@@ -94,7 +94,7 @@ directory structure:
 
 | subdirectory                     | contains                                   |
 | -------------------------------- |:------------------------------------------ |
-| `results/out_dir_name/cov/`      |     files with information on the parameter-covariance matrix, and corresponding Cholesky matrix, eigenvectors and eigenvalues
+|`results/out_dir_name/cov/`       |     files with information on the parameter-covariance matrix, and corresponding Cholesky matrix, eigenvectors and eigenvalues
 |`results/out_dir_name/gnufiles/`  |     scripts to plot data included in the fit
 |`results/out_dir_name/input/`     |     the input files used to run the program, i.e. kin_file and para_file
 |`results/out_dir_name/min/`       |     eigensets according to Minuit`s final output, covariance matrix and a log file with information of each iteration in the fit

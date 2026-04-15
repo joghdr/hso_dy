@@ -1,8 +1,6 @@
 #ifndef _THEORY_CLASS_H_
 #define _THEORY_CLASS_H_
 
-#include "behavior.h"
-#include "data_class.h"
 #include "cuba.h"
 #include <initializer_list>
 #include <string>
@@ -17,6 +15,8 @@ typedef int (*CubaFunction) (
 
 
 namespace hso{
+
+  class Data;
 
   extern bool store_values_theory;
 

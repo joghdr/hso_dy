@@ -1,13 +1,10 @@
 #include "tmdPDF.h"
-#include "behavior.h"
 #include "math_functions.h"
 #include "pqcd.h"
 #include "CSkernel.h"
 #include "collinear_factorization.h"
 #include "scale_setting.h"
-#include "LHAPDF/LHAPDF.h"
 #include <cmath>
-#include <iostream>
 
 
 namespace hso{

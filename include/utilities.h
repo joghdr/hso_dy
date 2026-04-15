@@ -1,14 +1,18 @@
 #ifndef _UTILITIES_H_
 #define _UTILITIES_H_
 
-#include "data_class.h"
-#include "stat_class.h"
-#include "FCN.h"
-#include "Minuit2/FunctionMinimum.h"
 #include <vector>
 #include <string>
 
+namespace ROOT { namespace Minuit2 { class FCN; } }
+namespace ROOT { namespace Minuit2 { class FunctionMinimum; } }
+namespace ROOT { namespace Minuit2 { class MnUserParameters; } }
+
 namespace hso{
+
+  class Data;
+
+  class Stat;
 
   namespace utils{
 
@@ -38,7 +42,7 @@ namespace hso{
 
                        std::vector<double> &eigen_sets, int &numofeigen, int &numofpara);
 
-    void GetEigenset(const std::vector<double> &eigen_sets,const int &numofeigen,
+    void GetEigenset(const std::vector<double> &eigen_sets,
 
                      const int &numofpara,const int &i, std::vector<double> &eigen_set_i);
 

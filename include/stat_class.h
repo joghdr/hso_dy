@@ -1,12 +1,14 @@
 #ifndef _STAT_CLASS_H_
 #define _STAT_CLASS_H_
 
-#include "data_class.h"
-#include "theory_class.h"
 #include <string>
 #include <vector>
 
 namespace hso{
+
+  class Data;
+
+  class Theory;
 
   extern bool store_values_stat;
 
@@ -83,7 +85,7 @@ namespace hso{
 
     virtual double Eval(double meas,double error,double theory,void *pointer);
 
-    virtual double EvalPenalties(void *pointer);
+    virtual double EvalPenalties(void *);
 
     virtual double operator()(void *para,void *pointer,bool store_values=store_values_stat);
 
@@ -125,21 +127,23 @@ namespace hso{
 
   public:
 
-    StatN(std::string name_in, Theory* theory_pointer, std::vector<Data*> &data_pointers, double rel_err_sys_pp_in, double delta_N__in):
+    // StatN(std::string name_in, Theory* theory_pointer, std::vector<Data*> &data_pointers, double rel_err_sys_pp_in, double delta_N__in):
+    //
+    //       Stat(name_in, theory_pointer, data_pointers, rel_err_sys_pp_in), delta_N_(delta_N__in) {
+    //
+    //   for(auto set: *data_) {
+    //
+    //     set->normalize_=true;
+    //
+    //     std::vector<double>(set->length_,1.0).swap(set->norm_values_);
+    //
+    //   }
+    //
+    //   penalties_exist_=true;
+    //
+    // };
 
-          Stat(name_in, theory_pointer, data_pointers, rel_err_sys_pp_in), delta_N_(delta_N__in) {
-
-      for(auto set: *data_) {
-
-        set->normalize_=true;
-
-        std::vector<double>(set->length_,1.0).swap(set->norm_values_);
-
-      }
-
-      penalties_exist_=true;
-
-    };
+    StatN(std::string name_in, Theory* theory_pointer, std::vector<Data*> &data_pointers, double rel_err_sys_pp_in, double delta_N__in);
 
     StatN(){};
 
@@ -157,23 +161,25 @@ namespace hso{
 
   public:
 
-    StatNMin(std::string name_in,Theory* theory_pointer,std::vector<Data*> &data_pointers,double rel_err_sys_pp_in,double delta_N__in):
+    // StatNMin(std::string name_in,Theory* theory_pointer,std::vector<Data*> &data_pointers,double rel_err_sys_pp_in,double delta_N__in):
+    //
+    //          Stat(name_in,theory_pointer,data_pointers,rel_err_sys_pp_in),delta_N_(delta_N__in) {
+    //
+    //   for(auto set: *data_) {
+    //
+    //     set->normalize_=true;
+    //
+    //     std::vector<double>(set->length_,1.0).swap(set->norm_values_);
+    //
+    //   }
+    //
+    //   penalties_exist_=true;
+    //
+    // };
 
-             Stat(name_in,theory_pointer,data_pointers,rel_err_sys_pp_in),delta_N_(delta_N__in) {
+    StatNMin(std::string name_in,Theory* theory_pointer,std::vector<Data*> &data_pointers,double rel_err_sys_pp_in,double delta_N__in);
 
-      for(auto set: *data_) {
-
-        set->normalize_=true;
-
-        std::vector<double>(set->length_,1.0).swap(set->norm_values_);
-
-      }
-
-      penalties_exist_=true;
-
-    };
-
-    StatNMin(){};
+    StatNMin();
 
     ~StatNMin(){};
     //members

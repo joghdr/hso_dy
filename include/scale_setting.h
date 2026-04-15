@@ -1,7 +1,6 @@
 #ifndef _SCALE_SETTING_H_
 #define _SCALE_SETTING_H_
 
-#include "behavior.h"
 
 namespace hso{
 

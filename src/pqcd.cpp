@@ -1,5 +1,5 @@
 #include "pqcd.h"
-#include "LHAPDF/LHAPDF.h"
+#include <LHAPDF/PDF.h>
 
 namespace hso{
 

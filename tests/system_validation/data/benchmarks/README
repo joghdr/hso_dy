@@ -1,0 +1,32 @@
+
+################## deprecated benchmarks
+
+# calculations as in DY pheno paper 2024
+# divides theory by a normalization to model systematic uncertainties
+# (dividing is consistent with D'Agostini paper, which we cited in our work)
+
+
+
+  E288_control_ninv: computes chi2 with fixed parameter which values were obtained in paper
+                     calculation is done using the same data points of E288 as in the paper
+
+  E288_control_ninv_fast: computes chi2 with fixed parameter which values were obtained in paper
+                          calculation is done using only a few points, for fast calculation
+
+
+
+
+
+################## current benchmarks
+
+# multiplies theory by a normalization to model systematic uncertainties
+# from now on code uses rhis version, it is simpler to implement and equivalent
+# to the one used in the paper
+
+  E288_control: fit to the same E288 data points as in our paper.
+                writes Minuit covariance matrix and calculated other related quantities,
+                placed inside 'cov/' subfolder
+
+
+  E288_control_fast: computes chi2 with fixed parameters, which values were obtained in
+                     benchmark fit 'E288_control'. Calculation is done on all points.

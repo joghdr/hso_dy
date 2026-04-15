@@ -1,9 +1,11 @@
 #include "FCN.h"
-#include "Minuit2/FunctionMinimum.h"
 #include "pqcd.h"
 #include "math_functions.h"
 #include "objects_stat.h"
 #include <cmath>
+#include <string>
+#include <vector>
+#include <stddef.h>
 
 // currently program requires using environment variable
 // OMP_NUM_THREADS = 1 (omp critical region not needed)

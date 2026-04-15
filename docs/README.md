@@ -3,12 +3,12 @@
 
 ## Description
 
-Language: C++ (Tested with gcc compilers, i.e. Linux)
+Language: C++(20) (Tested with gcc compilers, i.e. Linux)
 The code allows to reproduce results analogous to those published in:
 
   - [Phys.Rev.D 110 (2024) 7, 074016](https://inspirehep.net/literature/2751355)
 
-Other relevant publications are on the HSO approach are:
+Other relevant publications on the HSO approach are:
 
   - [Phys.Rev.D 106 (2022) 3, 034002](https://inspirehep.net/literature/2080521)
   - [Phys.Rev.D 107 (2023) 9, 094029](https://inspirehep.net/literature/2640018)

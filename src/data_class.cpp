@@ -2,7 +2,8 @@
 #include "read_data.h"
 #include <vector>
 #include <string>
-#include <cstddef> //std::size_t
+// #include <cstddef> //std::size_t
+#include <utility>
 #include <map>
 #include <iostream>
 #include <stdexcept>//std::out_of_range
@@ -96,16 +97,16 @@ namespace hso{
 
     dictionary=read_data::GetDictionary(key, var_bin_names_, var_int_names_,
 
-                                         var_avg_names_, meas_names_, err_names_);
+                                        var_avg_names_, meas_names_, err_names_);
 
-    while (read_data::ReadLineValues(dictionary, data_lines_, dim_, var_bin_names_,
+    while (read_data::ReadLineValues(dictionary, data_lines_, var_bin_names_,
 
-                                var_int_names_,var_avg_names_,meas_names_,err_names_,
+      var_int_names_,var_avg_names_,meas_names_,err_names_,
 
-                                var_bin_avg_,var_bin_min_,var_bin_max_,var_int_min_,
+      var_bin_avg_,var_bin_min_,var_bin_max_,var_int_min_,
 
-                                var_int_max_,var_avg_,meas_values_,err_values_)
-          );
+      var_int_max_,var_avg_,meas_values_,err_values_)
+    );
 
     number_of_var_bin_ = var_bin_names_.size();
 
@@ -143,15 +144,17 @@ namespace hso{
 
     length_active_=0;
 
-    for (int i=0;i<length_;i++ )
+    for (int i=0;i<length_;i++ ) {
 
       if(point_is_valid_[i]) {
 
-      point_is_active_[i]=true;
+        point_is_active_[i]=true;
 
-      length_active_++;
+        length_active_++;
 
-      set_is_active_=true;
+        set_is_active_=true;
+
+      }
 
     }
 
@@ -170,6 +173,7 @@ namespace hso{
     SetBehavior();
 
   }
+
   //methods
   std::vector<double> Data::Get(int i,bool check,bool omit_errors){
 
@@ -266,7 +270,7 @@ namespace hso{
 
     }
 
-    catch (const std::out_of_range& oor) {
+    catch (const std::out_of_range& oor_var_bin) {
 
       try {
 
@@ -280,7 +284,7 @@ namespace hso{
 
       }
 
-      catch (const std::out_of_range& oor) {
+      catch (const std::out_of_range& oor_var_int) {
 
         try {
 
@@ -292,7 +296,7 @@ namespace hso{
 
         }
 
-        catch (const std::out_of_range& oor) {
+        catch (const std::out_of_range& oor_var_avg) {
 
           found=false;
 
@@ -508,9 +512,9 @@ namespace hso{
 
       std::cout<<"\n#Error: requested theory values for "<<eigen_i
 
-               <<"-th eigenset, but currently there are number_of_eigen_="
+      <<"-th eigenset, but currently there are number_of_eigen_="
 
-               <<number_of_eigen_<<"in data '"<<name_<<"'. Aborting."<<std::endl;
+      <<number_of_eigen_<<"in data '"<<name_<<"'. Aborting."<<std::endl;
 
       std::exit(0);
 
@@ -522,9 +526,9 @@ namespace hso{
 
       std::cout<<"\n#Error: size of theory_values_eigen_plus_ should be "
 
-               <<length_*number_of_eigen_/2<<"\n# theory_values_eigen_plus_.size() = "
+      <<length_*number_of_eigen_/2<<"\n# theory_values_eigen_plus_.size() = "
 
-               <<theory_values_eigen_plus_.size()<<"\n# Aborting."<<std::endl;
+      <<theory_values_eigen_plus_.size()<<"\n# Aborting."<<std::endl;
 
       std::exit(0);
 
@@ -536,9 +540,9 @@ namespace hso{
 
       std::cout<<"\n#Error: size of theory_values_eigen_minus_ should be "
 
-               <<length_*number_of_eigen_/2<<"\n# theory_values_eigen_minus_.size()="
+      <<length_*number_of_eigen_/2<<"\n# theory_values_eigen_minus_.size()="
 
-               <<theory_values_eigen_minus_.size()<<"\n# Aborting."<<std::endl;
+      <<theory_values_eigen_minus_.size()<<"\n# Aborting."<<std::endl;
 
       std::exit(0);
 
@@ -580,9 +584,9 @@ namespace hso{
 
       std::cout<<"\n#Error: extracted values from theory_values_eigen_plus_(Minus)"
 
-               <<" are of different length than length_.\n"<<"# length_="<<length_
+      <<" are of different length than length_.\n"<<"# length_="<<length_
 
-               <<"\tsize of extracted="<<output.size()<<"\n# Aborting."<<std::endl;
+      <<"\tsize of extracted="<<output.size()<<"\n# Aborting."<<std::endl;
 
       std::exit(0);
 
@@ -690,11 +694,11 @@ namespace hso{
 
       std::cout<<"#\t"<<entry.first<<" is type "<<std::get<0>(other_vars_[entry.first])
 
-               <<": "<<std::get<1>(other_vars_[entry.first])
+      <<": "<<std::get<1>(other_vars_[entry.first])
 
-               <<"\t"<<std::get<2>(other_vars_[entry.first])<<"\t"
+      <<"\t"<<std::get<2>(other_vars_[entry.first])<<"\t"
 
-               <<std::get<3>(other_vars_[entry.first])<<std::endl;
+      <<std::get<3>(other_vars_[entry.first])<<std::endl;
 
     std::cout<<"#--input_column_number_--"<<std::endl;
 

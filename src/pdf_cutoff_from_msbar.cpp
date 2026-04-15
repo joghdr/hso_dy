@@ -2,8 +2,11 @@
 #include "behavior.h"
 #include "pqcd.h"
 #include "gsl_settings.h"
-#include "LHAPDF/LHAPDF.h"
+#include <LHAPDF/PDF.h>
+#include <gsl/gsl_math.h>
 #include <gsl/gsl_integration.h>
+#include <string>
+#include <sstream>
 #include <iostream>
 #include <cstdlib>
 #include <cmath>

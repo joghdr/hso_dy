@@ -1,8 +1,9 @@
 #include "CSkernel.h"
 #include "gsl_settings.h"
 #include "pqcd.h"
+#include <gsl/gsl_math.h>
 #include <gsl/gsl_integration.h>
-#include <iostream>
+#include <cmath>
 
 namespace hso{
 
@@ -88,7 +89,7 @@ namespace hso{
 
   }
 
-  double gamma_K_1(double mup,void *para){
+  double gamma_K_1(double mup,void *){
 
     double output = 0.0;
 

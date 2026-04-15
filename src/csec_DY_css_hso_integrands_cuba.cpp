@@ -3,7 +3,6 @@
 #include "WDY_hso.h"
 #include <gsl/gsl_sf_bessel.h>
 #include <vector>
-#include <iostream>
 #include <cmath>
 
 namespace hso{
@@ -12,9 +11,9 @@ namespace hso{
     ///@prototype: fixed target E288 experiment; units -> fb * GeV^-2
     int integrand_drell_yan_1(
 
-      const int *ndim, const double xx[],
+      const int *, const double xx[],
 
-      const int *ncomp, double ff[], void *P
+      const int *, double ff[], void *P
 
     ) {
 
@@ -117,9 +116,9 @@ namespace hso{
     ///@prototype: fixed target E605 experiment; units -> pb * GeV^-2
     int integrand_drell_yan_4_xFavg_qTavg (
 
-      const int *ndim, const double xx[],
+      const int *, const double xx[],
 
-      const int *ncomp, double ff[], void *P
+      const int *, double ff[], void *P
 
     ) {
 
@@ -221,9 +220,9 @@ namespace hso{
 
     int integrand_drell_yan_1(
 
-      const int *ndim, const double xx[],
+      const int *, const double xx[],
 
-      const int *ncomp, double ff[], void *P
+      const int *, double ff[], void *P
 
     ) {
 
@@ -313,9 +312,9 @@ namespace hso{
 
     int integrand_drell_yan_4_xFavg_qTavg(
 
-      const int *ndim, const double xx[],
+      const int *, const double xx[],
 
-      const int *ncomp, double ff[], void *P
+      const int *, double ff[], void *P
 
     ) {
 
@@ -414,9 +413,9 @@ namespace hso{
     //use with full Z0 propagator: must integrate over Q range
     int integrand_drell_yan_Z0_1(
 
-      const int *ndim, const double xx[],
+      const int *, const double xx[],
 
-      const int *ncomp, double ff[], void *P
+      const int *, double ff[], void *P
 
     ) {
 

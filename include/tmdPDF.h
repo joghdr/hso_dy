@@ -1,10 +1,12 @@
 #ifndef _TMDPDF_H_
 #define _TMDPDF_H_
 
-#include "pqcd.h"
-#include "LHAPDF/LHAPDF.h"
+
+namespace LHAPDF { class PDF; }
 
 namespace hso{
+
+  enum class Parton;
   ///@global
   extern LHAPDF::PDF* Apdf_lhapdf_pointer;
 

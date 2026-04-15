@@ -1,0 +1,70 @@
+{
+  "version": 3,
+  "configurePresets": [
+
+  {
+    "name": "base",
+    "hidden": true,
+    "generator": "Unix Makefiles",
+    "cacheVariables": {
+      "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+      "CMAKE_CXX_EXTENSIONS": "OFF",
+      "CMAKE_CXX_STANDARD": "20",
+      "CMAKE_CXX_STANDARD_REQUIRED": "ON"
+     }
+  },
+
+  {
+    "name": "release",
+    "inherits": "base",
+    "binaryDir": "${sourceDir}/build/release",
+    "cacheVariables": {
+      "CMAKE_CXX_FLAGS": "-flto=auto  -O3 -march=native -fopenmp",
+      "CMAKE_BUILD_TYPE": "Release"
+    }
+  },
+
+  {
+    "name": "dev",
+    "inherits": "base",
+    "binaryDir": "${sourceDir}/build/dev",
+    "cacheVariables": {
+      "CMAKE_CXX_FLAGS": "-flto=auto  -Og -g -Wall  -Wshadow -Wunused-parameter -Werror -fopenmp",
+      "CMAKE_BUILD_TYPE": "Debug"
+    }
+  },
+
+  {
+    "name": "audit",
+    "inherits": "base",
+    "binaryDir": "${sourceDir}/build/audit",
+    "cacheVariables": {
+      "CMAKE_CXX_FLAGS": "-O3  -flto=auto -Wall  -Wshadow -Wunused-parameter -Werror -fopenmp",
+      "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+    }
+  }
+  ],
+
+  "buildPresets": [
+
+  {
+    "name": "release",
+    "configurePreset": "release"
+
+  },
+
+  {
+    "name": "dev",
+    "configurePreset": "dev"
+
+  },
+
+  {
+    "name": "audit",
+    "configurePreset": "audit"
+
+  }
+
+  ]
+}
+

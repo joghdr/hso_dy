@@ -1,8 +1,6 @@
 #ifndef _PQCD_H_
 #define _PQCD_H_
 
-#include "LHAPDF/LHAPDF.h"
-#include <cmath>
 #include <map>
 
 namespace hso{
@@ -127,8 +125,8 @@ namespace hso{
   inline constexpr double CA = NC;
   inline constexpr double gammak1 = 8.*CF;
   inline constexpr double gammaF1 = 6*CF;
-  inline constexpr double gammaF2 = pow(CF,2)*(3 + 48*zeta3 - 4*pow(Pi,2)) + CF*nf*(-4.814814814814815 - (2*pow(Pi,2))/3.) + CA*CF*(35.592592592592595 - 52*zeta3 + (11*pow(Pi,2))/3.);
-  inline constexpr double H1 = CF*(-16 + pow(Pi,3)/3.);
+  inline constexpr double gammaF2 = CF*CF*(3 + 48*zeta3 - 4*Pi*Pi) + CF*nf*(-4.814814814814815 - (2*Pi*Pi)/3.) + CA*CF*(35.592592592592595 - 52*zeta3 + (11*Pi*Pi)/3.);
+  inline constexpr double H1 = CF*(-16 + Pi*Pi*Pi/3.);
   inline constexpr double k1 = 0;
   inline constexpr double k02 = 8*CF*((14*nf)/27. + CA*(-3.740740740740741 + (7*zeta3)/2.));
   inline constexpr double beta0 = (11.0*CA)/3. - (2.0*nf)/3.;

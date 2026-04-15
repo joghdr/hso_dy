@@ -3,6 +3,7 @@
 #include "data_class.h"
 #include "read_data.h"
 #include "cuba.h"
+#include <map>
 #include <vector>
 #include <iostream>
 #include <string>

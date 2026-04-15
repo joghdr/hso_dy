@@ -4,6 +4,7 @@
 #include "collinear_factorization.h"//TODO: only hso::SetLhapdf is needed from this header, modify to get rid of it
 #include "read_data.h"
 #include "data_class.h"
+#include "theory_class.h"
 #include "stat_class.h"
 #include "read_para.h"
 #include "read_kin.h"
@@ -11,32 +12,43 @@
 #include "objects_stat.h"
 #include "FCN.h"
 //
-#include "LHAPDF/LHAPDF.h"
 //Minuit functions
+//
+#include <gsl/gsl_math.h>                  // for gsl_function
+#include <gsl/gsl_linalg.h>
+#include <gsl/gsl_eigen.h>
+#include <gsl/gsl_roots.h>
+#include <gsl/gsl_errno.h>//error handling
+#include <gsl/gsl_matrix_double.h>         // for gsl_matrix_calloc, gsl_mat...
+#include <gsl/gsl_vector_double.h>         // for gsl_vector_calloc, gsl_vec...
+//
+#include <filesystem>// directory_iterator
+#include <string>
+#include <vector>
+#include <tuple>
+#include <map>                             // for map, operator==, _Rb_tree_...
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iomanip>
+#include <cmath>
+#include <sys/stat.h>// struct stat
+#include <cstdlib>
+#include <cstdio>
+#include <utility>
+
+using  std::string;
+
+#include <LHAPDF/LHAGlue.h>                // for setVerbosity, Verbosity
+
 #include "Minuit2/MnMigrad.h"
 #include "Minuit2/FunctionMinimum.h"
 #include "Minuit2/MnUserParameters.h"
 #include "Minuit2/MnPrint.h"
 #include "Minuit2/MinuitParameter.h"
-//
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_linalg.h>
-#include <gsl/gsl_eigen.h>
-#include <gsl/gsl_roots.h>
-#include <gsl/gsl_errno.h>//error handling
-//
-#include <filesystem>// directory_iterator
-#include <string>
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iomanip>
-#include <tuple>
-#include <cmath>
-#include <sys/stat.h>// struct stat
-#include <cstdlib>
-#include <cstdio>
+#include <Minuit2/MnApplication.h>         // for MnApplication
+#include <Minuit2/MnUserCovariance.h>      // for MnUserCovariance
+#include <Minuit2/MnUserParameterState.h>  // for MnUserParameterState
 
 namespace fs = std::filesystem;
 
@@ -44,7 +56,7 @@ namespace hso{
 
   std::string home_dir {"./results"};
 
-  std::string eigen_filename {""};
+  std::string eigen_filename_global {""};
 
   std::string kinematics_filename {""};
 
@@ -58,7 +70,7 @@ namespace hso{
 
     bool verbose=true;
     //initialize vars below to defaults, InitProgram will update their values
-    int lhapdf_set_member {0}; //LHAPDF member, set central as initial value
+    double lhapdf_set_member {0.0}; //LHAPDF member, set central as initial value
 
     double Q0 {2.0}; //input scale (all scales in GeV)
 
@@ -127,7 +139,7 @@ namespace hso{
 
       std::vector<std::string> rows(0);
 
-      std::string line;
+      std::string row_raw;
 
       bool found=false;
 
@@ -138,17 +150,17 @@ namespace hso{
 
         found=true;
 
-        while (getline(input_file,line)) {
+        while (getline(input_file,row_raw)) {
 
-          hso::read_data::CleanLine( line," " );
+          hso::read_data::CleanLine( row_raw," " );
 
-          if (line.compare(0,matrix_tag.size(),matrix_tag)==0 ) {
+          if (row_raw.compare(0,matrix_tag.size(),matrix_tag)==0 ) {
 
-            hso::read_data::CleanLine(line, matrix_tag);
+            hso::read_data::CleanLine(row_raw, matrix_tag);
 
-            hso::read_data::Replaceall(line, ":", " ");
+            hso::read_data::Replaceall(row_raw, ":", " ");
 
-            rows.push_back(line);
+            rows.push_back(row_raw);
 
           }
 
@@ -170,19 +182,19 @@ namespace hso{
         //input values in vectors
         for(auto row: rows){
 
-          std::stringstream line(row);
+          std::stringstream row_print(row);
 
           std::string entry("");
 
-          line>>entry;
+          row_print>>entry;
 
           row_indices.push_back(stoi(entry));
 
-          line>>entry;
+          row_print>>entry;
 
           col_indices .push_back(stoi(entry));
 
-          line>>entry;
+          row_print>>entry;
 
           matrix.push_back(stod(entry));
 
@@ -378,23 +390,23 @@ namespace hso{
 
       std::vector<std::string> rows(0);
 
-      std::string line;
+      std::string row_raw;
       ///read and store rows
       std::ifstream input_file(filename);
 
       if(input_file){
 
-        while( getline(input_file,line) ){
+        while( getline(input_file,row_raw) ){
 
-          hso::read_data::CleanLine( line," " );
+          hso::read_data::CleanLine( row_raw," " );
 
-          if (line.compare(0,vector_tag.size(),vector_tag)==0) {
+          if (row_raw.compare(0,vector_tag.size(),vector_tag)==0) {
 
-            hso::read_data::CleanLine(line, vector_tag);
+            hso::read_data::CleanLine(row_raw, vector_tag);
 
-            hso::read_data::Replaceall(line,":"," ");
+            hso::read_data::Replaceall(row_raw,":"," ");
 
-            rows.push_back(line);
+            rows.push_back(row_raw);
 
           }
 
@@ -414,13 +426,13 @@ namespace hso{
       //input values in vectors
       for(auto row: rows){
 
-        std::stringstream line(row);
+        std::stringstream row_print(row);
 
         std::string entry("");
 
-        line>>entry;
+        row_print>>entry;
 
-        line>>entry;
+        row_print>>entry;
 
         output.push_back(stod(entry));
 
@@ -672,7 +684,7 @@ namespace hso{
 
     }
 
-    void GetEigenset(const std::vector<double> &eigen_sets,const int &numofeigen,
+    void GetEigenset(const std::vector<double> &eigen_sets,
 
                      const int &numofpara,const int &i, std::vector<double> &eigen_set_i) {
 
@@ -1091,49 +1103,49 @@ namespace hso{
 
     log_file<<"#1.i\t";
 
-    int i=2;
+    int i_para_names=2;
 
     int para_names_size = static_cast<int>(parameter_names.size());
 
-    for(i = 2; i < para_names_size + 2; i++)
+    for(i_para_names = 2; i_para_names < para_names_size + 2; i_para_names++)
 
-      log_file<<i<<"."<<parameter_names[i-2]<<"\t";
+      log_file<<i_para_names<<"."<<parameter_names[i_para_names-2]<<"\t";
 
-    log_file<<i<<".pts ";
+    log_file<<i_para_names<<".pts ";
 
-    i++;
+    i_para_names++;
 
-    log_file<<i<<".chi2 ";
+    log_file<<i_para_names<<".chi2 ";
 
-    i++;
+    i_para_names++;
 
-    log_file<<i<<".chi2/pt";
+    log_file<<i_para_names<<".chi2/pt";
 
-    i++;
+    i_para_names++;
 
     log_file<<std::endl;
 
     log_file<<std::scientific<<std::setprecision(6);
     ///write to screen
-    i=2;
+    i_para_names=2;
 
     std::cout<<"#1.i\t";
 
-    for(i = 2; i < para_names_size + 2; i++)
+    for(i_para_names = 2; i_para_names < para_names_size + 2; i_para_names++)
 
-      std::cout<<i<<"."<<parameter_names[i-2]<<"\t";
+      std::cout<<i_para_names<<"."<<parameter_names[i_para_names-2]<<"\t";
 
-    std::cout<<i<<".pts ";
+    std::cout<<i_para_names<<".pts ";
 
-    i++;
+    i_para_names++;
 
-    std::cout<<i<<".chi2 ";
+    std::cout<<i_para_names<<".chi2 ";
 
-    i++;
+    i_para_names++;
 
-    std::cout<<i<<".chi2/pt";
+    std::cout<<i_para_names<<".chi2/pt";
 
-    i++;
+    i_para_names++;
 
     std::cout<<std::endl;
     //minimize (log file is written internally by theFCN )
@@ -1149,25 +1161,25 @@ namespace hso{
 
     minimum_output_file.close();
     //write again to screen
-    i=2;
+    i_para_names=2;
 
     std::cout<<"#1.i\t";
 
-    for(i = 2; i < para_names_size + 2; i++)
+    for(i_para_names = 2; i_para_names < para_names_size + 2; i_para_names++)
 
-      std::cout<<i<<"."<<parameter_names[i-2]<<"\t";
+      std::cout<<i_para_names<<"."<<parameter_names[i_para_names-2]<<"\t";
 
-    std::cout<<i<<".pts ";
+    std::cout<<i_para_names<<".pts ";
 
-    i++;
+    i_para_names++;
 
-    std::cout<<i<<".chi2 ";
+    std::cout<<i_para_names<<".chi2 ";
 
-    i++;
+    i_para_names++;
 
-    std::cout<<i<<".chi2/pt";
+    std::cout<<i_para_names<<".chi2/pt";
 
-    i++;
+    i_para_names++;
 
     std::cout<<std::endl;
     //print final status for the parameters in a format readable to 'read_parameters::read_para'
@@ -1209,27 +1221,27 @@ namespace hso{
 
       int central_size = static_cast<int>(para_central_value.size());
 
-      for(int i = 0; i < central_size; i++){
+      for(int i_central = 0; i_central < central_size; i_central++){
 
-        para_central_value[i]=min.UserState().Value(parameter_names[i]);
+        para_central_value[i_central]=min.UserState().Value(parameter_names[i_central]);
 
-        para_error[i]=min.UserState().Error(parameter_names[i]);
+        para_error[i_central]=min.UserState().Error(parameter_names[i_central]);
 
         status_output_file<<std::left;
 
-        status_output_file<<std::setw(20)<<parameter_names[i];
+        status_output_file<<std::setw(20)<<parameter_names[i_central];
 
-        status_output_file<<std::setw(13)<< para_central_value[i];
+        status_output_file<<std::setw(13)<< para_central_value[i_central];
 
-        status_output_file<<std::setw( 7)<< para_is_free[i];
+        status_output_file<<std::setw( 7)<< para_is_free[i_central];
 
-        status_output_file<<std::setw(13)<< para_error[i];
+        status_output_file<<std::setw(13)<< para_error[i_central];
 
-        status_output_file<<std::setw(10)<< para_is_limited[i];
+        status_output_file<<std::setw(10)<< para_is_limited[i_central];
 
-        status_output_file<<std::setw(13)<< para_lower_limit[i];
+        status_output_file<<std::setw(13)<< para_lower_limit[i_central];
 
-        status_output_file<<std::setw(13)<< para_upper_limit[i];
+        status_output_file<<std::setw(13)<< para_upper_limit[i_central];
 
         status_output_file<<"\n\n";
 
@@ -1240,9 +1252,9 @@ namespace hso{
     }
     // rerun fit with final fixed paramters. This is to store final values of theory,
     // chi2 pt by pt (and make sure lines correspond to final status of parameters)
-    for (int i = 0; i < para_names_size; i++)
+    for (int i_parafix = 0; i_parafix < para_names_size; i_parafix++)
 
-      migrad.Fix(parameter_names[i].c_str());
+      migrad.Fix(parameter_names[i_parafix].c_str());
 
     hso::store_values_stat = true;
 
@@ -1690,7 +1702,7 @@ namespace hso{
     //WARNING:this is a patch: uses bash script to fix labels in plot
     char command_fix[200];
 
-    std::sprintf( command_fix,"bash scripts/plotfix %s",home_dir.c_str() );
+    std::sprintf( command_fix,"bash gnufiles/plotfix %s",home_dir.c_str() );
 
     int system_result = std::system(command_fix);
 
@@ -1940,11 +1952,11 @@ namespace hso{
 
     if(argc-1 >= 3)
 
-      eigen_filename.assign(argv[3]);
+      eigen_filename_global.assign(argv[3]);
 
     else {
 
-      eigen_filename.assign( FileInDirUnique( fit_dir + "/min/", "eigensets" ));
+      eigen_filename_global.assign( FileInDirUnique( fit_dir + "/min/", "eigensets" ));
 
     if(argc-1>=4)
 
@@ -2042,11 +2054,11 @@ namespace hso{
 
       input_file_copy.clear();
       //cp eigensets file
-      input_file.open(eigen_filename); //open original para file
+      input_file.open(eigen_filename_global); //open original para file
 
-      eigen_filename=hso::read_data::ExtractFname(eigen_filename); //get file name without path
+      eigen_filename_global=hso::read_data::ExtractFname(eigen_filename_global); //get file name without path
 
-      input_file_copy.open(eigen_dir + "/" + eigen_filename); //open new file
+      input_file_copy.open(eigen_dir + "/" + eigen_filename_global); //open new file
 
       while(getline(input_file,line))
 
@@ -2070,7 +2082,7 @@ namespace hso{
 
     para_filename.assign(para_dir + "/" + para_filename);
 
-    eigen_filename.assign( eigen_dir + "/" + eigen_filename);
+    eigen_filename_global.assign( eigen_dir + "/" + eigen_filename_global);
 
   }
 
@@ -2094,7 +2106,7 @@ namespace hso{
 
     int numofpara=0;
 
-    ReadEigensets(eigen_filename, eigen_para_names,eigen_sets,numofeigen,numofpara);
+    ReadEigensets(eigen_filename_global, eigen_para_names,eigen_sets,numofeigen,numofpara);
     ///@set size in data for eigenset results
     for(auto stat: *(theFCN.stat_))
 
@@ -2126,7 +2138,7 @@ namespace hso{
 
       std::vector<double> eigen_set_i(0);
 
-      GetEigenset(eigen_sets,numofeigen,numofpara,i,eigen_set_i);
+      GetEigenset(eigen_sets,numofpara,i,eigen_set_i);
 
       int eigen_para_names_size = static_cast<int>(eigen_para_names.size());
 

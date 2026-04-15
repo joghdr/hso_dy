@@ -3,14 +3,18 @@
 #include "pqcd.h"
 #include "pdf_cutoff_from_msbar.h"
 #include "gsl_settings.h"
-#include "LHAPDF/LHAPDF.h"
+#include <gsl/gsl_math.h>
 #include <gsl/gsl_integration.h>
+#include <cmath>
 #include <iostream>
 #include <string>
 #include <algorithm>
 #include <cstdlib>
-#include <mutex>
 #include <sstream>
+#include <vector> // IWYU pragma: keep
+#include <LHAPDF/Factories.h>
+#include <LHAPDF/PDF.h>
+
 
 
 namespace hso{

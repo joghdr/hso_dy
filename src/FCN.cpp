@@ -1,4 +1,5 @@
 #include "FCN.h"
+#include "stat_class.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -10,6 +11,14 @@ namespace ROOT{
   namespace Minuit2{
 
     int fit_iteration_counter = 0;
+
+    void FCN::Info(){
+
+      std::cout<<__FILE__<<": "<<__LINE__<<": "<<"fit_iteration_counter"<<"="<<fit_iteration_counter<<"\n";
+
+      std::cout<<__FILE__<<": "<<__LINE__<<": "<<"stat size"<<"="<<stat_->size()<<"\n";
+
+    }
     //print/write methods
     void FCN::PrintToScreen(const int &npts,const double &chi2, const std::vector<double> &Parameters)const{
 
