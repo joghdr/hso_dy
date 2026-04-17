@@ -17,7 +17,6 @@ export HSO_ROOT
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
 
-
 .PHONY: all help clean verify check
 .PHONY: dev dev-registry-globals dev-test
 .PHONY: audit audit-registry-globals audit-test
@@ -26,7 +25,6 @@ GROUP_ID := $(shell id -g)
 
 MAKEFLAGS += -s
 
-
 COLOR_OK       := $(shell bash -c 'source $(HSO_ROOT)/tests/helpers.sh && echo $$COLOR_OK     ')
 COLOR_DIM      := $(shell bash -c 'source $(HSO_ROOT)/tests/helpers.sh && echo $$COLOR_DIM    ')
 COLOR_SOFT_OK  := $(shell bash -c 'source $(HSO_ROOT)/tests/helpers.sh && echo $$COLOR_SOFT_OK')
@@ -34,8 +32,6 @@ COLOR_WARNING  := $(shell bash -c 'source $(HSO_ROOT)/tests/helpers.sh && echo $
 COLOR_ERR      := $(shell bash -c 'source $(HSO_ROOT)/tests/helpers.sh && echo $$COLOR_ERR    ')
 COLOR_MSG      := $(shell bash -c 'source $(HSO_ROOT)/tests/helpers.sh && echo $$COLOR_MSG    ')
 COLOR_NC       := $(shell bash -c 'source $(HSO_ROOT)/tests/helpers.sh && echo $$COLOR_NC     ')
-
-
 
 define run_tests_static
 	printf -- "%30s\n" ">>> static analysis <<<" && \
@@ -61,8 +57,6 @@ define run_tests
 	printf "%b[%s]%b\n" "$(COLOR_OK)" "ALL TESTS SUCCEEDED"  "$(COLOR_NC)"
 endef
 
-
-
 all: help
 
 help:
@@ -81,12 +75,19 @@ verify: audit-test
 check: verify
 
 dev:
+	echo "*** [HSO] Building build/dev"; \
 	cmake --preset dev
 	cmake --build --preset dev --target try_build -j$(nproc)
 
-dev-registry-globals: dev
-	 @export HSO_BUILD_DIR=build/dev; \
-	 bash tests/static_analysis/make_global_registries.sh
+audit:
+	echo "*** [HSO] Building build/audit"; \
+	cmake --preset audit
+	cmake --build --preset audit --target try_build -j$(nproc)
+
+release:
+	echo "*** [HSO] Building build/release"; \
+	cmake --preset release
+	cmake --build --preset release  --target try_build -j$(nproc)
 
 dev-test: dev
 	if [ -f build/dev/SKIP_TESTS ]; then \
@@ -95,29 +96,12 @@ dev-test: dev
 		$(call run_tests,build/dev); \
 	fi
 
-audit:
-	printf -- "\n----------- %s ------------\n" "Building build/audit"
-	cmake --preset audit
-	cmake --build --preset audit --target try_build -j$(nproc)
-
-audit-registry-globals: audit
-	 @export HSO_BUILD_DIR=build/audit; \
-	 bash tests/static_analysis/make_global_registries.sh
-
 audit-test: audit
 	if [ -f build/audit/SKIP_TESTS ]; then \
 		echo "*** [HSO] Unresolved dependencies. Verification and build disabled."; \
 	else \
 		$(call run_tests,build/audit); \
 	fi
-
-release:
-	cmake --preset release
-	cmake --build --preset release  --target try_build -j$(nproc)
-
-release-registry-globals: release
-	 @export HSO_BUILD_DIR=build/release; \
-	 bash tests/static_analysis/make_global_registries.sh
 
 release-test: release
 	if [ -f build/release/SKIP_TESTS ]; then \
@@ -126,12 +110,24 @@ release-test: release
 		$(call run_tests,build/release); \
 	fi
 
+dev-registry-globals: dev
+	 @export HSO_BUILD_DIR=build/dev; \
+	 bash tests/static_analysis/make_global_registries.sh
+
+audit-registry-globals: audit
+	 @export HSO_BUILD_DIR=build/audit; \
+	 bash tests/static_analysis/make_global_registries.sh
+
+release-registry-globals: release
+	 @export HSO_BUILD_DIR=build/release; \
+	 bash tests/static_analysis/make_global_registries.sh
+
 docker-build: verify
 #Docker builds the release version
 #upon succesful completion of tests on the audit build
 	echo "*** [HSO] Building and Verifying in Docker Container."
 	docker build -t $(IMAGE_NAME):v$(VERSION) .
-#
+
 docker-run:
 	@mkdir -p $(shell pwd)/results
 	docker run --rm -u \
@@ -146,9 +142,4 @@ docker-run:
 
 get-globals:
 	@echo "$(shell bash -c 'HSO_ROOT=$(HSO_ROOT) HSO_BUILD_DIR=build/release source tests/static_analysis/get_global_functions.sh; get_globals')" | sed -E "s|( [a-zA-Z0-9_/.-]+\.cpp\.o: )|\n\1|g" | cut -d: -f2-
-
-
-
-
-
 
