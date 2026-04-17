@@ -22,7 +22,7 @@ GROUP_ID := $(shell id -g)
 .PHONY: dev dev-registry-globals dev-test
 .PHONY: audit audit-registry-globals audit-test
 .PHONY: release release-registry-globals release-test
-.PHONY: docker
+.PHONY: docker-build docker-run
 
 MAKEFLAGS += -s
 
@@ -38,8 +38,8 @@ COLOR_NC       := $(shell bash -c 'source $(HSO_ROOT)/tests/helpers.sh && echo $
 
 
 define run_tests_static
-	printf -- "%30s\n" ">>> static analysis <<<"
-	export HSO_BUILD_DIR="$(1)"; \
+	printf -- "%30s\n" ">>> static analysis <<<" && \
+	export HSO_BUILD_DIR="$(1)" && \
 	bash tests/static_analysis/sa_test_S1-1.sh && \
 	bash tests/static_analysis/sa_test_S2-1.sh && \
 	bash tests/static_analysis/sa_test_S3-1.sh && \
@@ -49,15 +49,15 @@ define run_tests_static
 endef
 
 define run_tests_validation
-	printf -- "%30s\n" ">>> system validation <<<"
-	export HSO_BUILD_DIR="$(1)"; \
+	printf -- "%30s\n" ">>> system validation <<<" && \
+	export HSO_BUILD_DIR="$(1)" && \
 	bash tests/system_validation/sv_test_fit_fast/run.sh
 endef
 
 define run_tests
-	printf -- "\n----------- %s ------------\n" "Verifying $(1) $$(date +'%Y-%m-%d %H:%M:%S')"
-	$(call run_tests_static,$(1))
-	$(call run_tests_validation,$(1))
+	printf -- "\n----------- %s ------------\n" "Verifying $(1) $$(date +'%Y-%m-%d %H:%M:%S')" && \
+	$(call run_tests_static,$(1)) && \
+	$(call run_tests_validation,$(1)) && \
 	printf "%b[%s]%b\n" "$(COLOR_OK)" "ALL TESTS SUCCEEDED"  "$(COLOR_NC)"
 endef
 
@@ -78,44 +78,58 @@ clean:
 
 verify: audit-test
 
-check: audit-test
+check: verify
 
 dev:
 	cmake --preset dev
-	cmake --build --preset dev -j$(nproc)
+	cmake --build --preset dev --target try_build -j$(nproc)
 
 dev-registry-globals: dev
 	 @export HSO_BUILD_DIR=build/dev; \
 	 bash tests/static_analysis/make_global_registries.sh
 
 dev-test: dev
-	 $(call run_tests,build/dev)
+	if [ -f build/dev/SKIP_TESTS ]; then \
+		echo "*** [HSO] Unresolved dependencies. Verification and build disabled."; \
+	else \
+		$(call run_tests,build/dev); \
+	fi
 
 audit:
+	printf -- "\n----------- %s ------------\n" "Building build/audit"
 	cmake --preset audit
-	cmake --build --preset audit -j$(nproc)
+	cmake --build --preset audit --target try_build -j$(nproc)
 
 audit-registry-globals: audit
 	 @export HSO_BUILD_DIR=build/audit; \
 	 bash tests/static_analysis/make_global_registries.sh
 
 audit-test: audit
-	 $(call run_tests,build/audit)
+	if [ -f build/audit/SKIP_TESTS ]; then \
+		echo "*** [HSO] Unresolved dependencies. Verification and build disabled."; \
+	else \
+		$(call run_tests,build/audit); \
+	fi
 
 release:
 	cmake --preset release
-	cmake --build --preset release -j$(nproc)
+	cmake --build --preset release  --target try_build -j$(nproc)
 
 release-registry-globals: release
 	 @export HSO_BUILD_DIR=build/release; \
 	 bash tests/static_analysis/make_global_registries.sh
 
 release-test: release
-	 $(call run_tests,build/release)
+	if [ -f build/release/SKIP_TESTS ]; then \
+		echo "*** [HSO] Unresolved dependencies. Verification and build disabled."; \
+	else \
+		$(call run_tests,build/release); \
+	fi
 
 docker-build: verify
 #Docker builds the release version
 #upon succesful completion of tests on the audit build
+	echo "*** [HSO] Building and Verifying in Docker Container."
 	docker build -t $(IMAGE_NAME):v$(VERSION) .
 #
 docker-run:

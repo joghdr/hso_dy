@@ -36,6 +36,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <utility>
+#include <algorithm>
 
 using  std::string;
 

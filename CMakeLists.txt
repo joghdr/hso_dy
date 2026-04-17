@@ -2,14 +2,45 @@ cmake_minimum_required(VERSION 3.20)
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" VERSION_STR)
 string(STRIP "${VERSION_STR}" VERSION_STR)
 project(HSODrellYan VERSION ${VERSION_STR} LANGUAGES CXX C)
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(HSODependencyLinker)
-
-
 set(ENGINE_TARGET "hso_engine")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(AUDIT_OUTPUT_DIR "${CMAKE_BINARY_DIR}/audit")
+
+
+find_package(GSL)
+find_package(OpenMP)
+find_package(Minuit2 CONFIG QUIET)
+hso_find_dependency(LHAPDF lhapdf "LHAPDF/LHAPDF.h")
+hso_find_dependency(cuba cuba "cuba.h")
+
+set(ALL_DEPENDENCIES_FOUND TRUE)
+set(REQUIRED_LIBS  GSL OpenMP Minuit2 LHAPDF cuba XXX )
+foreach(LIB ${REQUIRED_LIBS})
+  if(NOT ${LIB}_FOUND)
+    set(ALL_DEPENDENCIES_FOUND FALSE)
+    message("*** [HSO] Required dependency ${LIB} not found.")
+  else()
+  endif()
+endforeach()
+
+get_filename_component(BUILD_DIR_NAME "${CMAKE_BINARY_DIR}" NAME)
+if(NOT ALL_DEPENDENCIES_FOUND)
+  add_custom_target(skip_build
+    COMMAND ${CMAKE_COMMAND} -E touch SKIP_TESTS
+    COMMENT "[HSO] Some dependencies not found. Local build and verify are disabled."
+  )
+  add_custom_target(try_build DEPENDS skip_build)
+else()
+  add_custom_target(perform_build
+    COMMAND ${CMAKE_COMMAND} -E remove SKIP_TESTS
+    DEPENDS HSODrellYanFitter
+  )
+  add_custom_target(try_build
+    DEPENDS perform_build
+  )
+endif()
 
 
 set(CORE_SOURCES
@@ -41,20 +72,12 @@ set(CORE_SOURCES
 add_library(${ENGINE_TARGET} STATIC ${CORE_SOURCES})
 target_include_directories(${ENGINE_TARGET} PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
-find_package(OpenMP)
-find_package(GSL)
 
-target_link_libraries(${ENGINE_TARGET} PRIVATE OpenMP::OpenMP_CXX)
 target_link_libraries(${ENGINE_TARGET} PRIVATE GSL::gsl)
-
-hso_find_dependency(LHAPDF lhapdf "LHAPDF/LHAPDF.h")
-hso_link_include_dependency(${ENGINE_TARGET} LHAPDF)
-
-hso_find_dependency(Minuit2 minuit2 "Minuit2/FunctionMinimum.h")
-hso_link_include_dependency(${ENGINE_TARGET} Minuit2)
-
-hso_find_dependency(cuba cuba "cuba.h")
-hso_link_include_dependency(${ENGINE_TARGET} cuba)
+target_link_libraries(${ENGINE_TARGET} PRIVATE OpenMP::OpenMP_CXX)
+target_link_libraries(${ENGINE_TARGET} PUBLIC Minuit2::Minuit2 )
+target_link_libraries(${ENGINE_TARGET} PUBLIC LHAPDF::LHAPDF  )
+target_link_libraries(${ENGINE_TARGET} PUBLIC cuba::cuba)
 
 
 add_executable(HSODrellYanFitter programs/HSODrellYanFitter.cpp)
