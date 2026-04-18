@@ -34,9 +34,6 @@ fi
 # corresponding baseline/ input/ and output/ directories
 # first argument is the full path of the calling script
 function export_test_paths {
-#   echo "-----------------------------"
-#   echo "${BASH_SOURCE[@]}"
-#   echo "-----------------------------"
 
   local caller_dir="$( cd "$( dirname "${BASH_SOURCE[1]}" )" && pwd )"
   local caller_name="$( basename "${BASH_SOURCE[1]}" )"
