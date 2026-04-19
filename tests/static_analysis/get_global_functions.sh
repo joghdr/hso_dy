@@ -1,44 +1,27 @@
 
-: "${HSO_ROOT:?ERROR: ${SCRIPT_NAME} HSO_ROOT not set (check the MakeFile)}"
-if ! { source "${HSO_ROOT}/tests/env.sh" && source "${HSO_ROOT}/tests/helpers.sh"; }; then
-  echo "ERROR: ${SCRIPT_NAME} failed to source scripts" >&2
-  exit 1
-fi
+set -e
+: "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
+: "${HSO_BUILD_DIR:=build/dev}"
+: "${HSO_BUILD_TYPE:=dev}"
+: "${APP_PATH:=${HSO_ROOT}/${HSO_BUILD_DIR}/bin/HSODrellYanFitter}"
+: "${BINARIES_PATH:=${HSO_ROOT}/build/dev/CMakeFiles/hso_dy.dir/src}"
 
-SCRIPT_NAME="$( basename "${BASH_SOURCE[0]}" )"
+source "${HSO_ROOT}"/tests/env.sh && export_test_paths
+source "${HSO_ROOT}"/tests/helpers.sh
 
 
 #explicit global symbols (binaries)
 function get_globals_raw {
 
-  if [[ !  -s "$OBJ_PATH_FILE" ]]; then
-
-    print_err "$OBJ_PATH_FILE is empty or it does not exist"
-
-    return 1
-
-  fi
-
-  local binaries_path
-
-  binaries_path="$(cat "$OBJ_PATH_FILE" 2> /dev/null )"
-
-  if [[ !  -d "$binaries_path" ]]; then
-
-    print_err "could not find $binaries_path"
-
-    return 1
-
-  fi
-
   ##gate to prevent comparing to a broken build
-  local expected_count=$(find "$SOURCE_DIR" -name "*.cpp" | wc -l)
+  local expected_count=$(find "${HSO_ROOT}/src" -name "*.cpp" | wc -l)
 
-  local count=$(find "$binaries_path" -name "*.o" | wc -l)
+  local count=$(find "$BINARIES_PATH" -name "*.o" | wc -l)
 
   if [[ "$count" -lt "$expected_count" ]]; then
 
-    print_err "Build is incomplete. Expected $expected_count objects, found $count."
+    print_err "Build is incomplete. Expected $expected_count objects, found $count." "
+          ---> ${BINARIES_PATH}"
 
     return 1
 
@@ -48,7 +31,7 @@ function get_globals_raw {
   local global_symbol
 
   global_symbol="$( \
-        find "$binaries_path" -name "*.o" -print0 | \
+        find "$BINARIES_PATH" -name "*.o" -print0 | \
         xargs -0 -r nm -AC  | \
         grep ' [DBGSdbgs] ' | \
         sed -E "s/(.+:).+ (.) /\1 \2 /g" | \
@@ -200,28 +183,10 @@ function find_resolved_globals {
 #implicit global symbols (app level)
 function get_globals_raw_app {
 
-  if [[ !  -s "$BIN_PATH_FILE" ]]; then
-
-    print_err "BIN_PATH_FILE='${BIN_PATH_FILE}' is empty or it does not exist"
-
-    return 1
-
-  fi
-
-  local app_path="$(cat "$BIN_PATH_FILE" 2> /dev/null )"
-
-  if [[ !  -f "$app_path" ]]; then
-
-    print_err "Could not find path to app=${app_path}"
-
-    return 1
-
-  fi
-
   local global_symbol_app
 
   global_symbol_app="$( \
-    nm -C  "$app_path" | \
+    nm -C  "$APP_PATH" | \
     grep ' [dbgs] ' | \
     grep -vE 'vtable|typeinfo|VTT' | \
     sed -E "s/.+ (.) /\1 /g" | \
@@ -272,7 +237,6 @@ function get_globals_app {
 
   global_symbol_names_app="$( get_globals_raw_app | sort)"
 
-  local app_path="$(cat "$BIN_PATH_FILE"  )"
 
   local global_symbol_new_full_entry=(  )
 

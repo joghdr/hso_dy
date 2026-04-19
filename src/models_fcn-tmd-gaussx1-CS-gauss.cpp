@@ -7,10 +7,7 @@
 #include <vector>
 #include <stddef.h>
 
-// currently program requires using environment variable
-// OMP_NUM_THREADS = 1 (omp critical region not needed)
-// For now, multiple cores (if available) are used by CUBA integration
-// through the environment variable CUBACORES
+// currently using serial Minuit2
 namespace hso{
 
   namespace utils {

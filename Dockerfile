@@ -5,24 +5,21 @@
 
 FROM debian:12-slim AS auditor
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
 build-essential \
-git \
+ca-certificates \
+clang \
 cmake \
-g++ \
 gfortran \
-libgomp1 \
-pkg-config \
-wget \
-python3 \
-python3-dev \
+git \
 libboost-math-dev \
 libgsl-dev \
-&& rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y \
-clang \
 llvm \
+ninja-build \
+pkg-config \
+python3 \
+python3-dev \
+wget \
 && rm -rf /var/lib/apt/lists/*
 
 # 'python' symlink so for LHAPDF build
@@ -73,20 +70,17 @@ RUN ldconfig
 
 WORKDIR /app
 
-COPY . .
-
 ##copy MMHT2014nlo68cl grids (collinear functions and other coefficients)
 COPY grids/ /usr/local/share/LHAPDF/
 
-#########################################
-###### verify audit build
-#########################################
-RUN make verify
+COPY . .
 
+RUN cmake --workflow --preset verify-audit
+# RUN cmake --preset release && cmake --build --preset release -j$(nproc) && cmake --install build/release
 #########################################
 ###### build with release presets
 #########################################
-RUN cmake --preset release && cmake --build --preset release -j$(nproc) && cmake --install build/release
+RUN cmake --workflow --preset verify-release
 
 FROM debian:12-slim
 
@@ -103,10 +97,9 @@ COPY --from=auditor /usr/local/include /usr/local/include
 COPY --from=auditor /usr/local/bin /usr/local/bin
 COPY --from=auditor /usr/local/share/LHAPDF /usr/local/share/LHAPDF
 COPY --from=auditor /app/data   /app/data
+COPY --from=auditor /app/build/release/bin/HSODrellYanFitter /app/HSODrellYanFitter
 
-RUN chmod -R 755 /app/data
-
-RUN ldconfig
+RUN chmod -R 755 /app/data && ldconfig
 
 ENV CUBACORES=5
 

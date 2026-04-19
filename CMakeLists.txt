@@ -2,68 +2,12 @@ cmake_minimum_required(VERSION 3.20)
 file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" VERSION_STR)
 string(STRIP "${VERSION_STR}" VERSION_STR)
 project(HSODrellYan VERSION ${VERSION_STR} LANGUAGES CXX C)
+set(ENGINE_TARGET "hso_dy")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-include(HSODependencyLinker)
-set(ENGINE_TARGET "hso_engine")
-set(AUDIT_OUTPUT_DIR "${CMAKE_BINARY_DIR}/audit")
-
-set(REQUIRED_LIBS
-    GSL OpenMP Minuit2 LHAPDF cuba
-    # xGSL xOpenMP xMinuit2 xLHAPDF xcuba
-    )
-find_package(GSL)
-find_package(OpenMP)
-find_package(Minuit2 CONFIG QUIET)
-hso_find_dependency(LHAPDF lhapdf "LHAPDF/LHAPDF.h")
-hso_find_dependency(cuba cuba "cuba.h")
-
-set(MISSING_LIBS "")
-set(ALL_DEPENDENCIES_FOUND TRUE)
-foreach(LIB ${REQUIRED_LIBS})
-  if(NOT ${LIB}_FOUND)
-    set(ALL_DEPENDENCIES_FOUND FALSE)
-    list(APPEND MISSING_LIBS ${LIB})
-    message("*** [HSO] Required dependency ${LIB} not found.")
-  else()
-  endif()
-endforeach()
-
-if(NOT ALL_DEPENDENCIES_FOUND)
-  list(JOIN MISSING_LIBS "\n" MISSING_LIBS_LOG)
-  file(WRITE "${CMAKE_BINARY_DIR}/hso_missing_deps.log" "${MISSING_LIBS_LOG}\n"
-      )
-  add_custom_target(skip_build
-  COMMAND ${CMAKE_COMMAND} -E touch SKIP_TESTS
-  COMMENT "*** [HSO] Local build and verify are disabled (missing dependencies)."
-  )
-  add_custom_target(try_build DEPENDS skip_build)
-  if(EXISTS "${CMAKE_BINARY_DIR}/audit")
-    file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/audit")
-  endif()
-  if(EXISTS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-    file(REMOVE_RECURSE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-  endif()
-  file(GLOB STALE_LIBS "${CMAKE_BINARY_DIR}/*.a")
-  if(STALE_LIBS)
-      file(REMOVE ${STALE_LIBS})
-  endif()
-  if(EXISTS "${CMAKE_BINARY_DIR}/CMakeFiles/${ENGINE_TARGET}.dir")
-    file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/CMakeFiles/${ENGINE_TARGET}.dir")
-  endif()
-else()
-  add_custom_target(perform_build
-    COMMAND ${CMAKE_COMMAND} -E remove SKIP_TESTS
-    DEPENDS HSODrellYanFitter HSODrellYanHessian
-  )
-  add_custom_target(try_build DEPENDS perform_build)
-  if(EXISTS "${CMAKE_BINARY_DIR}/hso_missing_deps.log")
-    file(REMOVE "${CMAKE_BINARY_DIR}/hso_missing_deps.log")
-  endif()
-endif()
-
-set(CORE_SOURCES
+set(
+  CORE_SOURCES
   src/behavior.cpp
   src/collinear_factorization.cpp
   src/csec_DY_css_hso_integrands_cuba.cpp
@@ -89,14 +33,29 @@ set(CORE_SOURCES
   src/WDY_hso.cpp
 )
 
-add_library(${ENGINE_TARGET} STATIC ${CORE_SOURCES})
+include(HSODependencyLinker)
+
+find_package(GSL REQUIRED)
+find_package(Minuit2 CONFIG REQUIRED)
+find_package(Boost CONFIG REQUIRED)
+hso_find_dependency(LHAPDF lhapdf "LHAPDF/LHAPDF.h")
+hso_find_dependency(cuba cuba "cuba.h")
+
+add_library(${ENGINE_TARGET}_obj OBJECT ${CORE_SOURCES})
+set(OBJ_DIR "$<TARGET_PROPERTY:${ENGINE_TARGET}_obj,BINARY_DIR>/CMakeFiles/${ENGINE_TARGET}_obj.dir")
+target_include_directories(${ENGINE_TARGET}_obj PUBLIC "${CMAKE_SOURCE_DIR}/include")
+
+add_library(${ENGINE_TARGET} STATIC $<TARGET_OBJECTS:${ENGINE_TARGET}_obj>)
 target_include_directories(${ENGINE_TARGET} PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
-target_link_libraries(${ENGINE_TARGET} PRIVATE GSL::gsl)
-target_link_libraries(${ENGINE_TARGET} PRIVATE OpenMP::OpenMP_CXX)
-target_link_libraries(${ENGINE_TARGET} PUBLIC Minuit2::Minuit2 )
-target_link_libraries(${ENGINE_TARGET} PUBLIC LHAPDF::LHAPDF  )
-target_link_libraries(${ENGINE_TARGET} PUBLIC cuba::cuba)
+target_link_libraries(${ENGINE_TARGET} PUBLIC ${ENGINE_TARGET}_obj)
+target_link_libraries(${ENGINE_TARGET}_obj PUBLIC
+    GSL::gsl
+    Minuit2::Minuit2
+    LHAPDF::LHAPDF
+    cuba::cuba
+    Boost::boost
+)
 
 add_executable(HSODrellYanFitter programs/HSODrellYanFitter.cpp)
 target_link_libraries(HSODrellYanFitter PRIVATE ${ENGINE_TARGET})
@@ -106,15 +65,95 @@ add_executable(HSODrellYanHessian programs/HSODrellYanHessian.cpp)
 target_link_libraries(HSODrellYanHessian PRIVATE ${ENGINE_TARGET})
 install(TARGETS HSODrellYanHessian DESTINATION bin)
 
-add_custom_command(TARGET HSODrellYanFitter POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${AUDIT_OUTPUT_DIR}"
-    COMMAND ${CMAKE_COMMAND} -E echo "$<TARGET_FILE:HSODrellYanFitter>" > "${AUDIT_OUTPUT_DIR}/target_name.txt"
-    COMMAND ${CMAKE_COMMAND} -E echo "${CMAKE_BINARY_DIR}/CMakeFiles/${ENGINE_TARGET}.dir/src" > "${AUDIT_OUTPUT_DIR}/audit_obj_path.txt"
-    COMMAND ${CMAKE_COMMAND} -E echo "$<TARGET_FILE:HSODrellYanFitter>" > "${AUDIT_OUTPUT_DIR}/audit_bin_path.txt"
-    COMMAND ${CMAKE_COMMAND} -E remove -f "${CMAKE_BINARY_DIR}/SKIP_TESTS"
-    COMMENT "*** [HSO] Generating post-build audit metadata"
-    VERBATIM
-  )
+add_custom_target(update_registry_globals
+  COMMAND "${CMAKE_COMMAND}" -E env
+          "HSO_ROOT=${HSO_ROOT}"
+          "APP_PATH=$<TARGET_FILE:HSODrellYanFitter>"
+          "BINARIES_PATH=${OBJ_DIR}"
+          bash "${HSO_ROOT}/tests/static_analysis/update_registry_globals.sh"
+  WORKING_DIRECTORY "${HSO_ROOT}"
+  COMMENT "***[HSO] Updating Registry of Globals."
+  DEPENDS HSODrellYanFitter
+  VERBATIM
+)
 
+set(AUDIT_OUTPUT_DIR "${CMAKE_BINARY_DIR}/audit")
+add_custom_command(
+  TARGET HSODrellYanFitter POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${AUDIT_OUTPUT_DIR}"
+  COMMAND ${CMAKE_COMMAND} -E remove -f "${CMAKE_BINARY_DIR}/SKIP_TESTS"
+  COMMENT "*** [HSO] Generating post-build audit metadata"
+  VERBATIM)
+
+############################################
+############################################
+#################  TESTS     ###############
+############################################
+############################################
+
+enable_testing()
+
+set(TEST_SYNTAX
+      sa_test_S1-1
+      sa_test_S2-1
+      sa_test_S3-1
+      sa_test_S5-1
+    )
+foreach(test_unit ${TEST_SYNTAX} )
+  add_test(
+    NAME "${test_unit}"
+    COMMAND bash "tests/static_analysis/${test_unit}.sh"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" )
+  set_tests_properties(
+    "${test_unit}" PROPERTIES
+    ENVIRONMENT "HSO_ROOT=${HSO_ROOT};HSO_BUILD_DIR=${HSO_BUILD_DIR};HSO_BUILD_TYPE=${HSO_BUILD_TYPE}")
+  set_tests_properties("${test_unit}" PROPERTIES LABELS "syntax" )
+endforeach()
+
+set(TEST_STATIC
+      sa_test_B1-B2-1
+      sa_test_B3-1
+    )
+foreach(test_unit ${TEST_STATIC} )
+  add_test(
+    NAME "${test_unit}"
+    COMMAND bash "tests/static_analysis/${test_unit}.sh"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+  set_property(
+    TEST "${test_unit}" APPEND PROPERTY
+    ENVIRONMENT "HSO_ROOT=${HSO_ROOT};HSO_BUILD_DIR=${HSO_BUILD_DIR};HSO_BUILD_TYPE=${HSO_BUILD_TYPE}")
+  set_property(
+    TEST "${test_unit}" APPEND PROPERTY
+    ENVIRONMENT "APP_PATH=$<TARGET_FILE:HSODrellYanFitter>;BINARIES_PATH=${OBJ_DIR}")
+  set_tests_properties("${test_unit}" PROPERTIES LABELS "static" )
+endforeach()
+
+set(TEST_SYSTEM
+      sv_test_fit_fast
+    )
+foreach(test_unit ${TEST_SYSTEM} )
+  add_test(
+    NAME "${test_unit}"
+    COMMAND bash "tests/system_validation/${test_unit}/run.sh"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+  set_tests_properties(
+    "${test_unit}" PROPERTIES
+    PROCESSORS 5
+    RUN_SERIAL TRUE
+    ENVIRONMENT "CUBACORES=5;HSO_ROOT=${HSO_ROOT};HSO_BUILD_DIR=${HSO_BUILD_DIR};HSO_BUILD_TYPE=${HSO_BUILD_TYPE};EXEC=$<TARGET_FILE:HSODrellYanFitter>")
+  set_tests_properties(
+    "${test_unit}" PROPERTIES
+    LABELS "system")
+endforeach()
+
+# leverage test patterns for building docker image
+add_test(
+  NAME build_docker_image
+  COMMAND bash "scripts/build_docker_image.sh"
+  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" )
+set_tests_properties(
+  build_docker_image PROPERTIES
+  ENVIRONMENT "HSO_ROOT=${HSO_ROOT};HSO_BUILD_DIR=${HSO_BUILD_DIR};HSO_BUILD_TYPE=${HSO_BUILD_TYPE};IMAGE_NAME=${ENGINE_TARGET};VERSION=${VERSION_STR}"
+  LABELS "infrastructure")
 
 

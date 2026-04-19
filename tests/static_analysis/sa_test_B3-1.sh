@@ -4,13 +4,10 @@
 #            Identify resolved legacy debt in executable (convergence toward zero violations)
 #
 
-: "${HSO_ROOT:?[ERROR]: ${SCRIPT_NAME} HSO_ROOT not set (check the MakeFile)}"
-if ! { source "${HSO_ROOT}/tests/env.sh" && source "${HSO_ROOT}/tests/helpers.sh"; }; then
-  echo "[ERROR]: ${SCRIPT_NAME} failed to source scripts" >&2
-  exit 1
-fi
+: "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
+source "${HSO_ROOT}"/tests/env.sh && export_test_paths
+source "${HSO_ROOT}"/tests/helpers.sh
 
-export_test_paths
 
 if ! { source "${SCRIPT_DIR}/get_global_functions.sh"; }; then
   echo "[ERROR]: ${SCRIPT_NAME} failed to source function script" >&2

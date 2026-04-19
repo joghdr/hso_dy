@@ -2,16 +2,12 @@
 # Category: S2
 # Objective: Prevent heavy includes in headers.
 
-: "${HSO_ROOT:?[ERROR]: ${SCRIPT_NAME} HSO_ROOT not set (check the MakeFile)}"
-if ! { source "${HSO_ROOT}/tests/env.sh" && source "${HSO_ROOT}/tests/helpers.sh"; }; then
-  echo "[ERROR]: ${SCRIPT_NAME} failed to source scripts" >&2
-  exit 1
-fi
+: "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
+source "${HSO_ROOT}"/tests/env.sh && export_test_paths
+source "${HSO_ROOT}"/tests/helpers.sh
 
-export_test_paths
 
-VIOLATIONS="$(grep -rEnH  '#include[[:space:]]+<(iostream|fstream|sstream|iomanip|algorithm|random)>'  "$INCLUDE_DIR" )"
-
+VIOLATIONS="$(grep -rEnH  '#include[[:space:]]+<(iostream|fstream|sstream|iomanip|algorithm|random)>'  "$INCLUDE_DIR" || true)"
 
 if [[ -n "${VIOLATIONS//[[:space:]]/}" ]]; then
 

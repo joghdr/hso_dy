@@ -20,7 +20,6 @@ void CheckEnvironment() {
   };
 
   std::cout << "\n--- Environment  ---" << std::endl;
-  std::cout << "OMP_NUM_THREADS:  " << get_env_safe("OMP_NUM_THREADS") << std::endl;
   std::cout << "CUBACORES:     " << get_env_safe("CUBACORES") << std::endl;
   std::cout << "---------------------------------\n" << std::endl;
 }

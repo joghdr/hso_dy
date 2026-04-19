@@ -48,7 +48,7 @@ function print_formatted {
 
   local messages=( "$@" )
 
-  printf "%b[%s]%b: %s:\n" "${tag_color}" "${tag}" "${COLOR_NC}" "${caller}" >&2
+  printf "%b[%s]%b: %s:\n" "${tag_color}" "HSO-${tag}" "${COLOR_NC}" "${caller}" >&2
 
   for msg in "${messages[@]}"; do
 

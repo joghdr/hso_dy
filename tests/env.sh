@@ -1,14 +1,17 @@
 #!/bin/bash
 
-: "${HSO_ROOT:?ERROR: HSO_ROOT not set (check the MakeFile)}"
-: "${HSO_BUILD_DIR:?ERROR: HSO_BUILD_DIR not set (check the MakeFile)}"
+set -e
+
+: "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
+: "${HSO_BUILD_DIR:=build/dev}"
+: "${HSO_BUILD_TYPE:=dev}"
 
 
 export LC_ALL=C
 
 #test global dirs
 export BUILD_DIR="${HSO_ROOT}/${HSO_BUILD_DIR}"
-export BUILD_TYPE="$( basename "${BUILD_DIR}" )"
+# export HSO_BUILD_TYPE="$( basename "${BUILD_DIR}" )"
 export TEST_DIR="${HSO_ROOT}/tests"
 export SOURCE_DIR="${HSO_ROOT}/src"
 export INCLUDE_DIR="${HSO_ROOT}/include"
@@ -16,19 +19,6 @@ export INCLUDE_DIR="${HSO_ROOT}/include"
 
 #build-type specific
 export AUDIT_DIR="${BUILD_DIR}/audit"
-export OBJ_PATH_FILE="$BUILD_DIR/audit/audit_obj_path.txt"
-export BIN_PATH_FILE="$BUILD_DIR/audit/audit_bin_path.txt"
-
-
-if [[ ! -s "${BIN_PATH_FILE}" ]]; then
-  echo "ERROR: file ${BIN_PATH_FILE} not found or empty" >&2
-  exit 1
-fi
-export EXEC="$(cat "${BIN_PATH_FILE}")"
-if [[ ! -x "${EXEC}" ]]; then
-  echo "ERROR: file ${EXEC} not found or not an executable" >&2
-  exit 1
-fi
 
 # requires each test.sh script at the same level as
 # corresponding baseline/ input/ and output/ directories
@@ -63,8 +53,8 @@ function export_test_paths {
     export DATA_EXPECTED_DIR="${SCRIPT_DIR}/expected"
   fi
   #build-dependent dirs: baseline
-  if [[ -d "${SCRIPT_DIR}/baseline/${BUILD_TYPE}" ]]; then
-    export DATA_BASELINE_DIR="${SCRIPT_DIR}/baseline/${BUILD_TYPE}"
+  if [[ -d "${SCRIPT_DIR}/baseline/${HSO_BUILD_TYPE}" ]]; then
+    export DATA_BASELINE_DIR="${SCRIPT_DIR}/baseline/${HSO_BUILD_TYPE}"
   fi
 
 }
