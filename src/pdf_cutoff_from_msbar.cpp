@@ -1,7 +1,7 @@
-#include "pdf_cutoff_from_msbar.h"
-#include "behavior.h"
-#include "pqcd.h"
-#include "gsl_settings.h"
+#include <hso/pdf_cutoff_from_msbar.h>
+#include <hso/behavior.h>
+#include <hso/pqcd.h>
+#include <hso/gsl_settings.h>
 #include <LHAPDF/PDF.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_integration.h>

@@ -1,7 +1,7 @@
 #ifndef _OBJECTS_Theory_H_
 #define _OBJECTS_Theory_H_
 
-#include "theory_class.h"
+#include <hso/theory_class.h>
 
 namespace hso{
 

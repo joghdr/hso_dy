@@ -1,6 +1,6 @@
-#include "evo.h"
-#include "CSkernel.h"
-#include "scale_setting.h"
+#include <hso/evo.h>
+#include <hso/CSkernel.h>
+#include <hso/scale_setting.h>
 #include <cmath>
 
 namespace hso{

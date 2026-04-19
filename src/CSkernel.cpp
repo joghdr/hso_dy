@@ -1,6 +1,6 @@
-#include "CSkernel.h"
-#include "gsl_settings.h"
-#include "pqcd.h"
+#include <hso/CSkernel.h>
+#include <hso/gsl_settings.h>
+#include <hso/pqcd.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_integration.h>
 #include <cmath>

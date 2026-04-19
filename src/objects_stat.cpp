@@ -1,7 +1,7 @@
-#include "objects_stat.h"
-#include "objects_data.h"
-#include "objects_theory.h"
-#include "stat_class.h"
+#include <hso/objects_stat.h>
+#include <hso/objects_data.h>
+#include <hso/objects_theory.h>
+#include <hso/stat_class.h>
 
 
 namespace hso{

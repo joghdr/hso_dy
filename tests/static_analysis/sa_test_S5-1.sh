@@ -51,7 +51,9 @@ else
 fi
 
 
-iwyu_tool -j $cores -p "${BUILD_DIR}" -- "${all_includes[@]}" > "$report_path" 2>&1
+iwyu_tool -j $cores -p "${BUILD_DIR}" -- \
+-Xiwyu --mapping_file="${HSO_ROOT}/hso.imp" \
+"${all_includes[@]}" > "$report_path" 2>&1
 
 fatal="$( grep -E "fatal error:" "$report_path" | wc -l)"
 

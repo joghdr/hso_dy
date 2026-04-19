@@ -1,7 +1,7 @@
 #ifndef _OBJECTS_STAT_H_
 #define _OBJECTS_STAT_H_
 
-#include "stat_class.h"
+#include <hso/stat_class.h>
 #include <vector>
 
 namespace hso{

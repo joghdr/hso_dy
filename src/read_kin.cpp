@@ -1,4 +1,4 @@
-#include "read_kin.h"
+#include <hso/read_kin.h>
 #include <string>
 #include <fstream>
 #include <iostream>

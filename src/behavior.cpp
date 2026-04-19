@@ -1,4 +1,4 @@
-#include "behavior.h"
+#include <hso/behavior.h>
 
 namespace hso{
 

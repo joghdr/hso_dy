@@ -1,7 +1,7 @@
-#include "stat_class.h"
-#include "data_class.h"
-#include "theory_class.h"
-#include "read_data.h"
+#include <hso/stat_class.h>
+#include <hso/data_class.h>
+#include <hso/theory_class.h>
+#include <hso/read_data.h>
 #include <vector>
 #include <iostream>
 #include <string>

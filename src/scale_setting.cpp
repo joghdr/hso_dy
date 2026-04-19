@@ -1,5 +1,5 @@
-#include "scale_setting.h"
-#include "pqcd.h"
+#include <hso/scale_setting.h>
+#include <hso/pqcd.h>
 #include <cmath>
 
 namespace hso{

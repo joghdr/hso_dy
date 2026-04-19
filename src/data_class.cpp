@@ -1,5 +1,5 @@
-#include "data_class.h"
-#include "read_data.h"
+#include <hso/data_class.h>
+#include <hso/read_data.h>
 #include <vector>
 #include <string>
 // #include <cstddef> //std::size_t

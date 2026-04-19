@@ -1,9 +1,9 @@
-#include "tmdPDF.h"
-#include "math_functions.h"
-#include "pqcd.h"
-#include "CSkernel.h"
-#include "collinear_factorization.h"
-#include "scale_setting.h"
+#include <hso/tmdPDF.h>
+#include <hso/math_functions.h>
+#include <hso/pqcd.h>
+#include <hso/CSkernel.h>
+#include <hso/collinear_factorization.h>
+#include <hso/scale_setting.h>
 #include <cmath>
 
 

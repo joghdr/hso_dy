@@ -1,16 +1,16 @@
-#include "utilities.h"
+#include <hso/utilities.h>
 //
-#include "gnuplot_script_names.h"
-#include "collinear_factorization.h"//TODO: only hso::SetLhapdf is needed from this header, modify to get rid of it
-#include "read_data.h"
-#include "data_class.h"
-#include "theory_class.h"
-#include "stat_class.h"
-#include "read_para.h"
-#include "read_kin.h"
-#include "objects_data.h"
-#include "objects_stat.h"
-#include "FCN.h"
+#include <hso/gnuplot_script_names.h>
+#include <hso/collinear_factorization.h>//TODO: only hso::SetLhapdf is needed from this header, modify to get rid of it
+#include <hso/read_data.h>
+#include <hso/data_class.h>
+#include <hso/theory_class.h>
+#include <hso/stat_class.h>
+#include <hso/read_para.h>
+#include <hso/read_kin.h>
+#include <hso/objects_data.h>
+#include <hso/objects_stat.h>
+#include <hso/FCN.h>
 //
 //Minuit functions
 //
@@ -32,7 +32,7 @@
 #include <sstream>
 #include <iomanip>
 #include <cmath>
-#include <sys/stat.h>// struct stat
+#include <sys/stat.h> // IWYU pragma: keep
 #include <cstdlib>
 #include <cstdio>
 #include <utility>

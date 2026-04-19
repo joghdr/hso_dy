@@ -1,8 +1,8 @@
-#include "collinear_factorization.h"
-#include "behavior.h"
-#include "pqcd.h"
-#include "pdf_cutoff_from_msbar.h"
-#include "gsl_settings.h"
+#include <hso/collinear_factorization.h>
+#include <hso/behavior.h>
+#include <hso/pqcd.h>
+#include <hso/pdf_cutoff_from_msbar.h>
+#include <hso/gsl_settings.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_integration.h>
 #include <cmath>

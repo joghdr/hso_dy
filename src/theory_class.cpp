@@ -1,7 +1,7 @@
-#include "theory_class.h"
-#include "cuba_settings.h"
-#include "data_class.h"
-#include "read_data.h"
+#include <hso/theory_class.h>
+#include <hso/cuba_settings.h>
+#include <hso/data_class.h>
+#include <hso/read_data.h>
 #include "cuba.h"
 #include <map>
 #include <vector>

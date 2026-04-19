@@ -1,5 +1,5 @@
-#include "objects_data.h"
-#include "data_class.h"
+#include <hso/objects_data.h>
+#include <hso/data_class.h>
 #include <vector>
 #include <string>
 

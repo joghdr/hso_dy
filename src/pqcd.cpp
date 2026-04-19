@@ -1,4 +1,4 @@
-#include "pqcd.h"
+#include <hso/pqcd.h>
 #include <LHAPDF/PDF.h>
 
 namespace hso{

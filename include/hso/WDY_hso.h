@@ -1,7 +1,7 @@
 #ifndef _WDY_HSO_H_
 #define _WDY_HSO_H_
 
-#include "pqcd.h"
+#include <hso/pqcd.h>
 #include <vector>
 ////////////////////////////////////////////////////////
 //// 

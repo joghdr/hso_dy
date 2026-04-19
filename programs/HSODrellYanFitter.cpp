@@ -1,6 +1,6 @@
-#include "objects_stat.h"
-#include "FCN.h"
-#include "utilities.h"
+#include <hso/objects_stat.h>
+#include <hso/FCN.h>
+#include <hso/utilities.h>
 #include "Minuit2/MnUserParameters.h"
 #include <string>
 #include <iostream>

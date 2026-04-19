@@ -1,7 +1,7 @@
-#include "FCN.h"
-#include "pqcd.h"
-#include "math_functions.h"
-#include "objects_stat.h"
+#include <hso/FCN.h>
+#include <hso/pqcd.h>
+#include <hso/math_functions.h>
+#include <hso/objects_stat.h>
 #include <cmath>
 #include <string>
 #include <vector>

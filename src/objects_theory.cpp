@@ -1,7 +1,7 @@
 #include <string> //iwyu request
-#include "objects_theory.h"
-#include "csec_DY_css_hso_integrands_cuba.h"
-#include "theory_class.h"
+#include <hso/objects_theory.h> // IWYU pragma: keep
+#include <hso/csec_DY_css_hso_integrands_cuba.h>
+#include <hso/theory_class.h>
 
 namespace hso{
   //NOTE: last array in constructors dictate how to treat corresponding variable:

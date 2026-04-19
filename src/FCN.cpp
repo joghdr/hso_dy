@@ -1,5 +1,5 @@
-#include "FCN.h"
-#include "stat_class.h"
+#include <hso/FCN.h>
+#include <hso/stat_class.h>
 #include <vector>
 #include <iostream>
 #include <fstream>

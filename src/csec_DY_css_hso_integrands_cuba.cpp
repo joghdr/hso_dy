@@ -1,6 +1,6 @@
-#include "csec_DY_css_hso_integrands_cuba.h"
-#include "pqcd.h"
-#include "WDY_hso.h"
+#include <hso/csec_DY_css_hso_integrands_cuba.h>
+#include <hso/pqcd.h>
+#include <hso/WDY_hso.h>
 #include <gsl/gsl_sf_bessel.h>
 #include <vector>
 #include <cmath>
