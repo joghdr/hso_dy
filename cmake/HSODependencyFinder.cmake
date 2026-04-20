@@ -4,6 +4,10 @@ include(FindPackageHandleStandardArgs)
 function(hso_find_dependency LIBRARY LIBRARY_PC LIBRARY_ANCHOR_H )
 
   if(NOT LIBRARY)
+    message(FATAL_ERROR "*** [HSO] hso_find_dependency called without a library name.")
+  endif()
+
+  if(NOT LIBRARY)
     message(FATAL_ERROR "hso_find_dependency called without a library name.")
     return()
   endif()
@@ -37,35 +41,14 @@ function(hso_find_dependency LIBRARY LIBRARY_PC LIBRARY_ANCHOR_H )
   ########## Search with find_path if pkg-config failed
   if(NOT ${LIBRARY}_FOUND)
 
-    set(_SEARCH_PATHS
-          /usr
-          /usr/local
-          /opt/${LIBRARY}
-          /opt/${LIBRARY_PC}
-        )
-
-    set(_SEARCH_SUFFIXES
-          include
-          include/${LIBRARY}
-        )
-
-    set(_LIB_SUFFIXES
-          lib
-          lib64
-        )
-
     find_path(${LIBRARY}_INCLUDE_DIRS_FALLBACK
-      PATHS ${_SEARCH_PATHS}
-      PATH_SUFFIXES ${_SEARCH_SUFFIXES}
+      PATH_SUFFIXES include include/${LIBRARY}
       NAMES ${LIBRARY_ANCHOR_H}
-      NO_DEFAULT_PATH
     )
 
     find_library(${LIBRARY}_LIBRARIES_FALLBACK
-      PATHS ${_SEARCH_PATHS}
-      PATH_SUFFIXES ${_LIB_SUFFIXES}
+      PATH_SUFFIXES lib lib64
       NAMES ${LIBRARY}
-      NO_DEFAULT_PATH
     )
 
     if(${LIBRARY}_INCLUDE_DIRS_FALLBACK AND ${LIBRARY}_LIBRARIES_FALLBACK)

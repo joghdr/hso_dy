@@ -55,7 +55,7 @@ namespace fs = std::filesystem;
 
 namespace hso{
 
-  std::string home_dir {"./results"};
+  std::string home_dir {"./run/results"};
 
   std::string eigen_filename_global {""};
 
@@ -1317,6 +1317,8 @@ namespace hso{
 
         hso::read_data::Replace(stat_dir,"/data/","/"+subdir+"/");
 
+        hso::read_data::Replace(stat_dir,"assets/","");
+
         std::string dir=home_dir + "/" + stat_dir ;
 
         if (stat(dir.c_str(), &sb) != 0)
@@ -1351,9 +1353,12 @@ namespace hso{
 
     for (int i = 0; i < filenames_size; i++)
 
-      if (write_file[i])
+      if (write_file[i]){
 
-      stat_in->Write(list_of_filenames[i],i);
+        stat_in->Write(list_of_filenames[i],i);
+
+      }
+
 
   }
 

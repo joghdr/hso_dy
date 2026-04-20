@@ -52,7 +52,7 @@ fi
 
 
 iwyu_tool -j $cores -p "${BUILD_DIR}" -- \
--Xiwyu --mapping_file="${HSO_ROOT}/hso.imp" \
+-Xiwyu --mapping_file="${HSO_ROOT}/devtools/hso.imp" \
 "${all_includes[@]}" > "$report_path" 2>&1
 
 fatal="$( grep -E "fatal error:" "$report_path" | wc -l)"

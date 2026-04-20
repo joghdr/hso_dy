@@ -1,7 +1,7 @@
 
 set -e
 : "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
-: "${HSO_BUILD_DIR:=build/dev}"
+: "${HSO_BUILD_DIR:=${HSO_ROOT}/build/dev}"
 : "${HSO_BUILD_TYPE:=dev}"
 : "${APP_PATH:=${HSO_ROOT}/${HSO_BUILD_DIR}/bin/HSODrellYanFitter}"
 : "${BINARIES_PATH:=${HSO_ROOT}/build/dev/CMakeFiles/hso_dy.dir/src}"

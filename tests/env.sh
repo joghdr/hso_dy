@@ -2,16 +2,18 @@
 
 set -e
 
+: "${WHY:?}"
+
 : "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
-: "${HSO_BUILD_DIR:=build/dev}"
+: "${HSO_BUILD_DIR:=${HSO_ROOT}/build/dev}"
 : "${HSO_BUILD_TYPE:=dev}"
 
 
 export LC_ALL=C
 
 #test global dirs
-export BUILD_DIR="${HSO_ROOT}/${HSO_BUILD_DIR}"
-# export HSO_BUILD_TYPE="$( basename "${BUILD_DIR}" )"
+export BUILD_DIR="${HSO_BUILD_DIR}"
+# export BUILD_DIR="${HSO_ROOT}/${HSO_BUILD_DIR}"
 export TEST_DIR="${HSO_ROOT}/tests"
 export SOURCE_DIR="${HSO_ROOT}/src"
 export INCLUDE_DIR="${HSO_ROOT}/include/hso"

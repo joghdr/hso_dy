@@ -6,7 +6,7 @@
 
 namespace hso{
 
-  inline constexpr std::string kDirData {"./data/"};
+  inline constexpr std::string kDirData {"assets/data/"};
   ///@fix_target
   //e288
   extern hso::Data e288_200_4 ;

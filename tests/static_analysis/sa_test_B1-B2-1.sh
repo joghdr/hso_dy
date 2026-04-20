@@ -5,7 +5,7 @@
 #
 
 : "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
-: "${HSO_BUILD_DIR:=build/dev}"
+: "${HSO_BUILD_DIR:=${HSO_ROOT}/build/dev}"
 : "${HSO_BUILD_TYPE:=dev}"
 source "${HSO_ROOT}"/tests/env.sh && export_test_paths
 source "${HSO_ROOT}"/tests/helpers.sh

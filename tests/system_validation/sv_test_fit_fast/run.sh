@@ -2,11 +2,12 @@
 # Category: System Validation
 # Objective Test consistency with known results
 
-set -e
+# set -e
+
 
 : "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
-: "${HSO_BUILD_DIR:=build/dev}"
-: "${EXEC:=${HSO_ROOT}/build/dev/bin/HSODrellYanFitter}"
+: "${HSO_BUILD_DIR:=${HSO_ROOT}/build/dev}"
+: "${APP_PATH:=${HSO_ROOT}/build/dev/bin/HSODrellYanFitter}"
 
 source ${HSO_ROOT}/tests/env.sh && export_test_paths
 source "${HSO_ROOT}/tests/helpers.sh"
@@ -26,18 +27,20 @@ output_dir="${output_root_dir}/stat/E288"
 
 expected_dir="${SCRIPT_DIR}/expected/E288_control_fast/stat/E288"
 
-if [[ -d results/${output_root_dir} ]]; then
-  rm -rf "results/${output_root_dir}"
+if [[ -d run/results/${output_root_dir} ]]; then
+
+  rm -rf "run/results/${output_root_dir}"
+
 fi
 
 
-${EXEC} ${kin_file} ${para_file} ${output_root_dir} > /dev/null
+${APP_PATH} ${kin_file} ${para_file} ${output_root_dir} > /dev/null
 
 for expected_file in "${expected_dir}"/*.stat; do
 
   if [[ -s ${expected_file} ]]; then
 
-    output_file="results/${output_dir}/$(basename ${expected_file})"
+    output_file="run/results/${output_dir}/$(basename ${expected_file})"
 
     if [[ !  -f ${output_file} ]]; then
 
