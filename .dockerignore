@@ -1,29 +1,30 @@
+# repository data
+.git/
+.gitignore
+
+# temporary files
 .vscode/
 .idea/
 *.swp
 *.log
 
-
-
-audit/
+# binaries
 build/
+bin/
 exe/
+*.o
+*.a
+*.so
+*.out
 
+# documentation
 docs/
-mynotes/
+src/.doc
 
+# local results
+run/results/*
+!run/results/.gitkeep
+scripts/
+tests/system_validation/sv_test_fit_fast/results/*
+!tests/system_validation/sv_test_fit_fast/results/.gitkeep
 
-dev/
-devtools/
-todo/
-sandbox/
-
-results/
-!results/.gitkeep
-control/
-gnufiles/
-
-
-
-.git/
-.gitignore

@@ -2,7 +2,6 @@
 
 set -e
 
-: "${WHY:?}"
 
 : "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
 : "${HSO_BUILD_DIR:=${HSO_ROOT}/build/dev}"
