@@ -4,6 +4,7 @@
 #include "Minuit2/MnUserParameters.h"
 #include <string>
 #include <iostream>
+#include <vector>
 
 namespace ROOT { namespace Minuit2 { class FunctionMinimum; } }
 

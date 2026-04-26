@@ -24,7 +24,6 @@ src/.doc
 # local results
 run/results/*
 !run/results/.gitkeep
-scripts/
 tests/system_validation/sv_test_fit_fast/results/*
 !tests/system_validation/sv_test_fit_fast/results/.gitkeep
 

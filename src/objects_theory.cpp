@@ -1,5 +1,4 @@
-#include <string> //iwyu request
-#include <hso/objects_theory.h> // IWYU pragma: keep
+#include <string>
 #include <hso/csec_DY_css_hso_integrands_cuba.h>
 #include <hso/theory_class.h>
 

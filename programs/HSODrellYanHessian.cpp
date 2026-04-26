@@ -3,7 +3,7 @@
 #include <hso/utilities.h>
 #include "Minuit2/MnUserParameters.h"
 #include <iostream>
-
+#include <vector>
 
 
 

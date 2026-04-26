@@ -1,8 +1,14 @@
 #ifndef _OBJECTS_STAT_H_
 #define _OBJECTS_STAT_H_
 
-#include <hso/stat_class.h>
 #include <vector>
+
+namespace hso{
+
+  class Stat;
+  class StatNMin;
+
+}
 
 namespace hso{
 

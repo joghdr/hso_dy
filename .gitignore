@@ -22,7 +22,7 @@ __pycache__/
 *.pyc
 
 # Runtime and Test results (keeping directory structure)
-run/results/
+run/results/*
 !run/results/.gitkeep
 tests/system_validation/sv_test_fit_fast/results/
 !tests/system_validation/sv_test_fit_fast/results/.gitkeep

@@ -2,7 +2,8 @@
 #define _OBJECTS_DATA_H_
 #include <string>
 #include <vector>
-#include <hso/data_class.h>
+
+namespace hso { class Data; }
 
 namespace hso{
 

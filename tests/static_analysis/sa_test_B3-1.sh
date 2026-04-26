@@ -4,28 +4,23 @@
 #            Identify resolved legacy debt in executable (convergence toward zero violations)
 #
 
-: "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
-source "${HSO_ROOT}"/tests/env.sh && export_test_paths
-source "${HSO_ROOT}"/tests/helpers.sh
+set -e
+
+: "${HSO_TEST_HELPER_FILE:?" Helper file was not injected."}"
+: "${HSO_TEST_SA_HELPER_FILE:?" Helper file was not injected."}"
+: "${HSO_REG_GLOBALS_FILE:?" Helper file was not injected."}"
 
 
-if ! { source "${SCRIPT_DIR}/get_global_functions.sh"; }; then
-  echo "[ERROR]: ${SCRIPT_NAME} failed to source function script" >&2
+source "${HSO_TEST_SA_HELPER_FILE}"
+
+
+if ! find_new_globals "${HSO_REG_GLOBALS_FILE}"; then
   exit 1
 fi
 
-globals_registry_file_app="${DATA_BASELINE_DIR}/global_registry_app.sym"
 
-if ! find_new_globals_app "${globals_registry_file_app}"; then
-  exit 1
-fi
-
-
-if ! find_resolved_globals_app "${globals_registry_file_app}"; then
+if ! find_resolved_globals "${HSO_REG_GLOBALS_FILE}"; then
   exit 1
 fi
 
 exit 0
-
-
-

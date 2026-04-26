@@ -2,23 +2,27 @@
 # Category: S1
 # Objective: Forbid static symbols in Headers.
 
-: "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
+set -e
 
-source "${HSO_ROOT}"/tests/env.sh && export_test_paths
-source "${HSO_ROOT}"/tests/helpers.sh
+: "${HSO_ROOT_DIR:?" Environment variable was not injected."}"
+: "${HSO_INC_DIR:?" Environment variable was not injected."}"
+: "${HSO_TEST_HELPER_FILE:?" Helper file was not injected."}"
 
-VIOLATIONS=$(catclean <(grep -rwE "static"  "$INCLUDE_DIR" ) | \
+
+source "${HSO_TEST_HELPER_FILE}"
+
+violations=$(hso_sed_clean <(grep -rwE "static"  "${HSO_INC_DIR}" ) | \
               grep -vE "static_cast|static_assert" || true  )
 
-if [[ -n "${VIOLATIONS//[[:space:]]/}" ]]; then
+if [[ -n "${violations//[[:space:]]/}" ]]; then
 
-  print_err "Static symbols found in header" "$VIOLATIONS"
+  hso_print_err "Static symbols found in header" "${violations}"
 
   exit 1
 
 else
 
-  print_ok "Header is free of static symbols"
+  hso_print_ok  "Header is free of static symbols"
 
   exit 0
 

@@ -6,6 +6,12 @@ set(ENGINE_TARGET "hso_dy")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+include(HSOLayout)
+
+if(NOT HSO_LAYOUT_LOADED)
+    message(FATAL_ERROR "HSOLayout not found or corrupted.")
+endif()
+
 set(
   CORE_SOURCES
   src/behavior.cpp
@@ -54,11 +60,10 @@ target_link_libraries(${ENGINE_TARGET}_obj PUBLIC
     Minuit2::Minuit2
     LHAPDF::LHAPDF
     cuba::cuba
-    Boost::boost
 )
 
 add_executable(HSODrellYanFitter programs/HSODrellYanFitter.cpp)
-target_link_libraries(HSODrellYanFitter PRIVATE ${ENGINE_TARGET})
+target_link_libraries(HSODrellYanFitter PRIVATE  ${ENGINE_TARGET})
 install(TARGETS HSODrellYanFitter DESTINATION bin)
 
 add_executable(HSODrellYanHessian programs/HSODrellYanHessian.cpp)
@@ -70,30 +75,17 @@ install(TARGETS HSODrellYanHessian DESTINATION bin)
 #################  CUSTOM TARGETS     ######
 ############################################
 ############################################
-if(NOT HSO_BUILD_TYPE)
-  set(HSO_BUILD_TYPE "dev")
-endif()
-
-set(HSO_TEST_ENV
-    "HSO_ROOT=${CMAKE_SOURCE_DIR}"
-    "HSO_BUILD_DIR=${CMAKE_BINARY_DIR}"
-    "HSO_BUILD_TYPE=${HSO_BUILD_TYPE}"
-    "APP_PATH=$<TARGET_FILE:HSODrellYanFitter>"
-    "BINARIES_PATH=${OBJ_DIR}"
-)
 
 add_custom_target(update_registry_globals
-  COMMAND "${CMAKE_COMMAND}" -E env
-          # "HSO_ROOT=${CMAKE_SOURCE_DIR}"
-          # "APP_PATH=$<TARGET_FILE:HSODrellYanFitter>"
-          # "BINARIES_PATH=${OBJ_DIR}"
-          ${HSO_TEST_ENV}
-          bash "${CMAKE_SOURCE_DIR}/tests/static_analysis/update_registry_globals.sh"
+  COMMAND ${CMAKE_COMMAND} -E env ${HSO_ENV_BLOCK}
+          bash "tests/static_analysis/update_registry_globals.sh"
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   COMMENT "***[HSO] Updating Registry of Globals."
   DEPENDS HSODrellYanFitter
   VERBATIM
 )
+
+
 
 set(AUDIT_OUTPUT_DIR "${CMAKE_BINARY_DIR}/audit")
 add_custom_command(
@@ -124,14 +116,14 @@ set(TEST_SYNTAX
 foreach(test_unit ${TEST_SYNTAX} )
   add_test(
     NAME "${test_unit}"
-    COMMAND bash "tests/static_analysis/${test_unit}.sh"
+    COMMAND bash "${HSO_TEST_SA_DIR}/${test_unit}.sh"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" )
   set_tests_properties(
     "${test_unit}" PROPERTIES
     LABELS "syntax")
   set_property(
     TEST "${test_unit}" APPEND PROPERTY
-    ENVIRONMENT ${HSO_TEST_ENV})
+    ENVIRONMENT ${HSO_ENV_BLOCK})
 endforeach()
 
 set(TEST_STATIC
@@ -141,7 +133,7 @@ set(TEST_STATIC
 foreach(test_unit ${TEST_STATIC} )
   add_test(
     NAME "${test_unit}"
-    COMMAND bash "tests/static_analysis/${test_unit}.sh"
+    COMMAND bash "${HSO_TEST_SA_DIR}/${test_unit}.sh"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
   set_tests_properties(
@@ -150,7 +142,7 @@ foreach(test_unit ${TEST_STATIC} )
   )
   set_property(
     TEST "${test_unit}" APPEND PROPERTY
-    ENVIRONMENT ${HSO_TEST_ENV})
+    ENVIRONMENT ${HSO_ENV_BLOCK})
 endforeach()
 
 set(TEST_SYSTEM
@@ -159,7 +151,8 @@ set(TEST_SYSTEM
 foreach(test_unit ${TEST_SYSTEM} )
   add_test(
     NAME "${test_unit}"
-    COMMAND bash "tests/system_validation/${test_unit}/run.sh"
+    COMMAND ${CMAKE_COMMAND} -E env EXEC=$<TARGET_FILE:HSODrellYanFitter>
+            bash "${HSO_TEST_SV_SCRIPTS_DIR}/${test_unit}.sh"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
   set_tests_properties(
     "${test_unit}" PROPERTIES
@@ -169,7 +162,7 @@ foreach(test_unit ${TEST_SYSTEM} )
   set_property(
     TEST "${test_unit}" APPEND PROPERTY
     ENVIRONMENT "CUBACORES=${TEST_CORES}"
-                ${HSO_TEST_ENV})
+                ${HSO_ENV_BLOCK})
 endforeach()
 
   ############################################
@@ -177,16 +170,34 @@ endforeach()
   #################  Docker Image     ########
   ############################################
   ############################################
-add_test(
-  NAME build_docker_image
-  COMMAND bash "scripts/build_docker_image.sh"
-  WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" )
-set_tests_properties(
-  build_docker_image PROPERTIES
-  LABELS "infrastructure")
-set_property(
-  TEST build_docker_image APPEND PROPERTY
-  ENVIRONMENT "IMAGE_NAME=${ENGINE_TARGET}"
-              "VERSION=${VERSION_STR}"
-              ${HSO_TEST_ENV})
+add_custom_target(
+  build_docker_image
+  COMMAND ${CMAKE_COMMAND} -E env
+          HSO_VERSION=${VERSION_STR}
+          HSO_IMAGE_NAME=${ENGINE_TARGET}
+          ${HSO_ENV_BLOCK}
+          bash "${HSO_DEV_TOOLS_DIR}/build_docker_image.sh"
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  DEPENDS HSODrellYanFitter HSODrellYanHessian
+  COMMENT "Building the Docker image of HSODrellYan"
+  VERBATIM
+)
 
+set_property(
+  TARGET build_docker_image
+  APPEND PROPERTY ENVIRONMENT ${HSO_ENV_BLOCK}
+)
+
+# add_test(
+#   NAME build_docker_image
+#   COMMAND bash "${HSO_DEV_TOOLS_DIR}/build_docker_image.sh"
+#   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}" )
+# set_tests_properties(
+#   build_docker_image PROPERTIES
+#   LABELS "infrastructure")
+# set_property(
+#   TEST build_docker_image APPEND PROPERTY
+#   ENVIRONMENT "IMAGE_NAME=${ENGINE_TARGET}"
+#               "VERSION=${VERSION_STR}"
+#               ${HSO_ENV_BLOCK})
+#

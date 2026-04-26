@@ -1,7 +1,10 @@
 #!/bin/bash
 
+set -e
+
+: "${HSO_VERBOSE:=0}"
+
 #message vars
-# Define colors using tput
 if [ -t 2 ]; then
   COLOR_OK=$(tput setaf 10)
   COLOR_DIM=$(tput setaf 7)
@@ -22,25 +25,29 @@ else
 
 
 fi
-
-
 ##general helpers
-function catclean {
+function hso_sed_clean {
+
+  : ${1:?"*** [HSO-ERROR] Helper function hso_sed_clean: no filename passed."}
 
   fname="$1"
 
-  cat "$fname" | \
-  sed -E 's|//+.*$||g' | \
-  sed -E 's|/\*.*\*/||g' | \
-  sed -E '/^[[:space:]]*$/d'
+  if [[ ! -f "${fname}" ]] ; then
+
+    hso_print_err "Helperfunction hso_sed_clean: file ${fname:-<EMPTY>} not found."
+
+    exit 1
+  fi
+
+  sed -E -e 's|//+.*$||g' -e 's|/\*.*\*/||g' -e '/^[[:space:]]*$/d' "${fname}"
 
 }
 
-function print_formatted {
+function hso_print_formatted {
 
   local tag="$1"
 
-  local caller="$2"
+  local caller="${2:-<Unknown Caller>}"
 
   local tag_color="$3"
 
@@ -48,7 +55,9 @@ function print_formatted {
 
   local messages=( "$@" )
 
-  printf "%b[%s]%b: %s:\n" "${tag_color}" "HSO-${tag}" "${COLOR_NC}" "${caller}" >&2
+  local timestamp="$(date +"%H:%M:%S")"
+
+  printf "%b[%s][%s]%b: %s:\n" "${tag_color}" "HSO-${tag}" "${timestamp}" "${COLOR_NC}" "${caller}" >&2
 
   for msg in "${messages[@]}"; do
 
@@ -61,45 +70,77 @@ function print_formatted {
   done
 }
 
-function print_err {
+function hso_verbose_gate {
 
-  local messages=( "$@" )
-
-  print_formatted "ERROR" "${BASH_SOURCE[1]}" "${COLOR_ERR}" "${messages[@]}"
+  [[ "${HSO_VERBOSE}" != 0 ]] && return 0 || return 1
 
 }
 
-function print_warning {
+function hso_get_caller {
 
-  local messages=( "$@" )
+  local i
 
-  print_formatted "WARNING" "${BASH_SOURCE[1]}" "${COLOR_WARNING}" "${messages[@]}"
+  for i in "${!BASH_SOURCE[@]}"; do
 
-}
+    if [[ "${BASH_SOURCE[$i]}" != "${BASH_SOURCE[0]}" ]]; then
 
-function print_soft_ok {
+      echo "${BASH_SOURCE[$i]}"
 
-  local messages=( "$@" )
+      return 0
 
-  print_formatted "SOFT-OK" "${BASH_SOURCE[$(( ${#BASH_SOURCE[@]} - 1 ))]}" "${COLOR_SOFT_OK}" "${messages[@]}"
+    fi
 
-}
+  done
 
-function print_ok {
-
-  local messages=( "$@" )
-
-  print_formatted "OK" "${BASH_SOURCE[$(( ${#BASH_SOURCE[@]} - 1 ))]}" "${COLOR_OK}" "${messages[@]}"
+  echo "<Unknown Caller>"
 
 }
 
-
-
-function print_msg {
+function hso_print_err {
 
   local messages=( "$@" )
 
-  print_formatted "MSG" "" "${COLOR_MSG}" "${messages[@]}"
+  hso_print_formatted "ERROR" "$(hso_get_caller)" "${COLOR_ERR}" "${messages[@]}"
+
+}
+
+function hso_print_warning {
+
+  hso_verbose_gate || return 0
+
+  local messages=( "$@" )
+
+  hso_print_formatted "WARNING" "$(hso_get_caller)" "${COLOR_WARNING}" "${messages[@]}"
+
+}
+
+function hso_print_soft_ok {
+
+  hso_verbose_gate || return 0
+
+  local messages=( "$@" )
+
+  hso_print_formatted "SOFT-OK" "$(hso_get_caller)" "${COLOR_SOFT_OK}" "${messages[@]}"
+
+}
+
+function hso_print_ok {
+
+  hso_verbose_gate || return 0
+
+  local messages=( "$@" )
+
+  hso_print_formatted "OK" "$(hso_get_caller)" "${COLOR_OK}" "${messages[@]}"
+
+}
+
+function hso_print_msg {
+
+  hso_verbose_gate || return 0
+
+  local messages=( "$@" )
+
+  hso_print_formatted "MSG" "" "${COLOR_MSG}" "${messages[@]}"
 
 }
 

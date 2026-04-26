@@ -10,15 +10,13 @@
     "binaryDir": "${sourceDir}/build/${presetName}",
     "environment": {
       "HSO_ROOT": "${sourceDir}",
-      "HSO_BUILD_DIR": "${sourceDir}/build/${presetName}",
-      "HSO_BUILD_TYPE": "${presetName}"
+      "HSO_BUILD_DIR": "${sourceDir}/build/${presetName}"
     },
     "cacheVariables": {
       "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
       "CMAKE_CXX_EXTENSIONS": "OFF",
       "CMAKE_CXX_STANDARD": "20",
-      "CMAKE_CXX_STANDARD_REQUIRED": "ON",
-      "HSO_BUILD_TYPE": "${presetName}"
+      "CMAKE_CXX_STANDARD_REQUIRED": "ON"
      }
   },
 
@@ -90,7 +88,7 @@
       },
       "execution": {
         "noTestsAction": "error",
-        "stopOnFailure": false,
+        "stopOnFailure": true,
         "parallel": 0
       }
     },
@@ -174,11 +172,6 @@
     {
       "name": "test-release-all",
       "inherits": "test-release-base"
-    },
-    {
-      "name": "build-docker-image",
-      "inherits": "test-release-base",
-      "filter": { "include": {"name": "build_docker_image"} }
     }
   ],
 

@@ -2,16 +2,28 @@
 # Category: S3
 # Objective: Check header `#ifndef` guards
 
-: "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
-source "${HSO_ROOT}"/tests/env.sh && export_test_paths
-source "${HSO_ROOT}"/tests/helpers.sh
+set -e
+
+: "${HSO_ROOT_DIR:?" Environment variable was not injected."}"
+: "${HSO_INC_DIR:?" Environment variable was not injected."}"
+: "${HSO_TEST_HELPER_FILE:?" Helper file was not injected."}"
+
+source "${HSO_TEST_HELPER_FILE}"
+
+function hso_test_header {
+
+  local fname="${1}"
+
+  if [[ ! -f "${fname}" ]] ; then
+
+     hso_print_err "Helper function hso_test_header file ${fname:-<EMPTY>} not found."
+
+     exit 1
+
+  fi
 
 
-function test_header {
-
-  local fname="$1"
-
-  mapfile -t header < <( catclean  "$fname" |  \
+  mapfile -t header < <( hso_sed_clean  "$fname" |  \
                          grep -E '^#(ifndef|define)[[:space:]]+[A-Z0-9_]+' | \
                          head -2 )
 
@@ -24,7 +36,7 @@ function test_header {
      [[ "$directive_2" != '#define'  ]] || \
      [[ "$name_1" != "$name_2"  ]] ; then
 
-     print_err \
+     hso_print_err \
       "$fname" \
       "header guard not pressent or inconsistent" \
       "${header[0]:-<EMPTY>}" \
@@ -41,9 +53,9 @@ function test_header {
 
 error_count=0
 
-for fname in "$INCLUDE_DIR"/*.h; do
+for fname in $(find "${HSO_INC_DIR}" -name "*.h" ); do
 
-  test_header "$fname"
+  hso_test_header "$fname"
 
   error_count=$(( error_count + $? ))
 
@@ -55,7 +67,7 @@ if [[ $error_count > 0 ]]; then
 
 fi
 
-print_ok "no issues found in header guards"
+hso_print_ok "no issues found in header guards"
 
 exit 0
 

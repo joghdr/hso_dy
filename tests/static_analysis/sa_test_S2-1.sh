@@ -2,24 +2,27 @@
 # Category: S2
 # Objective: Prevent heavy includes in headers.
 
-: "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
-source "${HSO_ROOT}"/tests/env.sh && export_test_paths
-source "${HSO_ROOT}"/tests/helpers.sh
+set -e
 
+: "${HSO_ROOT_DIR:?" Environment variable was not injected."}"
+: "${HSO_INC_DIR:?" Environment variable was not injected."}"
+: "${HSO_TEST_HELPER_FILE:?" Helper file was not injected."}"
 
-VIOLATIONS="$(grep -rEnH  '#include[[:space:]]+<(iostream|fstream|sstream|iomanip|algorithm|random)>'  "$INCLUDE_DIR" || true)"
+source "${HSO_TEST_HELPER_FILE}"
 
-if [[ -n "${VIOLATIONS//[[:space:]]/}" ]]; then
+violations="$(grep -rEnH  '#include[[:space:]]+<(iostream|fstream|sstream|iomanip|algorithm|random)>'  "${HSO_INC_DIR}" || true)"
 
-  LOG="$( echo "$VIOLATIONS" | sed 's/#include//g')"
+if [[ -n "${violations//[[:space:]]/}" ]]; then
 
-  print_err "heavy includes found:" "${LOG}"
+  log="$( echo "$violations" | sed 's/#include//g')"
+
+  hso_print_err "heavy includes found:" "${log}"
 
   exit 1
 
 else
 
-  print_ok "no heavy includes found"
+  hso_print_ok "no heavy includes found"
 
   exit 0
 

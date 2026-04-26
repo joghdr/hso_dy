@@ -1,37 +1,40 @@
 
-set -e
-: "${HSO_ROOT:=$(git rev-parse --show-toplevel 2> /dev/null || pwd)}"
-: "${HSO_BUILD_DIR:=${HSO_ROOT}/build/dev}"
-: "${HSO_BUILD_TYPE:=dev}"
-: "${APP_PATH:=${HSO_ROOT}/${HSO_BUILD_DIR}/bin/HSODrellYanFitter}"
-: "${BINARIES_PATH:=${HSO_ROOT}/build/dev/CMakeFiles/hso_dy.dir/src}"
+# set -e
 
-source "${HSO_ROOT}"/tests/env.sh && export_test_paths
-source "${HSO_ROOT}"/tests/helpers.sh
+: "${HSO_ROOT_DIR:?" Environment variable was not injected."}"
+: "${HSO_INC_DIR:?" Environment variable was not injected."}"
+: "${HSO_BUILD_DIR:?" Environment variable was not injected."}"
+: "${HSO_TEST_HELPER_FILE:?" Helper file was not injected."}"
+: "${HSO_EXEC_DIR:?" Helper file was not injected."}"
 
+
+
+source "${HSO_TEST_HELPER_FILE}"
 
 #explicit global symbols (binaries)
 function get_globals_raw {
 
-  ##gate to prevent comparing to a broken build
-  local expected_count=$(find "${HSO_ROOT}/src" -name "*.cpp" | wc -l)
+  local obj_dir="$( dirname $(find "${HSO_BUILD_DIR}" -name "*.o" | grep 'src/') | sort -u  )"
 
-  local count=$(find "$BINARIES_PATH" -name "*.o" | wc -l)
+  local cpp_file_basenames="$(sed -E -e  "s|.+/([a-zA-Z0-9_-]+)\..+|\1|g" <(find "${HSO_SRC_DIR}" -name "*.cpp") | sort -u)"
 
-  if [[ "$count" -lt "$expected_count" ]]; then
+  local obj_file_basenames="$(sed -E -e  "s|.+/([a-zA-Z0-9_-]+)\..+|\1|g" <(find "${HSO_BUILD_DIR}" -name "*.o" | grep 'src/') | sort -u)"
 
-    print_err "Build is incomplete. Expected $expected_count objects, found $count." "
-          ---> ${BINARIES_PATH}"
+
+  if ! diff <(echo "${cpp_file_basenames}") <(echo "${obj_file_basenames}"); then
+
+    diff -y <(echo "${cpp_file_basenames}") <(echo "${obj_file_basenames}")
+
+    hso_print_err "Source files *.cpp do not exactly map to object files *.o"
 
     return 1
 
   fi
 
-
   local global_symbol
 
   global_symbol="$( \
-        find "$BINARIES_PATH" -name "*.o" -print0 | \
+        find "$obj_dir" -name "*.o" -print0 | \
         xargs -0 -r nm -AC  | \
         grep ' [DBGSdbgs] ' | \
         sed -E "s/(.+:).+ (.) /\1 \2 /g" | \
@@ -52,9 +55,9 @@ function get_globals_raw {
 
 function get_globals {
 
-  if [[ !  -d "$BUILD_DIR" ]]; then
+  if [[ !  -d "$HSO_BUILD_DIR" ]]; then
 
-    print_err "Build dir '${BUILD_DIR}' not found. Run cmake chain first."
+    hso_print_err "Build dir '${HSO_BUILD_DIR}' not found. Run cmake chain first."
 
     return 1
 
@@ -66,7 +69,7 @@ function get_globals {
 
 function diff_with_registry {
 
-  local globals_registry_file="$1"
+  local globals_registry_file="${1:?Not file provided}"
 
   diff <(get_globals | awk '{ print $(NF-1), $NF }' | sort) <(cat "$globals_registry_file" | awk '{ print $(NF-1), $NF }' | sort)
 
@@ -74,11 +77,13 @@ function diff_with_registry {
 
 function find_new_globals {
 
-  local globals_registry_file="$1"
+  local globals_registry_file="${1:?Not file provided}"
 
   if [[ ! -f "${globals_registry_file}" ]]; then
 
-    print_err "Registry file ${globals_registry_file} not present (binaries)" "See MakeFile to generate a new registry"
+    hso_print_err "Registry file ${globals_registry_file} not present (binaries)" \
+                  "Generate registry of globals by running:" \
+                  "   cmake --build --preset <BUILD_PRESET_NAME> --target update_registry_globals" \
 
     exit 1
 
@@ -86,13 +91,15 @@ function find_new_globals {
 
   local current_globals
 
-  current_globals=$(get_globals 2>&1)
+#   current_globals=$(get_globals 2>&1)
+
+  current_globals=$(get_globals)
 
   local exit_code=$?
 
   if [[ $exit_code -ne 0 ]]; then
 
-    print_err "Function 'get_globals' unexpectedly failed."
+    hso_print_err "Function 'get_globals' unexpectedly failed."
 
     return 1
 
@@ -106,7 +113,7 @@ function find_new_globals {
 
   if [[ -n "${new_globals//[[:space:]]/}" ]]; then
 
-    print_err "Found new globals in binaries:" "$new_globals"
+    hso_print_err "Found new globals in binaries:" "$new_globals"
 
     print_msg " REGISTRY LIST IS:" "${globals_registry_file}"
 
@@ -120,7 +127,7 @@ function find_new_globals {
 
   fi
 
-  print_soft_ok "No new globals found in binaries"
+  hso_print_soft_ok "No new globals found in binaries"
 
   return 0
 
@@ -128,11 +135,13 @@ function find_new_globals {
 
 function find_resolved_globals {
 
-  local globals_registry_file="$1"
+  local globals_registry_file="${1:?Not file provided}"
 
   if [[ ! -f "${globals_registry_file}" ]]; then
 
-    print_err "Registry file ${globals_registry_file} not present (binaries)" "See MakeFile to generate a new registry"
+    hso_print_err "Registry file ${globals_registry_file} not present (binaries)" \
+                  "Generate registry of globals by running:" \
+                  "   cmake --build --preset <BUILD_PRESET_NAME> --target update_registry_globals" \
 
     exit 1
 
@@ -157,13 +166,14 @@ function find_resolved_globals {
   if [[ -n "${resolved_globals//[[:space:]]/}" ]]; then
 
     if [ ! -f /.dockerenv ]; then
-      print_soft_ok "Some globals tagged as 'resolved' while auditing in container. Ignoring (harmless)."
+      hso_print_soft_ok "Some globals tagged as 'resolved' while auditing in container. Ignoring (harmless)."
       return 0
     else
 
       print_warning \
       "Found new resolved globals in binaries, registry must be updated," \
-      "see Makefile for details." \
+      "Update registry of globals by running:" \
+      "   cmake --build --preset <BUILD_PRESET_NAME> --target update_registry_globals" \
       "Resolved globals:" \
       "${resolved_globals}"
 
@@ -173,20 +183,40 @@ function find_resolved_globals {
 
   fi
 
-  print_soft_ok "All global variable instances reported in registry (binaries)."
+  hso_print_soft_ok "All global variable instances reported in registry (binaries)."
 
   return 0
 
 }
 
-
 #implicit global symbols (app level)
 function get_globals_raw_app {
+
+  local obj_dir="$( dirname $(find "${HSO_BUILD_DIR}" -name "*.o" | grep 'src/') | sort -u  )"
+
+  local cpp_file_basenames="$(sed -E -e  "s|.+/([a-zA-Z0-9_-]+)\..+|\1|g" <(find "${HSO_SRC_DIR}" -name "*.cpp") | sort -u)"
+
+  local obj_file_basenames="$(sed -E -e  "s|.+/([a-zA-Z0-9_-]+)\..+|\1|g" <(find "${HSO_BUILD_DIR}" -name "*.o" | grep 'src/') | sort -u)"
+
+  if ! diff <(echo "${cpp_file_basenames}") <(echo "${obj_file_basenames}"); then
+
+    diff -y <(echo "${cpp_file_basenames}") <(echo "${obj_file_basenames}")
+
+    hso_print_err "Source files *.cpp do not exactly map to object files *.o"
+
+    return 1
+
+  fi
+
+
+  local app_file_names=( $(find "${HSO_EXEC_DIR}" -name "*") )
+
+  local hso_app_file="${app_file_names[1]}"
 
   local global_symbol_app
 
   global_symbol_app="$( \
-    nm -C  "$APP_PATH" | \
+    nm -C  "${hso_app_file}" | \
     grep ' [dbgs] ' | \
     grep -vE 'vtable|typeinfo|VTT' | \
     sed -E "s/.+ (.) /\1 /g" | \
@@ -207,9 +237,9 @@ function get_globals_raw_app {
 
 function get_globals_app {
 
-  if [[ !  -d "$BUILD_DIR" ]]; then
+  if [[ !  -d "$HSO_BUILD_DIR" ]]; then
 
-    print_err "Build directory '$BUILD_DIR' not found. Run cmake chain first."
+    hso_print_err "Build directory '$HSO_BUILD_DIR' not found. Run cmake chain first."
 
     return 1
 
@@ -225,7 +255,7 @@ function get_globals_app {
 
   for candidate in $(echo "$global_symbol_names_disjoint"); do
 
-    if grep -rwqs "$candidate" "include" "src"; then
+    if grep -rwqs "$candidate" "${HSO_INC_DIR}" "${HSO_SRC_DIR}"; then
 
       global_symbol_names_new="$global_symbol_names_new\n""$candidate"
 
@@ -235,7 +265,7 @@ function get_globals_app {
 
   global_symbol_names_new="$(echo -e "$global_symbol_names_new" | sed "/^$/d" | sort -u)"
 
-  global_symbol_names_app="$( get_globals_raw_app | sort)"
+  global_symbol_names_app="$( get_globals_raw_app | sort -u )"
 
 
   local global_symbol_new_full_entry=(  )
@@ -259,7 +289,7 @@ function get_globals_app {
 
 function diff_with_registry_app {
 
-  local globals_registry_file_app="$1"
+  local globals_registry_file_app="${1:?Not file provided}"
 
   diff <(get_globals_app | awk '{ print $(NF-1), $NF }' | sort) <(cat "$globals_registry_file_app" | awk '{ print $(NF-1), $NF }' | sort)
 
@@ -267,11 +297,13 @@ function diff_with_registry_app {
 
 function find_new_globals_app {
 
-  local globals_registry_file_app="$1"
+  local globals_registry_file_app="${1:?Not file provided}"
 
   if [[ ! -f "${globals_registry_file_app}" ]]; then
 
-    print_err "Registry file '${globals_registry_file_app}' not present (executable)" "See MakeFile to generate a new registry"
+    hso_print_err "Registry file ${globals_registry_file_app} not present (binaries)" \
+    "Generate registry of globals by running:" \
+    "   cmake --build --preset <BUILD_PRESET_NAME> --target update_registry_globals" \
 
     exit 1
 
@@ -288,13 +320,13 @@ function find_new_globals_app {
 
   if [[ -n "${new_globals//[[:space:]]/}" ]]; then
 
-    print_err "Found new globals in executable" "$new_globals"
+    hso_print_err "Found new globals in executable" "$new_globals"
 
     return 1
 
     fi
 
-    print_soft_ok "No new globals found in executable."
+    hso_print_soft_ok "No new globals found in executable."
 
     return 0
 
@@ -302,11 +334,13 @@ function find_new_globals_app {
 
 function find_resolved_globals_app {
 
-  local globals_registry_file="$1"
+  local globals_registry_file="${1:?Not file provided}"
 
   if [[ ! -f "${globals_registry_file_app}" ]]; then
 
-    print_err "Registry file '${globals_registry_file_app}' not present (executable)" "See MakeFile to generate a new registry"
+    hso_print_err "Registry file ${globals_registry_file_app} not present (binaries)" \
+    "Generate registry of globals by running:" \
+    "   cmake --build --preset <BUILD_PRESET_NAME> --target update_registry_globals" \
 
     exit 1
 
@@ -324,13 +358,14 @@ function find_resolved_globals_app {
   if [[ -n "${resolved_globals//[[:space:]]/}" ]]; then
 
     if [ ! -f /.dockerenv ]; then
-      print_soft_ok "Some globals tagged as 'resolved' while auditing in container. Ignoring (harmless)."
+      hso_print_soft_ok "Some globals tagged as 'resolved' while auditing in container. Ignoring (harmless)."
       return 0
     else
 
       print_warning \
       "Found new resolved globals in executable, registry must be updated," \
-      "see Makefile for details." \
+      "Update registry of globals by running:" \
+      "   cmake --build --preset <BUILD_PRESET_NAME> --target update_registry_globals" \
       "Resolved globals:" \
       "${resolved_globals}"
 
@@ -344,7 +379,7 @@ function find_resolved_globals_app {
 
   fi
 
-  print_soft_ok "All global variable instances reported in registry (executable)."
+  hso_print_soft_ok "All global variable instances reported in registry (executable)."
 
   return 0
 

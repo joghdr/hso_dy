@@ -1,5 +1,5 @@
 #include <hso/math_functions.h>
-#include <boost/math/special_functions/bessel.hpp>
+// #include <boost/math/special_functions/bessel.hpp>
 #include <cmath>
 
 namespace hso{
@@ -21,7 +21,7 @@ namespace hso{
 
     long double output=0.0;
 
-    output=boost::math::cyl_bessel_k(0, x/*,besselK_policy()*/);
+    output=std::cyl_bessel_k(0, x/*,besselK_policy()*/);
 
     return output;
 
@@ -31,7 +31,7 @@ namespace hso{
 
     long double output=0.0;
 
-    output=boost::math::cyl_bessel_k(n, x/*,besselK_policy()*/);
+    output=std::cyl_bessel_k(n, x/*,besselK_policy()*/);
 
     return output;
 
