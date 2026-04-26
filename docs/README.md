@@ -22,11 +22,10 @@ The code relies on several external libraries and packages, which the user must 
 
   1. gnu compiler collection, in particular g++ (g++ 13.3.0 or later)
   2. gnu scientific libraries (libgsl-dev 2.7.1 or later)
-  3. boost libraries (libboost-all-dev 1.83.0.1 or later)
-  4. gnuplot (version 6.0 or later)
-  5. cuba integration libraries (version 4.2.2)
-  6. lhapdf (version 6.5.4 and later)
-  7. Minuit2 (standalone, version 5.28.00 or later)
+  3. gnuplot (version 6.0 or later)
+  4. cuba integration libraries (version 4.2.2)
+  5. lhapdf (version 6.5.4 and later)
+  6. Minuit2 (standalone, version 5.28.00 or later)
 
 The code has been developed in Ubuntu 24.04 (noble), but it should work in other
 Linux distributions that use gcc compilers.

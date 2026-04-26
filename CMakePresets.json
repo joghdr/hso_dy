@@ -24,7 +24,7 @@
     "name": "release",
     "inherits": "base",
     "cacheVariables": {
-      "CMAKE_CXX_FLAGS": "-flto=auto  -O3 -march=native ",
+      "CMAKE_CXX_FLAGS": "-O3 -march=native -flto=auto",
       "CMAKE_BUILD_TYPE": "Release"
     }
   },
