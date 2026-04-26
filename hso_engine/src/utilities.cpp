@@ -818,7 +818,7 @@ namespace hso{
 
     para_filename.assign(argv[2]);
 
-    home_dir = home_dir + "/" + argv[3];
+    home_dir = home_dir + argv[3];
 
     std::string input_dir;
 
