@@ -92,6 +92,7 @@ libstdc++6 \
 && rm -rf /var/lib/apt/lists/*
 
 COPY --from=hso-dy-build /app/build/release/bin/HSODrellYanFitter /usr/local/bin/HSODrellYanFitter
+COPY --from=hso-dy-build /app/build/release/bin/HSODrellYanHessian /usr/local/bin/HSODrellYanHessian
 COPY --from=hso-dy-build   /usr/local/lib/libMinuit2.so      /usr/local/lib
 COPY --from=hso-dy-build   /usr/local/lib/libMinuit2Math.so  /usr/local/lib
 COPY --from=hso-dy-build   /usr/local/lib/libLHAPDF.so       /usr/local/lib

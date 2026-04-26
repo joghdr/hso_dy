@@ -1,6 +1,7 @@
 #!/bin/bash
 # Run the docker build (see Dockerfile)
-OUTPUT_DIR="${1}"
+catch="${1}"
+OUTPUT_DIR=results/"${catch}"
 
 if [[ -z "${OUTPUT_DIR}" ]]; then
 

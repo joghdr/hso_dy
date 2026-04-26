@@ -6,6 +6,7 @@
 
 set -e
 
+
 : ${EXEC:? executable was not injected.}
 
 source "${HSO_TEST_HELPER_FILE}"
@@ -16,10 +17,9 @@ target_name="${target_name/#*\//}"
 kin_file="${HSO_TEST_SV_INPUT_DIR}/${target_name}/kin_drellyan.input"
 para_file="${HSO_TEST_SV_INPUT_DIR}/${target_name}/para_hso.input"
 output_dir_name=$( basename $(mktemp -d -t hso_temp_dir_XXXXXXXXXX) )
-output_dir="${HSO_RUN_OUTPUT_DIR}/${output_dir_name}"
+output_dir="${HSO_TEST_SV_DIR}/${output_dir_name}"
 
-
-${EXEC} ${kin_file} ${para_file} ${output_dir_name}  > /dev/null
+${EXEC} ${kin_file} ${para_file} ${output_dir} > /dev/null
 
 #TODO: move the discovery of expected_file_list into cmake
 expected_file_list=( "$(find ${HSO_TEST_SV_EXPECT_DIR}/ -name "*.stat" )" )
@@ -58,10 +58,17 @@ if [[ -f "/tmp/$output_dir_name" ]]; then
 
 fi
 
-if [[ -f "$output_dir" ]]; then
+#clean and leave
+hso_print_msg "Cheking ${output_dir} "
+if [[ -d "${output_dir}" ]]; then
+  hso_print_msg "removing ${output_dir} "
+  rm -rf "${output_dir}"
+fi
 
-  rm -rf "$output_dir"
-
+hso_print_msg "Cheking /tmp/${output_dir_name} "
+if [[ -d /tmp/"${output_dir_name}" ]]; then
+  hso_print_msg "removing /tmp/${output_dir_name} "
+  rm -rf /tmp/"${output_dir_name}"
 fi
 
 exit 0

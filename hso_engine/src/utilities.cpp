@@ -55,7 +55,7 @@ namespace fs = std::filesystem;
 
 namespace hso{
 
-  std::string home_dir {"./run/results"};
+  std::string home_dir {""};
 
   std::string eigen_filename_global {""};
 

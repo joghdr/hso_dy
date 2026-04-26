@@ -1,36 +1,48 @@
-# Log and temporary files
+
 *.log
 *.kate-swp
 *.tmp
+*.swp
+.dir
+commit_changes.log
 
-# CMake transients and local overrides
-CMakeCache.txt
-CMakeFiles/
-CMakeUserPresets.json
+**/CMakeCache.txt
+**/CMakeFiles/
+**/CMakeUserPresets.json
+**/cmake_install.cmake
+**/Makefile
+**/install_manifest.txt
+**/_deps/
 
-# Build and binary artifacts
-build/
-bin/
-exe/
+**/build/
+**/bin/
+**/exe/
 *.o
+*.obj
 *.a
+*.lib
 *.so
+*.so.*
 *.out
 
-# Python transients
-__pycache__/
+**/__pycache__/
 *.pyc
+*.pyo
 
-# Runtime and Test results (keeping directory structure)
-run/results/*
-!run/results/.gitkeep
-tests/system_validation/sv_test_fit_fast/results/
-!tests/system_validation/sv_test_fit_fast/results/.gitkeep
+run/results/**/*
+!run/results/**/.gitkeep
 
-# IDE and OS metadata
+tests/system_validation/**/results/
+!tests/system_validation/**/results/.gitkeep
+
+run/scripts/gnufiles/*.eps
+run/scripts/gnufiles/*.pdf
+run/scripts/gnufiles/*.png
+
 .vscode/
 .idea/
 .DS_Store
+Thumbs.db
 
-# Local notes
 mynotes/
+sandbox/

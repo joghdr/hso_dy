@@ -2,7 +2,7 @@ if(HSO_LAYOUT_LOADED)
   return()
   endif()
 
-  # --- Project Root ---
+  # --- Engine Root ---
   set(HSO_ROOT_DIR              "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "" FORCE)
   set(HSO_VERSION_FILE          "${HSO_ROOT_DIR}/VERSION" CACHE INTERNAL "" FORCE)
 
@@ -44,13 +44,13 @@ if(HSO_LAYOUT_LOADED)
   set(HSO_TEST_SV_SCRIPTS_DIR   "${HSO_TEST_SV_DIR}/scripts" CACHE INTERNAL "" FORCE)
 
 
-  # --- Build & Audit State ---
+  # --- Build & Audit   ---
   set(HSO_BUILD_DIR             "${CMAKE_BINARY_DIR}" CACHE INTERNAL "" FORCE)
   set(HSO_EXEC_DIR              "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" CACHE INTERNAL "" FORCE)
   set(HSO_AUDIT_DIR             "${HSO_BUILD_DIR}/audit" CACHE INTERNAL "" FORCE)
   set(HSO_BUILD_CONFIG          "${CMAKE_BUILD_TYPE}" CACHE INTERNAL "" FORCE)
 
-  # --- Environment Block (Flattened for Process Injection) ---
+  # --- Environment ---
   set(HSO_ENV_BLOCK
   "HSO_ROOT_DIR=${HSO_ROOT_DIR}"
   "HSO_VERSION_FILE=${HSO_VERSION_FILE}"

@@ -63,11 +63,11 @@ target_link_libraries(${ENGINE_TARGET}_obj PUBLIC
 
 add_executable(HSODrellYanFitter programs/HSODrellYanFitter.cpp)
 target_link_libraries(HSODrellYanFitter PRIVATE  ${ENGINE_TARGET})
-install(TARGETS HSODrellYanFitter DESTINATION bin)
+install(TARGETS HSODrellYanFitter DESTINATION ${CMAKE_BINARY_DIR}/bin)
 
 add_executable(HSODrellYanHessian programs/HSODrellYanHessian.cpp)
 target_link_libraries(HSODrellYanHessian PRIVATE ${ENGINE_TARGET})
-install(TARGETS HSODrellYanHessian DESTINATION bin)
+install(TARGETS HSODrellYanHessian DESTINATION ${CMAKE_BINARY_DIR}/bin)
 
 ############################################
 ############################################
@@ -84,13 +84,6 @@ add_custom_target(update_registry_globals
   VERBATIM
 )
 
-set(AUDIT_OUTPUT_DIR "${CMAKE_BINARY_DIR}/audit")
-# add_custom_command(
-#   TARGET HSODrellYanFitter POST_BUILD
-#   COMMAND ${CMAKE_COMMAND} -E make_directory "${AUDIT_OUTPUT_DIR}"
-#   COMMAND ${CMAKE_COMMAND} -E remove -f "${CMAKE_BINARY_DIR}/SKIP_TESTS"
-#   COMMENT "*** [HSO] Generating post-build audit metadata"
-#   VERBATIM)
 
 ############################################
 ############################################
@@ -163,11 +156,11 @@ endforeach()
 
   ############################################
   ############################################
-  #################  Docker Image     ########
+  #################  Docker Images     #######
   ############################################
   ############################################
 
-add_custom_target(image_dev
+add_custom_target(hso_docker_image_dev
     COMMAND
             docker build .
             --target hso-dy-dev
@@ -178,7 +171,7 @@ add_custom_target(image_dev
     USES_TERMINAL
 )
 
-add_custom_target(image_deps
+add_custom_target(hso_docker_image_deps
     COMMAND
             docker build .
             --target hso-dy-deps
@@ -186,11 +179,11 @@ add_custom_target(image_deps
             --build-arg HSO_VERSION=${HSO_VERSION}
             -t ${ENGINE_TARGET}-deps:${HSO_VERSION}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    DEPENDS image_dev
+    DEPENDS hso_docker_image_dev
     USES_TERMINAL
 )
 
-add_custom_target(image_engine
+add_custom_target(hso_docker_image_engine
     COMMAND
             docker build .
             --target hso-dy
@@ -198,47 +191,6 @@ add_custom_target(image_engine
             --build-arg HSO_VERSION=${HSO_VERSION}
             -t ${ENGINE_TARGET}:${HSO_VERSION}
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    DEPENDS image_deps
+    DEPENDS hso_docker_image_deps
     USES_TERMINAL
 )
-# add_custom_target(image-deps
-#     COMMAND docker build . --target hso-dy-deps
-#             --build-arg HSO_IMAGE_NAME=${HSO_IMAGE_NAME}
-#             --build-arg HSO_VERSION=${HSO_VERSION}
-#             -t ${HSO_IMAGE_NAME}-deps:${HSO_VERSION}
-#     USES_TERMINAL
-# )
-#
-# add_custom_target(image-app
-#     COMMAND docker build . --target hso-dy
-#             --build-arg HSO_IMAGE_NAME=${HSO_IMAGE_NAME}
-#             --build-arg HSO_VERSIONERSION=${HSO_VERSION}
-#             -t ${HSO_IMAGE_NAME}:${HSO_VERSION}
-#     USES_TERMINAL
-# )
-#
-# add_dependencies(image-deps image-dev)
-# add_dependencies(image-app image-deps)
-#
-#
-
-
-
-# add_custom_target(
-#   build_docker_image
-#   COMMAND ${CMAKE_COMMAND} -E env
-#           HSO_VERSIONERSION=${HSO_VERSION}
-#           HSO_IMAGE_NAME=${ENGINE_TARGET}
-#           ${HSO_ENV_BLOCK}
-#           bash "${HSO_DEV_TOOLS_DIR}/build_docker_image.sh"
-#   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-#   DEPENDS HSODrellYanFitter HSODrellYanHessian
-#   COMMENT "Building the Docker image of HSODrellYan"
-#   VERBATIM
-# )
-#
-# set_property(
-#   TARGET build_docker_image
-#   APPEND PROPERTY ENVIRONMENT ${HSO_ENV_BLOCK}
-# )
-#
