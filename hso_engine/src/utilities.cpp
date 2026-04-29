@@ -604,7 +604,7 @@ namespace hso{
       return root;
 
     }
-    //NOTE: functions used by 'HESSIAN'
+    //NOTE: functions used by 'Errors'
     void ReadEigensets(std::string eigen_filename, std::vector<std::string> &eigen_para_names,
 
                        std::vector<double> &eigen_sets, int &numofeigen, int &numofpara) {
@@ -818,7 +818,7 @@ namespace hso{
 
     para_filename.assign(argv[2]);
 
-    home_dir = home_dir + argv[3];
+    home_dir = argv[3];
 
     std::string input_dir;
 
@@ -1267,9 +1267,14 @@ namespace hso{
 
     hso::store_values_theory = false;
 
-    WriteCovariance(&min);
+    if(number_of_varying_parameters > 0){
 
-    WriteCovarianceEigen(home_dir+"/cov/covariance.dat");
+      WriteCovariance(&min);
+
+      WriteCovarianceEigen(home_dir+"/cov/covariance.dat");
+
+
+    }
 
     return &min;
 
@@ -1705,20 +1710,7 @@ namespace hso{
         std::cout<<"could not create file "<<filename_with_path<<std::endl;
 
     }
-    //WARNING:this is a patch: uses bash script to fix labels in plot
-    char command_fix[200];
 
-    std::sprintf( command_fix,"bash gnufiles/plotfix %s",home_dir.c_str() );
-
-    int system_result = std::system(command_fix);
-
-    if(system_result != 0){
-
-      std::cout<<"Warning:"<<__FILE__<<":"<<__LINE__<<": "
-
-               <<"last call to 'system()' returned non-zero value\n";
-
-    }
 
   }
 
@@ -1954,7 +1946,7 @@ namespace hso{
 
     std::string fit_dir(argv[1]);
 
-    home_dir = home_dir + "/" + argv[2];
+    home_dir = argv[2];
 
     if(argc-1 >= 3)
 
@@ -1988,10 +1980,6 @@ namespace hso{
 
     eigen_dir = home_dir + "/status/" ;
 
-    std::string bands_dir ;
-
-    bands_dir = home_dir + "/bands/" ;
-
     int check0 = mkdir(home_dir.c_str(),0777);
 
     int check1 = 0;
@@ -2013,8 +2001,6 @@ namespace hso{
       check1 = mkdir(input_dir.c_str(),0777);
 
       check2 = mkdir(para_dir .c_str(),0777);//same for eigensets
-
-      check3 = mkdir(bands_dir.c_str(),0777);
 
     }
 
@@ -2076,13 +2062,6 @@ namespace hso{
 
     }
 
-    if(check3 != 0){
-
-      std::cout<<"warning: mkdir returned check = "<<check3
-
-               <<" when trying to create '"<<bands_dir<<"'\n";
-
-    }
     //to use the newly created copies.
     kinematics_filename.assign(input_dir + "/" + kinematics_filename);
 
