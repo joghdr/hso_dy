@@ -13,43 +13,33 @@ Other relevant publications on the HSO approach are:
   - [Phys.Rev.D 106 (2022) 3, 034002](https://inspirehep.net/literature/2080521)
   - [Phys.Rev.D 107 (2023) 9, 094029](https://inspirehep.net/literature/2640018)
 
-Some bash scripts are included for certain tasks, like compiling and running the
-sample programs.
+## Build Requirements
+
+The build system requires`CMake(3.28)`, `Ninja(1.11)` and `Docker(29.4)`, which the user must pre-install.
+
+## Building the Executables
+
+A containerized build environment is provided via Docker for portability (see [build](https://github.com/joghdr/hso_dy/blob/main/docs/build_info.md)). This enables a simple one-step build.
+
+Advanced users and developers may want to take a look at the `CMakePresets.json` for available presets, `CMakeLists.txt` for targets/tests and the information on dependencies below.
+
 
 ## Dependencies (see [dependencies](https://github.com/joghdr/hso_dy/blob/main/docs/dependencies_info.md) for details)
+*NOTE: when using the containerized build, all dependencies are automatically handled*
 
 The code relies on several external libraries and packages, which the user must install
 
   1. gnu compiler collection, in particular g++ (g++ 13.3.0 or later)
   2. gnu scientific libraries (libgsl-dev 2.7.1 or later)
-  3. gnuplot (version 6.0 or later)
-  4. cuba integration libraries (version 4.2.2)
-  5. lhapdf (version 6.5.4 and later)
-  6. Minuit2 (standalone, version 5.28.00 or later)
+  3. cuba integration libraries (version 4.2.2)
+  4. lhapdf (version 6.5.4 or later)
+  5. Minuit2 (standalone, version 5.28.00 or later)
+  6. gnuplot (**optional** for plotting, version 6.0 or later)
 
 The code has been developed in Ubuntu 24.04 (noble), but it should work in other
 Linux distributions that use gcc compilers.
 
-## Compiling the HSO code (see [compile](https://github.com/joghdr/hso_dy/blob/main/docs/compile_info.md) for details)
-
-The code has the following directory structure:
-
-  - `src/`         source files and binaries (after first compilation)
-  - `include/`     header files
-  - `programs/`    sample programs
-  - `scripts/`     bash scripts for different tasks
-  - `exe/`         executables (after compilation)
-  - `input/`       sample input files for parameters and kinematical cuts
-
-The code can be compiled by simply running the bash script `scripts/compile.sh`,
-which requires at least one argument, the name of a `.c` main file. For instance,
-running in the terminal the command
-
-  `bash scripts/compile.sh programs/fit_fixed_target_DY.c`
-
-will create all binaries inside `src/` and the main program `exe/fit_fixed_target_DY.c`.
-
-## Use cases (see [guide](https://github.com/joghdr/hso_dy/blob/main/docs/guide.md) for details)
+## Use Cases & Running the Programs (see [guide](https://github.com/joghdr/hso_dy/blob/main/docs/guide.md) for details)
 
 The current version of the code allows the user to
 
@@ -58,6 +48,8 @@ The current version of the code allows the user to
   - plot some results
 
 The current accuracy of perturbative coefficients is $O(\alpha_s)$
+
+A bash script is provided to run the executables inside the Docker container.
 
 
 

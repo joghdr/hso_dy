@@ -9,7 +9,12 @@ local key1="$2"
 local key2="$3"
 
 if [[ ! -d  "${dir}" ]]; then
-  echo "Directory ${dir} not found"
+  echo "Directory containing results '${dir}' not found"
+  return 1
+fi
+
+if [[ ! -d  "${dir}/stat/E288" || -z "$(ls "${dir}/stat/E288")" ]]; then
+  echo "Directory '${dir}/stat/E288' not found or empty"
   return 1
 fi
 
@@ -56,9 +61,15 @@ local key1="$2"
 local key2="$3"
 
 if [[ ! -d  "${dir}" ]]; then
-  echo "Directory ${dir} not found"
+  echo "Directory containing results '${dir}' not found"
   return 1
 fi
+
+if [[ ! -d  "${dir}/stat/E605" || -z "$(ls "${dir}/stat/E605")" ]]; then
+  echo "Directory '${dir}/stat/E605' not found or empty"
+  return 1
+fi
+
 
 local id="$(basename "${dir}")"
 

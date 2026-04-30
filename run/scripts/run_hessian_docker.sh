@@ -8,12 +8,13 @@ if [[ -z "${catch_1}" || -z "${catch_2}" ]]; then
   echo  -e \
    "Need 2 arguments. Try running:
 
-      bash ${BASH_SOURCE[0]} <FIT_DIR_NAME> <OUT_DIR_NAME>
+      bash ${BASH_SOURCE[0]} <FIT_DIR_PATH> <OUT_DIR_NAME>
 
     with arguments:
 
-    <FIT_DIR_NAME> - the name of a directory containing results of a fit (run the script 'run_fitter_docker.sh')
-    <OUT_DIR_NAME> - the name of the directory where results should be stored (directory must not exist)"
+    <FIT_DIR_PATH> - the path of a directory containing results of a fit (run the script 'run_fitter_docker.sh')
+    <OUT_DIR_NAME> - the name of the directory where results should be stored (directory must not exist in 'results/').
+    Note: results are stored in 'results/<OUT_DIR_NAME>'"
 
   exit 1
 
@@ -28,3 +29,4 @@ docker run --rm \
 -v $(pwd)/results:/app/results \
 -t hso-dy:1.0.0 \
 HSODrellYanHessian "${FIT_DIR}" "${OUTPUT_DIR}"
+

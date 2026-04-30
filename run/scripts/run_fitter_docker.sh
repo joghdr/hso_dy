@@ -2,9 +2,17 @@
 # Run the docker build (see Dockerfile)
 catch="${1}"
 
-if [[ -z "${catch}" ]]; then
+if [[ -z "${catch_1}" || -z "${catch_2}" ]]; then
 
-  echo -e "Need to provide output directory name as argument. Try:\n\tOUTPUT_DIR=<dir_name> bash ${BASH_SOURCE[0]}\nResult will be stored in 'run/results/<dir_name>'"
+  echo  -e \
+   "Need 1 argument. Try running:
+
+      bash ${BASH_SOURCE[0]} <OUT_DIR_NAME>
+
+    with argument:
+
+    <OUT_DIR_NAME> - the name of the directory where results should be stored (directory must not exist in 'results/').
+    Note: results are stored in 'results/<OUT_DIR_NAME>'"
 
   exit 1
 
