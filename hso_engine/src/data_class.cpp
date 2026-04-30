@@ -604,8 +604,6 @@ namespace hso{
 
     std::cout<<"#file_name_ = "<<file_name_ <<std::endl;
 
-    std::cout<<"#gnu_script_ = "<<gnu_script_<<std::endl;
-
     std::cout<<"#key = "<<key_ <<std::endl;
 
     std::cout<<"#set_is_active_ = "<< set_is_active_ <<std::endl;

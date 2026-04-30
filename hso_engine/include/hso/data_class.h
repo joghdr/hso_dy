@@ -89,8 +89,6 @@ namespace hso{
 
     std::string file_name_;
 
-    std::string gnu_script_;
-
     std::string key_;
 
     std::vector<std::string> data_lines_;

@@ -51,8 +51,6 @@ int main(int argc, char *argv[]){
 
   hso::Write(hso::chi2_total);//files with data and theory in 'stat' directory
 
-  hso::Plot(hso::chi2_total ,"qT","csec");//writes gnuplot scripts, needed for bash command 'plotE288' and 'plotE288-band'
-
   if (num_of_free_para > 0){
 
     hso::Errors(theFCN, *min);//use minuit's covariance matrix to get eigenvalues, writes: <MAIN>/cov/scan.dat <MAIN>/min/eigensets.dat

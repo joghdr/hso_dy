@@ -104,8 +104,6 @@ namespace hso{
 
     std::vector<Data*> *data_;
 
-    std::string gnuscript_;
-
     int length_;
 
     int length_active_;

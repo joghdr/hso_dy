@@ -66,8 +66,6 @@ namespace hso{
 
     CubaFunction cuba_integrand_ ;
 
-    std::string gnu_script_;
-
     int length_;
 
     std::vector<std::string> var_names_;
