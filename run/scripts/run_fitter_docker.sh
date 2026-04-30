@@ -16,5 +16,5 @@ docker run --rm \
 -u $(id -u):$(id -g) \
 -v $(pwd)/input:/app/input \
 -v $(pwd)/results:/app/results \
--it hso-dy:1.0.0 \
+-t hso-dy:1.0.0 \
 HSODrellYanFitter input/kin_drellyan.input input/para_hso.input "${OUTPUT_DIR}"

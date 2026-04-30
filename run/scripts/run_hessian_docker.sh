@@ -26,5 +26,5 @@ OUTPUT_DIR=results/"${catch_2}"
 docker run --rm \
 -u $(id -u):$(id -g) \
 -v $(pwd)/results:/app/results \
--it hso-dy:1.0.0 \
+-t hso-dy:1.0.0 \
 HSODrellYanHessian "${FIT_DIR}" "${OUTPUT_DIR}"

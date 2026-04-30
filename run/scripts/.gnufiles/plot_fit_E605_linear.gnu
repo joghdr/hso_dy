@@ -1,10 +1,13 @@
-load 'gnufiles/.format4_pdf.gnu'
+load 'GNUFILES_DIR/.format_pdf.gnu'
+
 
 height=width/3.0
 
 set term pdfcairo enhanced color font sprintf("Sans,%i",fontsize) size width*scale,height*scale
 
 DIR=""
+
+ID=""
 
 subDIR="stat"
 
@@ -18,7 +21,7 @@ Label(key1,key2)=sprintf("%s %s",key1,key2)
  
 file(Qmin,Qmax)=sprintf("%s/%s/E605/E605_800_%s-%s.stat",DIR,subDIR,Qmin,Qmax)
 
-OUTPUT=sprintf("%s/plots/E605-%s.pdf",DIR,DIR)
+OUTPUT=sprintf("%s/plots/E605-%s.pdf",DIR,ID)
  
 set output OUTPUT
  

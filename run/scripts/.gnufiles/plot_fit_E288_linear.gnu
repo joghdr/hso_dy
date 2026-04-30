@@ -1,8 +1,10 @@
-load 'gnufiles/.format4_pdf.gnu'
+load 'GNUFILES_DIR/.format_pdf.gnu'
 
 
 
 DIR=""
+
+ID=""
 
 subDIR="stat"
 
@@ -14,12 +16,12 @@ file(E,Q)=sprintf("%s/%s/E288/E288_%.0f_%.0f-%.0f.stat",DIR,subDIR,E,Q,Q+1)
 
 Label(key1,key2)=sprintf("%s %s",key1,key2)
 
-OUTPUT=sprintf("%s/plots/E288-%s.pdf",DIR,DIR)
- 
+OUTPUT=sprintf("%s/plots/E288-%s.pdf",DIR,ID)
+
  set output OUTPUT
- 
- set multiplot 
- 
+
+ set multiplot
+
 
  
 ROWS=3
