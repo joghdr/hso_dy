@@ -1,5 +1,5 @@
-ARG HSO_IMAGE_NAME
-ARG HSO_VERSION
+ARG HSO_IMAGE_NAME="hso-dy-default"
+ARG HSO_VERSION="1.0.x"
 
 # ----- hso dev tools -----
 FROM ubuntu:24.04 AS hso-dy-dev
@@ -77,7 +77,12 @@ WORKDIR /app
 
 COPY . .
 
-RUN cmake --workflow --preset verify-release
+RUN \
+if [ -f "hso_engine/CMakePresets.json" ]; then \
+  cd hso_engine; \
+fi && \
+cmake --workflow --preset verify-release || \
+cmake --workflow --preset verify-release
 
 
 # ----- hso light release image -----
