@@ -4,7 +4,7 @@ The engine was developed to produce an analysis of Drell-Yan for publication. Ho
 before the engine can be scalable, which is a must for more comprehensive analyses like using more data sets or running Montecarlo simulations.
 
 The main source of technical debt is the proliferation of global state, which prevents the engine from being truly modular and thread safe.
-The followiing is registry of the global state symbols currently in the engine. An incremental refactor of the code will aim at elmininating
+The following is registry of the global state symbols currently in the engine. An incremental refactor of the code will aim at elmininating
 these globals.
 ### **Global Dependency Registry**
 | Unique ID | Symbol Name | Definition Site | Data Type | Access (R/W) | Impacted Files |
