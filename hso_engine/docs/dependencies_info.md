@@ -2,7 +2,7 @@
 # Hadron Structure Oriented approach to TMD phenomenology - Drell-Yan
 
 ## User vs Developer
-Details to build the executables in a host machine are provided here, but they are meant for developers or advanced users that require to modify the source code, e.g. define custom models. Otherwise, a user may skip these steps and simply build (see [build](hso_engine/docs/build_info.md)) and run executables (see [guide](hso_engine/docs/guide.md)) using a
+Details to build the executables in a host machine are provided here, but they are meant for developers or advanced users that require to modify the source code, e.g. define custom models. Otherwise, a user may skip these steps and simply build (see [build](build_info.md)) and run executables (see [guide](guide.md)) using a
 the containerized Docker environment.
 
 ## Build Requirements
