@@ -19,12 +19,12 @@ The build system requires`CMake(3.28)`, `Ninja(1.11)` and `Docker(29.4)`, which 
 
 ## Building the Executables
 
-A containerized build environment is provided via Docker for portability (see [build](https://github.com/joghdr/hso_dy/blob/main/docs/build_info.md)). This enables a simple one-step build.
+A containerized build environment is provided via Docker for portability (see [build](hso_engine/docs/build_info.md)). This enables a simple one-step build.
 
 Advanced users and developers may want to take a look at the `CMakePresets.json` for available presets, `CMakeLists.txt` for targets/tests and the information on dependencies below.
 
 
-## Dependencies (see [dependencies](https://github.com/joghdr/hso_dy/blob/main/docs/dependencies_info.md) for details)
+## Dependencies (see [dependencies](hso_engine/docs/dependencies_info.md) for details)
 *NOTE: when using the containerized build, all dependencies are automatically handled*
 
 The code relies on several external libraries and packages, which the user must install
@@ -39,7 +39,7 @@ The code relies on several external libraries and packages, which the user must 
 The code has been developed in Ubuntu 24.04 (noble), but it should work in other
 Linux distributions that use gcc compilers.
 
-## Use Cases & Running the Programs (see [guide](https://github.com/joghdr/hso_dy/blob/main/docs/guide.md) for details)
+## Use Cases & Running the Programs (see [guide](hso_engine/docs/guide.md) for details)
 
 The current version of the code allows the user to
 
