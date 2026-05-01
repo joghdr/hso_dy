@@ -27,7 +27,7 @@ jobs:
       - name: build and verify via cmake orchestration
         run: |
           cmake --preset release -S hso_engine -DHSO_DOCKER_ONLY=ON
-          cmake --build --preset release --target hso_docker_image_engine
+          cmake --build --preset hso_engine/build/release --target hso_docker_image_engine
           
 
       - name: status
