@@ -1,0 +1,205 @@
+{
+  "version": 6,
+
+  "configurePresets": [
+
+  {
+    "name": "base",
+    "hidden": true,
+    "generator": "Ninja",
+    "binaryDir": "${sourceDir}/build/${presetName}",
+    "environment": {
+      "HSO_ROOT": "${sourceDir}",
+      "HSO_BUILD_DIR": "${sourceDir}/build/${presetName}"
+    },
+    "cacheVariables": {
+      "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+      "CMAKE_CXX_EXTENSIONS": "OFF",
+      "CMAKE_CXX_STANDARD": "20",
+      "CMAKE_CXX_STANDARD_REQUIRED": "ON"
+     }
+  },
+
+  {
+    "name": "release",
+    "inherits": "base",
+    "cacheVariables": {
+      "CMAKE_CXX_FLAGS": "-O3 -march=native -flto=auto",
+      "CMAKE_BUILD_TYPE": "Release"
+    }
+  },
+
+  {
+    "name": "dev",
+    "inherits": "base",
+    "cacheVariables": {
+      "CMAKE_CXX_FLAGS": "-flto=auto  -Og -g -Wall  -Wshadow -Wunused-parameter -Werror ",
+      "CMAKE_BUILD_TYPE": "Debug"
+    }
+  },
+
+  {
+    "name": "audit",
+    "inherits": "base",
+    "cacheVariables": {
+      "CMAKE_CXX_FLAGS": "-O3  -flto=auto -Wall  -Wshadow -Wunused-parameter -Werror ",
+      "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+    }
+  }
+  ],
+
+  "buildPresets": [
+
+  {
+    "name": "base",
+    "hidden": true,
+    "jobs": 0,
+    "cleanFirst": false
+  },
+
+  {
+    "name": "release",
+    "inherits": "base",
+    "configurePreset": "release"
+
+  },
+
+  {
+    "name": "dev",
+    "inherits": "base",
+    "configurePreset": "dev"
+
+  },
+
+  {
+    "name": "audit",
+    "inherits": "base",
+    "configurePreset": "audit"
+  }
+
+  ],
+
+  "testPresets": [
+    {
+      "name": "test-base",
+      "hidden": true,
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true,
+        "parallel": 0
+      }
+    },
+    {
+      "name": "test-syntax-base",
+      "hidden": true,
+      "filter": { "include": {"label": "syntax"}  }
+    },
+    {
+      "name": "test-static-base",
+      "hidden": true,
+      "filter": { "include": {"label": "static"}  }
+    },
+    {
+      "name": "test-system-base",
+      "hidden": true,
+      "filter": { "include": {"label": "system"}  }
+    },
+    {
+      "name": "test-dev-base",
+      "hidden": true,
+      "inherits": "test-base",
+      "configurePreset": "dev"
+    },
+    {
+      "name": "test-audit-base",
+      "hidden": true,
+      "inherits": "test-base",
+      "configurePreset": "audit"
+    },
+    {
+      "name": "test-release-base",
+      "hidden": true,
+      "inherits": "test-base",
+      "configurePreset": "release"
+    },
+    {
+      "name": "test-dev-syntax",
+      "inherits": ["test-dev-base", "test-syntax-base"]
+    },
+    {
+      "name": "test-audit-syntax",
+      "inherits": ["test-audit-base", "test-syntax-base"]
+    },
+    {
+      "name": "test-release-syntax",
+      "inherits": ["test-release-base", "test-syntax-base"]
+    },
+    {
+      "name": "test-dev-static",
+      "inherits": ["test-dev-base", "test-static-base"]
+    },
+    {
+      "name": "test-audit-static",
+      "inherits": ["test-audit-base", "test-static-base"]
+    },
+    {
+      "name": "test-release-static",
+      "inherits": ["test-release-base", "test-static-base"]
+    },
+    {
+      "name": "test-dev-system",
+      "inherits": ["test-dev-base", "test-system-base"]
+    },
+    {
+      "name": "test-audit-system",
+      "inherits": ["test-audit-base", "test-system-base"]
+    },
+    {
+      "name": "test-release-system",
+      "inherits": ["test-release-base", "test-system-base"]
+    },
+    {
+      "name": "test-dev-all",
+      "inherits": "test-dev-base"
+    },
+    {
+      "name": "test-audit-all",
+      "inherits": "test-audit-base"
+    },
+    {
+      "name": "test-release-all",
+      "inherits": "test-release-base"
+    }
+  ],
+
+  "workflowPresets": [
+  {
+    "name": "verify-dev",
+    "steps": [
+      {"type": "configure", "name": "dev"},
+      {"type": "build", "name": "dev"},
+      {"type": "test", "name": "test-dev-all"}
+    ]
+  },
+  {
+    "name": "verify-audit",
+    "steps": [
+      {"type": "configure", "name": "audit"},
+      {"type": "build", "name": "audit"},
+      {"type": "test", "name": "test-audit-all"}
+    ]
+  },
+  {
+    "name": "verify-release",
+    "steps": [
+    {"type": "configure", "name": "release"},
+    {"type": "build", "name": "release"},
+    {"type": "test", "name": "test-release-all"}
+    ]
+  }
+  ]
+}
+

@@ -1,0 +1,28 @@
+# repository data
+.git/
+.gitignore
+
+# temporary files
+.vscode/
+.idea/
+*.swp
+*.log
+
+# binaries
+build/
+bin/
+exe/
+*.o
+*.a
+*.so
+*.out
+
+# documentation
+docs/
+src/.doc
+
+# local results
+**/run/
+tests/system_validation/sv_test_fit_fast/results/*
+!tests/system_validation/sv_test_fit_fast/results/.gitkeep
+

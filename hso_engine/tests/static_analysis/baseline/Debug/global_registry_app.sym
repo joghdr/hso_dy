@@ -1,0 +1,3 @@
+b guard variable for hso::Minimize(ROOT::Minuit2::FCN&, ROOT::Minuit2::MnUserParameters&)::min
+b hso::Minimize(ROOT::Minuit2::FCN&, ROOT::Minuit2::MnUserParameters&)::min
+d hso::kDirData
