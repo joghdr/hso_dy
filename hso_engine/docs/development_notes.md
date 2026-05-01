@@ -2,7 +2,7 @@
 ## Current Global State Staged for Refactor
 The engine was developed to produce a specific analysis of Drell-Yan for publication. However, before more computationally intensive tasks can be made with the engine, such as analyzing all available data sets or running high-performance Montecarlo simulations, significant improvements have to be implemented.
 
-The main source of technical debt is the proliferation of global state, which prevents the implementation of parallelism and efficient concurrency into the engine. The following is registry of the global state symbols currently in the engine. An incremental refactor of the code will aim at elmininating these globals.
+The main source of technical debt is the proliferation of global state, which prevents the implementation of parallelism and efficient concurrency into the engine. The following is the registry of the global state symbols currently in the engine. An incremental refactor of the code will aim at elmininating these globals.
 
 ### **Global Dependency Registry**
 | Unique ID | Symbol Name | Definition Site | Data Type | Access (R/W) | Impacted Files |
