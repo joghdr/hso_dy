@@ -33,7 +33,7 @@ The settings of the fit are controlled by two input files:
 The user can control the behaviour of the fitter by directly modifying these files.
 
 ### Running the Fitter and Producing Hessian bands
-*NOTE: Before running the programs, the user must build the executables, see [build](https://github.com/joghdr/hso_dy/blob/main/docs/build_info.md)*
+*NOTE: Before running the programs, the user must build the executables, see [build](build_info.md)*
 
 The programs are run through helper scripts
 
