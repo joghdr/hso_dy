@@ -24,16 +24,11 @@ jobs:
           echo "HSO_VERSION=$(cat hso_engine/VERSION)" >> $GITHUB_OUTPUT
           echo "HSO_IMAGE_NAME=$(grep -oP 'set[[:space:]]*\([[:space:]]*ENGINE_TARGET \K[^)]+' hso_engine/CMakeLists.txt | tr -d '"')" >> $GITHUB_OUTPUT
 
-      - name: build and verify
+      - name: build and verify via cmake orchestration
         run: |
-          docker build \
-            -f hso_engine/Dockerfile \
-            --target hso-dy-build \
-            --build-arg HSO_IMAGE_NAME=${{steps.meta.outputs.HSO_IMAGE_NAME}} \
-            --build-arg HSO_VERSION=${{steps.meta.outputs.HSO_VERSION}} \
-            --cache-from=type=gha \
-            --cache-to=type=gha,mode=max \
-            -t hso-verify:latest .
+          cmake --preset release
+          cmake --build --preset release --target hso_docker_image_engine
+          
 
       - name: status
         run: echo "CI Verification OK"
