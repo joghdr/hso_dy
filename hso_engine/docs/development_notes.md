@@ -1,6 +1,6 @@
 # Hadron Structure Oriented approach to TMD phenomenology - Drell-Yan
 ## Current Global State Staged for Refactor
-The engine was develop to produce an analysis of Drell-Yan data prepared for publication. However, there are significant improvements to be made
+The engine was develop to produce an analysis of Drell-Yan for publication. However, there are significant improvements to be made
 before the engine can be scalable, which is a must for more comprehensive analysis like using more data sets, running Montecarlo simulations.
 
 The main source of technical debt is the proliferation of global state, which prevents the engine from being truly modular and thread safe.
