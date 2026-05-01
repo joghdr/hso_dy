@@ -1,7 +1,10 @@
-## Instructions: Docker build and run
+# Hadron Structure Oriented approach to TMD phenomenology - Drell-Yan
+
+## Build Instructions
 This assumes the user works in a debian based system. Instructions for other
 systems are not provided but there should be analogous steps.
-### Docker
+
+### Setting Docker
 The user must install Docker first (instructions not provided here). Upon installation, to avoid the need for `sudo` run the commands from a terminal:
 
   ```bash

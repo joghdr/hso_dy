@@ -13,6 +13,9 @@ Other relevant publications on the HSO approach are:
   - [Phys.Rev.D 106 (2022) 3, 034002](https://inspirehep.net/literature/2080521)
   - [Phys.Rev.D 107 (2023) 9, 094029](https://inspirehep.net/literature/2640018)
 
+## Development
+For technical debt and planned refactor path notes, see [Development Notes](hso_engine/docs/development_notes.md)
+
 ## Build Requirements
 
 The build system requires`CMake(3.28)`, `Ninja(1.11)` and `Docker(29.4)`, which the user must pre-install.

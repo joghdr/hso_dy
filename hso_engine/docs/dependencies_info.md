@@ -1,16 +1,15 @@
-
 # Hadron Structure Oriented approach to TMD phenomenology - Drell-Yan
 
 ## User vs Developer
-Details to build the executables in a host machine are provided here, but they are meant for developers or advanced users that require to modify the source code, e.g. define custom models. Otherwise, a user may skip these steps and simply build (see [build](build_info.md)) and run executables (see [guide](guide.md)) using a
-the containerized Docker environment.
 
-## Build Requirements
+Details to build the executables in a host machine are provided here, but they are meant for developers or advanced users that require to modify the source code, e.g. define custom models. Otherwise, a user may skip these steps and simply build (see [build](build_info.md)) and run executables (see [guide](guide.md)) using the containerized Docker environment.
+
+### Build Requirements
 
 The build system requires`CMake(3.28)`, `Ninja(1.11)` and `Docker(29.4)`, which the user must pre-install.
 
 
-## Dependencies
+### Dependencies
 The code relies on several external libraries and packages. In order to build
 the code locally, the user must first install:
 
