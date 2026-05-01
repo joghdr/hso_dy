@@ -39,27 +39,33 @@ set(
   src/WDY_hso.cpp
 )
 
-include(HSODependencyFinder)
 
-find_package(GSL REQUIRED)
-find_package(Minuit2 CONFIG REQUIRED)
-hso_find_dependency(LHAPDF lhapdf "LHAPDF/LHAPDF.h")
-hso_find_dependency(cuba cuba "cuba.h")
+  add_library(${ENGINE_TARGET}_obj OBJECT ${CORE_SOURCES})
+  set(OBJ_DIR "$<TARGET_PROPERTY:${ENGINE_TARGET}_obj,BINARY_DIR>/CMakeFiles/${ENGINE_TARGET}_obj.dir")
+  target_include_directories(${ENGINE_TARGET}_obj PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
-add_library(${ENGINE_TARGET}_obj OBJECT ${CORE_SOURCES})
-set(OBJ_DIR "$<TARGET_PROPERTY:${ENGINE_TARGET}_obj,BINARY_DIR>/CMakeFiles/${ENGINE_TARGET}_obj.dir")
-target_include_directories(${ENGINE_TARGET}_obj PUBLIC "${CMAKE_SOURCE_DIR}/include")
+  add_library(${ENGINE_TARGET} STATIC $<TARGET_OBJECTS:${ENGINE_TARGET}_obj>)
+  target_include_directories(${ENGINE_TARGET} PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
-add_library(${ENGINE_TARGET} STATIC $<TARGET_OBJECTS:${ENGINE_TARGET}_obj>)
-target_include_directories(${ENGINE_TARGET} PUBLIC "${CMAKE_SOURCE_DIR}/include")
+  target_link_libraries(${ENGINE_TARGET} PUBLIC ${ENGINE_TARGET}_obj)
 
-target_link_libraries(${ENGINE_TARGET} PUBLIC ${ENGINE_TARGET}_obj)
-target_link_libraries(${ENGINE_TARGET}_obj PUBLIC
-    GSL::gsl
-    Minuit2::Minuit2
-    LHAPDF::LHAPDF
-    cuba::cuba
-)
+option(HSO_DOCKER_ONLY "skip dependency check, done by Docker" OFF)
+
+if(NOT HSO_DOCKER_ONLY)
+  include(HSODependencyFinder)
+
+  find_package(GSL REQUIRED)
+  find_package(Minuit2 CONFIG REQUIRED)
+  hso_find_dependency(LHAPDF lhapdf "LHAPDF/LHAPDF.h")
+  hso_find_dependency(cuba cuba "cuba.h")
+
+  target_link_libraries(${ENGINE_TARGET}_obj PUBLIC
+      GSL::gsl
+      Minuit2::Minuit2
+      LHAPDF::LHAPDF
+      cuba::cuba
+  )
+endif()
 
 add_executable(HSODrellYanFitter programs/HSODrellYanFitter.cpp)
 target_link_libraries(HSODrellYanFitter PRIVATE  ${ENGINE_TARGET})
