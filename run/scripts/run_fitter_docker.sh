@@ -2,7 +2,7 @@
 # Run the docker build (see Dockerfile)
 catch="${1}"
 
-if [[ -z "${catch_1}" || -z "${catch_2}" ]]; then
+if [[ -z "${catch}"  ]]; then
 
   echo  -e \
    "Need 1 argument. Try running:
