@@ -23,18 +23,8 @@ namespace hso{
 
   public:
 
-    Data();
-
-    Data(std::string file_name_in){Init(file_name_in);number_of_eigen_=0;}
-
-    Data(std::string file_name_in,std::string name_in){Init(file_name_in);name_=name_in;number_of_eigen_=0;}
-
-    ~Data(){};
-
     //methods
     void UpdateActive();
-
-    void Init(std::string file_name_in);
 
     std::vector<double> Get(int i,bool check=true,bool omit_errors=false);
     ///read variable values, meas and errors
@@ -62,8 +52,6 @@ namespace hso{
 
     void Info();
 
-    void SetBehavior();
-
     //members
     bool set_is_active_;
 
@@ -88,14 +76,6 @@ namespace hso{
     std::string dir_name_;
 
     std::string file_name_;
-
-    std::string key_;
-
-    std::vector<std::string> data_lines_;
-
-    std::vector<std::string> comment_lines_;
-
-    std::vector<int> dim_;
 
     std::vector<bool> point_is_valid_;
 

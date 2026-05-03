@@ -32,13 +32,13 @@ function hso_sed_clean {
 
   fname="$1"
 
-  if [[ ! -f "${fname}" ]] ; then
+#   if [[ ! -f "${fname}" ]] ; then
 
-    hso_print_err "Helperfunction hso_sed_clean: file ${fname:-<EMPTY>} not found."
+#     hso_print_err "Helperfunction hso_sed_clean: file ${fname:-<EMPTY>} not found."
 
-    exit 1
-  fi
-
+#     exit 1
+#   fi
+#
   sed -E -e 's|//+.*$||g' -e 's|/\*.*\*/||g' -e '/^[[:space:]]*$/d' "${fname}"
 
 }
