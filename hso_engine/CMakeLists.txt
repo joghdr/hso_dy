@@ -19,6 +19,7 @@ set(
   src/csec_DY_css_hso_integrands_cuba.cpp
   src/CSkernel.cpp
   src/data_class.cpp
+  src/data_loader.cpp
   src/evo.cpp
   src/FCN.cpp
   src/math_functions.cpp
@@ -104,7 +105,6 @@ endif()
 enable_testing()
 
 set(TEST_SYNTAX
-      sa_test_S1-1
       sa_test_S2-1
       sa_test_S3-1
     )

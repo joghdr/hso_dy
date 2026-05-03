@@ -44,136 +44,6 @@ namespace hso{
       set_is_active_=true;
 
   }
-
-  void Data::Init(std::string fname_in){
-
-    std::string name_f(fname_in);
-
-    std::string name_d(fname_in);
-
-    std::size_t pos=name_f.rfind("/");
-
-    if(pos!=std::string::npos) {
-
-      name_f.erase(0,pos+1);
-
-      name_d.erase(pos+1,name_d.length()-pos);
-
-    }
-
-    else {
-
-      name_d.assign("./");
-
-    }
-
-    file_name_=name_f;
-
-    dir_name_=name_d;
-
-    pos=name_f.rfind(".");
-
-    if (pos != std::string::npos) {
-
-      name_f.erase(pos,name_f.length()-pos);
-
-      name_ = name_f;
-
-    }
-
-    else
-
-      name_ = name_f;
-
-    std::string key=read_data::LoadFile(dir_name_ + file_name_, data_lines_,
-
-                                        comment_lines_, dim_, var_bin_names_,
-
-                                        var_int_names_, var_avg_names_, meas_names_,
-
-                                        err_names_, input_column_number_);
-
-    std::map<std::string,int> dictionary;
-
-    dictionary=read_data::GetDictionary(key, var_bin_names_, var_int_names_,
-
-                                        var_avg_names_, meas_names_, err_names_);
-
-    while (read_data::ReadLineValues(dictionary, data_lines_, var_bin_names_,
-
-      var_int_names_,var_avg_names_,meas_names_,err_names_,
-
-      var_bin_avg_,var_bin_min_,var_bin_max_,var_int_min_,
-
-      var_int_max_,var_avg_,meas_values_,err_values_)
-    );
-
-    number_of_var_bin_ = var_bin_names_.size();
-
-    number_of_var_int_ = var_int_names_.size();
-
-    number_of_var_avg_ = var_avg_names_.size();
-
-    number_of_meas_ = 1;
-
-    number_of_err_=err_names_.size();
-    //maps for easy acess to values
-    for(int j=0;j<number_of_var_bin_;j++)
-
-      varbin_j_.insert({var_bin_names_[j],j});
-
-    for(int j=0;j<number_of_var_int_;j++)
-
-      varint_j_.insert({var_int_names_[j],j});
-
-    for(int j=0;j<number_of_var_avg_;j++)
-
-      varavg_j_.insert({var_avg_names_[j],j});
-
-    for(int k=0;k<number_of_err_ ;k++)
-
-      err_k_.insert({err_names_[k],k});
-    //set active length, valid and active
-    length_ = meas_values_.size();
-    //mark lines that are not valid
-    std::vector<bool> (length_,false).swap(point_is_valid_);
-
-    for(int i=0;i<length_;i++ ) if(meas_values_[i]==meas_values_[i]) point_is_valid_[i]=true;
-    //mark all valid bins as active and count active bins
-    std::vector<bool> (length_,false).swap(point_is_active_);
-
-    length_active_=0;
-
-    for (int i=0;i<length_;i++ ) {
-
-      if(point_is_valid_[i]) {
-
-        point_is_active_[i]=true;
-
-        length_active_++;
-
-        set_is_active_=true;
-
-      }
-
-    }
-
-    read_data::SearchOtherKeys(comment_lines_, other_vars_);
-    //Sep 2023
-    std::vector<double> (meas_values_.size(),NAN).swap(theory_values_);
-
-    std::vector<double> (meas_values_.size(),1.0).swap(norm_values_);
-
-    std::vector<double> (meas_values_.size(),0.0).swap(shift_values_);
-
-    normalize_=false;
-
-    shift_=false;
-
-    SetBehavior();
-
-  }
-
   //methods
   std::vector<double> Data::Get(int i,bool check,bool omit_errors){
 
@@ -604,8 +474,6 @@ namespace hso{
 
     std::cout<<"#file_name_ = "<<file_name_ <<std::endl;
 
-    std::cout<<"#key = "<<key_ <<std::endl;
-
     std::cout<<"#set_is_active_ = "<< set_is_active_ <<std::endl;
 
     std::cout<<"#length_ = "<< length_ <<std::endl;
@@ -651,8 +519,6 @@ namespace hso{
       std::cout<<name<<"\t";
 
     std::cout<<std::endl;
-
-    std::cout<<"#rows="<<dim_[0]<<" cols="<<dim_[1]<<std::endl;
 
     std::cout<<"#varbin_j_: ";
 
@@ -717,33 +583,6 @@ namespace hso{
     }
 
   }
-  //Sep 2023
-  void Data::SetBehavior(){
 
-    using hso::read_data::ColumnType;
-
-    for(auto name: var_bin_names_)
-
-      var_type_[name]=static_cast<int>(ColumnType::VariableBin);
-
-    for(auto name: var_int_names_)
-
-      var_type_[name]=static_cast<int>(ColumnType::VariableRange);
-
-    for(auto name: var_avg_names_)
-
-      var_type_[name]=static_cast<int>(ColumnType::VariableAvg);
-
-    for(auto entry: other_vars_ ) {
-
-      std::string name = entry.first;
-
-      int behavior= std::get<0>(other_vars_[name]);
-
-      var_type_[name]=behavior;
-
-    }
-
-  }
 
 }//hso

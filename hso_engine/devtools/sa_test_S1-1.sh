@@ -14,6 +14,8 @@ source "${HSO_TEST_HELPER_FILE}"
 violations=$(hso_sed_clean <(grep -rwE "static"  "${HSO_INC_DIR}" ) | \
               grep -vE "static_cast|static_assert" || true  )
 
+
+
 if [[ -n "${violations//[[:space:]]/}" ]]; then
 
   hso_print_err "Static symbols found in header" "${violations}"
