@@ -31,11 +31,9 @@
 #include <sstream>
 #include <iomanip>
 #include <cmath>
-#include <sys/stat.h> // IWYU pragma: keep
 #include <cstdlib>
 #include <cstdio>
 #include <utility>
-// #include <algorithm>
 
 using  std::string;
 
@@ -206,29 +204,14 @@ namespace hso{
 
     void WriteCovariance(ROOT::Minuit2::FunctionMinimum* min){
 
-      struct stat sb;
+      std::filesystem::path dir_path(home_dir + "/" + "cov");
 
-      int check;
+      std::filesystem::create_directories(dir_path);
 
-      std::string dir(home_dir + "/" + "cov");
+      std::string dir(dir_path.string());
 
       ROOT::Minuit2::MnUserParameters upar = min->UserParameters() ;
 
-      if (stat(home_dir.c_str(), &sb) != 0) {
-
-        std::cout<<"Can't find dir "<<home_dir<<". Aborting."<<std::endl;
-
-        std::exit(1);
-
-      }
-
-      if (stat(dir.c_str(), &sb) != 0){
-
-        check=mkdir(dir.c_str(),0777);
-
-        std::cout<<"making new directory '"<<dir<<"': "<<check<<"\n";
-
-      }
       //NOTE:for errors
       int number_of_free_parameters = GetFreeParaNumber( upar );
 
@@ -707,18 +690,16 @@ namespace hso{
       std::cout<<std::endl;
 
     }
-    //NOTE functions needed for InitHessianBands and HessianBands
-    void FilesInDir(const std::string dir,std::vector<std::string> &filenames){
 
-      std::string path = "/home/jogh/research/HSO_DY/test";
+    void FilesInDir(const std::string dir, std::vector<std::string> &filenames){
 
-      for (const auto & entry : fs::directory_iterator(dir))
+      for (const auto &entry : fs::directory_iterator(dir))
 
         filenames.push_back( entry.path() );
 
     }
 
-    void FilesInDir(std::string dir,std::string substring,std::vector<std::string > &filenames){
+    void FilesInDir(const std::string dir, const std::string substring, std::vector<std::string > &filenames){
 
       std::vector<std::string> new_filenames(0);
 
@@ -738,7 +719,7 @@ namespace hso{
 
     }
 
-    std::string FileInDirUnique(std::string dir, std::string substring){
+    std::string FileInDirUnique(const std::string dir, const std::string substring){
 
       std::vector<std::string> filenames(0);
 
@@ -756,7 +737,7 @@ namespace hso{
 
       }
 
-      else if (filenames_size >1) {
+      else if (filenames_size > 1) {
 
         std::cout<<"\n#Error: file '*"<<substring<<"*' is not unique in directory '"
 
@@ -817,17 +798,9 @@ namespace hso{
 
     home_dir = argv[3];
 
-    std::string input_dir;
+    std::filesystem::path home_dir_path(home_dir);
 
-    input_dir = home_dir + "/input/";
-
-    std::string para_dir ;
-
-    para_dir = home_dir + "/input/";
-
-    int check = mkdir(home_dir.c_str(),0777);
-
-    if(check!=0){
+    if (! std::filesystem::create_directories(home_dir_path)){
 
       std::cout<<"folder '"<<home_dir<<"' exists. Aborting"<<std::endl;
 
@@ -835,53 +808,53 @@ namespace hso{
 
     }
 
-    else {
+    std::string input_dir = home_dir + "/input/";
 
-      check = mkdir(input_dir.c_str(),0777);
+    std::filesystem::path input_dir_path(input_dir);
 
-    }
+    std::filesystem::create_directories(input_dir_path);
 
-    if(check==0){
+    std::string para_dir(input_dir) ;
 
-      std::string line;
-      //cp input file
-      std::ifstream input_file (kinematics_filename); //open originial input file
+    std::string line;
+    //cp input file
+    std::ifstream input_file (kinematics_filename); //open originial input file
 
-      kinematics_filename=hso::read_data::ExtractFname(kinematics_filename); //get file name without path
+    kinematics_filename=hso::read_data::ExtractFname(kinematics_filename); //get file name without path
 
-      std::ofstream input_file_copy( input_dir + "/" + kinematics_filename); //open new file
+    std::ofstream input_file_copy( input_dir + "/" + kinematics_filename); //open new file
 
-      while(getline(input_file,line))
+    while(getline(input_file,line))
 
-        input_file_copy<<line<<"\n";
+      input_file_copy<<line<<"\n";
 
-      input_file.close();
+    input_file.close();
 
-      input_file.clear();
+    input_file.clear();
 
-      input_file_copy.close();
+    input_file_copy.close();
 
-      input_file_copy.clear();
-      //cp para file
-      input_file.open(para_filename); //open original para file
+    input_file_copy.clear();
+    //cp para file
+    input_file.open(para_filename); //open original para file
 
-      para_filename=hso::read_data::ExtractFname(para_filename); //get file name without path
+    para_filename=hso::read_data::ExtractFname(para_filename); //get file name without path
 
-      input_file_copy.open(para_dir + "/" + para_filename); //open new file
+    input_file_copy.open(para_dir + "/" + para_filename); //open new file
 
-      while(getline(input_file,line))
+    while(getline(input_file,line))
 
-        input_file_copy<<line<<"\n";
+      input_file_copy<<line<<"\n";
 
-      input_file .close();
+    input_file .close();
 
-      input_file_copy.close();
-      //to use the newly created copies.
-      kinematics_filename.assign( input_dir + "/" + kinematics_filename);
+    input_file_copy.close();
+    //to use the newly created copies.
+    kinematics_filename.assign( input_dir + "/" + kinematics_filename);
 
-      para_filename.assign( para_dir + "/" + para_filename);
+    para_filename.assign( para_dir + "/" + para_filename);
 
-    }
+
 
   }
 
@@ -1093,7 +1066,9 @@ namespace hso{
     /////set output dirs and streams for minuit output
     std::string dir=home_dir + "/" + minimum_dir;
 
-    mkdir(dir.c_str(),0777);
+    std::filesystem::path dir_path(dir);
+
+    std::filesystem::create_directories(dir_path);
 
     std::ofstream minimum_output_file(dir + "/" + "minimum.dat");
     ///write to log file
@@ -1181,73 +1156,65 @@ namespace hso{
 
     std::cout<<std::endl;
     //print final status for the parameters in a format readable to 'read_parameters::read_para'
-    dir=home_dir+"/"+"status";
+    std::string final_para_dir=home_dir+"/"+"status";
 
-    int check;
+    std::filesystem::path final_para_dir_path(final_para_dir);
 
-    check=mkdir(dir.c_str(),0777);
+    std::filesystem::create_directories(final_para_dir_path);
 
-    if(check != 0)
+    std::string status_filename=hso::read_data::ExtractFname(para_filename);
 
-      std::cout<<"Error: problem with '"<<dir<<"'. Either Directory exists"
+    std::ofstream status_output_file(final_para_dir + "/" + status_filename);
 
-               <<" or cannot be created. Skipping."<<std::endl;
+    status_output_file<<std::left;
 
-    else {
+    status_output_file<<std::setw(20)<<"#name";
 
-      std::string status_filename=hso::read_data::ExtractFname(para_filename);
+    status_output_file<<std::setw(13)<<"central_value";
 
-      std::ofstream status_output_file(dir + "/" + status_filename);
+    status_output_file<<std::setw( 7)<<"is_free";
+
+    status_output_file<<std::setw(13)<<"error";
+
+    status_output_file<<std::setw(10)<<"is_limited";
+
+    status_output_file<<std::setw(13)<<"lower_limit";
+
+    status_output_file<<std::setw(13)<<"upper_limit";
+
+    status_output_file<<"\n\n";
+
+    int central_size = static_cast<int>(para_central_value.size());
+
+    for(int i_central = 0; i_central < central_size; i_central++){
+
+      para_central_value[i_central]=min.UserState().Value(parameter_names[i_central]);
+
+      para_error[i_central]=min.UserState().Error(parameter_names[i_central]);
 
       status_output_file<<std::left;
 
-      status_output_file<<std::setw(20)<<"#name";
+      status_output_file<<std::setw(20)<<parameter_names[i_central];
 
-      status_output_file<<std::setw(13)<<"central_value";
+      status_output_file<<std::setw(13)<< para_central_value[i_central];
 
-      status_output_file<<std::setw( 7)<<"is_free";
+      status_output_file<<std::setw( 7)<< para_is_free[i_central];
 
-      status_output_file<<std::setw(13)<<"error";
+      status_output_file<<std::setw(13)<< para_error[i_central];
 
-      status_output_file<<std::setw(10)<<"is_limited";
+      status_output_file<<std::setw(10)<< para_is_limited[i_central];
 
-      status_output_file<<std::setw(13)<<"lower_limit";
+      status_output_file<<std::setw(13)<< para_lower_limit[i_central];
 
-      status_output_file<<std::setw(13)<<"upper_limit";
+      status_output_file<<std::setw(13)<< para_upper_limit[i_central];
 
       status_output_file<<"\n\n";
 
-      int central_size = static_cast<int>(para_central_value.size());
-
-      for(int i_central = 0; i_central < central_size; i_central++){
-
-        para_central_value[i_central]=min.UserState().Value(parameter_names[i_central]);
-
-        para_error[i_central]=min.UserState().Error(parameter_names[i_central]);
-
-        status_output_file<<std::left;
-
-        status_output_file<<std::setw(20)<<parameter_names[i_central];
-
-        status_output_file<<std::setw(13)<< para_central_value[i_central];
-
-        status_output_file<<std::setw( 7)<< para_is_free[i_central];
-
-        status_output_file<<std::setw(13)<< para_error[i_central];
-
-        status_output_file<<std::setw(10)<< para_is_limited[i_central];
-
-        status_output_file<<std::setw(13)<< para_lower_limit[i_central];
-
-        status_output_file<<std::setw(13)<< para_upper_limit[i_central];
-
-        status_output_file<<"\n\n";
-
-      }
-
-      status_output_file.close();
-
     }
+
+    status_output_file.close();
+
+
     // rerun fit with final fixed paramters. This is to store final values of theory,
     // chi2 pt by pt (and make sure lines correspond to final status of parameters)
     for (int i_parafix = 0; i_parafix < para_names_size; i_parafix++)
@@ -1283,37 +1250,16 @@ namespace hso{
 
     std::vector<bool > write_file(0);
 
-    struct stat sb;
-
-    int check;
-
     std::string dir2( home_dir + "/" + subdir );
 
-    if (stat(home_dir.c_str(), &sb) != 0) {
+    std::filesystem::path dir2_path(dir2);
 
-      std::cout<<"Can't find dir "<<home_dir<<". Aborting."<<std::endl;
+    std::filesystem::create_directories(dir2_path);
 
-      std::exit(1);
-
-    }
     //get all names for files
     for(auto set: *(stat_in->data_) ) {
 
       if(set->set_is_active_){
-
-        if (stat(dir2.c_str(), &sb) != 0){
-
-          check=mkdir(dir2.c_str(),0777);
-
-          if(check != 0){
-
-            std::cout<<"warning: mkdir returned check = "<<check
-
-                     <<" when trying to create '"<<dir2<<"'\n";
-
-          }
-
-        }
 
         std::string stat_dir(set->dir_name_);
 
@@ -1323,10 +1269,12 @@ namespace hso{
 
         std::string dir=home_dir + "/" + stat_dir ;
 
-        if (stat(dir.c_str(), &sb) != 0)
+        std::cout<<"FULLDIR   - - - - -  "<<dir<<std::endl;
 
-          check=mkdir(dir.c_str(),0777);
-        //set file name: changes extension to ".stat"; if !found add extension .stat
+        std::filesystem::path dir_path(dir);
+
+        std::filesystem::create_directories(dir_path);
+
         std::string filename(set->file_name_);
 
         size_t pos=filename.rfind(".");
@@ -1599,6 +1547,7 @@ namespace hso{
 
     home_dir = argv[2];
 
+
     if(argc-1 >= 3)
 
       eigen_filename_global.assign(argv[3]);
@@ -1619,27 +1568,9 @@ namespace hso{
 
     para_filename.assign( FileInDirUnique( fit_dir + "/status/", "para" ) );
 
-    std::string input_dir;
+    std::filesystem::path home_dir_path(home_dir);
 
-    input_dir = home_dir + "/input/" ;
-
-    std::string para_dir ;
-
-    para_dir = home_dir + "/status/" ;
-
-    std::string eigen_dir ;
-
-    eigen_dir = home_dir + "/status/" ;
-
-    int check0 = mkdir(home_dir.c_str(),0777);
-
-    int check1 = 0;
-
-    int check2 = 0;
-
-    int check3 = 0;
-
-    if(check0!=0){
+    if ( ! std::filesystem::create_directories(home_dir_path) ){
 
       std::cout<<"folder "<<home_dir<<" exists. Aborting"<<std::endl;
 
@@ -1647,15 +1578,26 @@ namespace hso{
 
     }
 
-    else{
+    //create output directories
+    std::string input_dir;
 
-      check1 = mkdir(input_dir.c_str(),0777);
+    input_dir = home_dir + "/input/" ;
 
-      check2 = mkdir(para_dir .c_str(),0777);//same for eigensets
+    std::filesystem::path input_dir_path(input_dir);
 
-    }
+    std::filesystem::create_directories(input_dir_path);
 
-    if(check1==0){
+    std::string para_dir ;
+
+    para_dir = home_dir + "/status/" ;
+
+    std::filesystem::path para_dir_path(para_dir);
+
+    std::filesystem::create_directories(para_dir_path);
+
+    std::string eigen_dir(para_dir);
+
+    if(0){
 
       std::string line;
       //cp input file
@@ -1675,7 +1617,7 @@ namespace hso{
 
     }
 
-    if(check2==0){
+    if(0){
 
       std::string line;
       //cp para file
