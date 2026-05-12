@@ -95,6 +95,27 @@ namespace hso {
     return &(it->second);
   }
 
+  //Adds the filename taken from path into subdir. File does not need to exist since no copy is made.
+  void OutputDirectoryTree::AddFilePath(const fs::path &file, const std::string &file_key, const std::string &subdir_name){
+
+    const fs::path* subdir = GetSubdir(subdir_name);
+
+    if (!subdir) {
+
+      std::cout<<"Could not add "<<file.string()<<". Subdirectory "<<subdir_name<<" not in registry."<<std::endl;
+
+      return;
+
+    }
+
+    const fs::path new_file = *subdir / file.filename();
+
+    std::error_code err;
+
+    files_[file_key] = new_file;
+
+  }
+  //Adds file name from path into subdir in object AND copies to disk
   void OutputDirectoryTree::AddFile(const fs::path &file, const std::string &file_key, const std::string &subdir_name){
 
     const fs::path* subdir = GetSubdir(subdir_name);
@@ -115,7 +136,7 @@ namespace hso {
 
       std::cout<<"Could not copy file "<<file.string()<<": std::filesystem message:\n"<<err.message()<<std::endl;
 
-      return;
+    return;
 
     }
 

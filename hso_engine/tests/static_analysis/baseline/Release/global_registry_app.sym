@@ -1,5 +1,7 @@
+b guard variable for hso::ContextRegistry::GetInstance()::unique_instance
 b guard variable for hso::Minimize(ROOT::Minuit2::FCN&, ROOT::Minuit2::MnUserParameters&)::min
 b guard variable for hso::nucleon_number
 b guard variable for hso::Parton_charge
+b hso::ContextRegistry::GetInstance()::unique_instance
 b hso::Minimize(ROOT::Minuit2::FCN&, ROOT::Minuit2::MnUserParameters&)::min
 d hso::kDirData

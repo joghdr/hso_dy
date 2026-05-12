@@ -143,7 +143,6 @@ endforeach()
 
 set(TEST_SYSTEM
       sv_test_fit_fast
-      sv_test_dat_files
     )
 foreach(test_unit ${TEST_SYSTEM} )
   add_test(

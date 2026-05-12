@@ -61,8 +61,6 @@ namespace hso{
 
   std::string para_filename {""};
 
-  std::string minimum_dir("./min/");
-
   namespace utils{
 
     bool verbose=true;
@@ -205,7 +203,9 @@ namespace hso{
 
     void WriteCovariance(ROOT::Minuit2::FunctionMinimum* min){
 
-      const fs::path* cov_dir = ContextRegistry::GetInstance()->RequestContext("fitter_output")->GetSubdir("cov");
+      OutputDirectoryTree* output_ctx = ContextRegistry::GetInstance()->RequestContext("fitter_output");
+
+      const fs::path* cov_dir = output_ctx->GetSubdir("cov");
 
       ROOT::Minuit2::MnUserParameters upar = min->UserParameters() ;
 
@@ -240,7 +240,11 @@ namespace hso{
 
         }
         /////////write covariance
-        std::ofstream output_file(*cov_dir / "covariance.dat");
+        fs::path cov_file_path = *cov_dir / "covariance.dat";
+
+        output_ctx->AddFilePath(cov_file_path, "covariance", "cov");
+
+        std::ofstream output_file(cov_file_path);
 
         output_file<<"#+++++++++++covariance+++++++++++"<<std::endl;
 
@@ -258,7 +262,11 @@ namespace hso{
 
         output_file.clear();
         ////////////////write cholesky////////////////////////
-        output_file.open(*cov_dir / "cholesky.dat");
+        fs::path cholesky_file_path = *cov_dir / "cholesky.dat";
+
+        output_ctx->AddFilePath(cholesky_file_path, "cholesky", "cov");
+
+        output_file.open(cholesky_file_path);
 
         output_file<<"#+++++++++++cholesky+++++++++++"<<std::endl;
 
@@ -280,7 +288,9 @@ namespace hso{
 
     void WriteCovarianceEigen(std::string covariance_filename) {
 
-      const fs::path* cov_dir = ContextRegistry::GetInstance()->RequestContext("fitter_output")->GetSubdir("cov");
+      OutputDirectoryTree* output_ctx = ContextRegistry::GetInstance()->RequestContext("fitter_output");
+
+      const fs::path* cov_dir = output_ctx->GetSubdir("cov");
 
       std::vector<double> matrix(0);
 
@@ -312,7 +322,11 @@ namespace hso{
 
         gsl_eigen_symmv_free(Weigen);
         ///write eigen values and eigen vectors (matrix form)
-        std::ofstream output_file(*cov_dir / "eigen.dat");
+        fs::path eigen_file_path = *cov_dir / "eigen.dat";
+
+        output_ctx->AddFilePath(eigen_file_path, "eigen", "cov");
+
+        std::ofstream output_file(eigen_file_path);
 
         if(output_file){
 
@@ -350,7 +364,7 @@ namespace hso{
 
         else{
 
-          std::cout<<"#Warning: could not open '"<<(*cov_dir / "eigen.dat").string()<<"'. "<<std::endl;
+          std::cout<<"#Warning: could not open '"<<eigen_file_path.string()<<"'. "<<std::endl;
 
         }
 
@@ -1267,9 +1281,9 @@ namespace hso{
 
     double chi2_min= min.Fval();
 
-    std::string covariance_filename (home_dir + "/cov/covariance2.dat");
+    OutputDirectoryTree* output_ctx = ContextRegistry::GetInstance()->RequestContext("fitter_output");
 
-    std::string eigen_filename(home_dir + "/cov/eigen.dat" );
+    const fs::path* eigen_file_path = output_ctx->GetFile("eigen");
     //vectors
     std::vector< int> row_indices(0);
 
@@ -1283,19 +1297,15 @@ namespace hso{
 
     std::vector<double> eva;
 
-    ReadVector(eigen_filename, "#eva:", eva);
+    ReadVector(eigen_file_path->string(), "#eva:", eva);
     //matrices
-    std::vector<double> cov;
-
-    ReadSquareMatrix(covariance_filename, "#cov:", row_indices, col_indices, cov);
-
     std::vector<double> eve;
 
-    ReadSquareMatrix(eigen_filename, "#eve:", row_indices, col_indices, eve);
+    ReadSquareMatrix(eigen_file_path->string(), "#eve:", row_indices, col_indices, eve);
 
     std::vector<double> evet;
 
-    ReadSquareMatrix(eigen_filename, "#evet:", row_indices, col_indices, evet);
+    ReadSquareMatrix(eigen_file_path->string(), "#evet:", row_indices, col_indices, evet);
 
     int central_size = static_cast<int>(para_central_value.size());
 
@@ -1331,7 +1341,11 @@ namespace hso{
 
     TransformParameters(evet,parameters,transformed_parameters,free_index);
 
-    std::ofstream scan_output_file(home_dir + "/cov/scan.dat");
+    output_ctx->AddFilePath("scan.dat", "scan", "cov");
+
+    const fs::path* scan_file_path = output_ctx->GetFile("scan");
+
+    std::ofstream scan_output_file(*scan_file_path);
 
     theFCN.log_file_=&scan_output_file;
 
@@ -1398,8 +1412,12 @@ namespace hso{
       scan_output_file<<"------------------------------------------------------------"<<std::endl;
 
     }
+    //TODO: add eigensets.dat file to fitter_output ctx and prepare path to pass to ofstream constructor
+    output_ctx->AddFilePath("eigensets.dat", "eigensets", "min");
 
-    std::ofstream output_file(home_dir + "/min/eigensets.dat");
+    const fs::path* eigensets_file_path = output_ctx->GetFile("eigensets");
+
+    std::ofstream output_file(*eigensets_file_path);
 
     std::cout<<"\n\n";
 

@@ -39,6 +39,8 @@ namespace hso {
 
     const path* GetSubdir(const std::string &subdir_name) const;
 
+    void AddFilePath(const path &file, const std::string &file_id, const std::string &subdir_name);
+
     void AddFile(const path &file, const std::string &file_id, const std::string &subdir_name);
 
     const path* GetFile(const std::string &file_id) const;
