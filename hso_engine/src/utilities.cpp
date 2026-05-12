@@ -10,6 +10,7 @@
 #include <hso/objects_data.h>
 #include <hso/objects_stat.h>
 #include <hso/FCN.h>
+#include <hso/output_dir_tree.h>
 //
 //Minuit functions
 //
@@ -204,11 +205,7 @@ namespace hso{
 
     void WriteCovariance(ROOT::Minuit2::FunctionMinimum* min){
 
-      std::filesystem::path dir_path(home_dir + "/" + "cov");
-
-      std::filesystem::create_directories(dir_path);
-
-      std::string dir(dir_path.string());
+      const fs::path* cov_dir = ContextRegistry::GetInstance()->RequestContext("fitter_output")->GetSubdir("cov");
 
       ROOT::Minuit2::MnUserParameters upar = min->UserParameters() ;
 
@@ -243,9 +240,7 @@ namespace hso{
 
         }
         /////////write covariance
-        std::string covariance_filename(dir + "/" + "covariance.dat");
-
-        std::ofstream output_file( covariance_filename );
+        std::ofstream output_file(*cov_dir / "covariance.dat");
 
         output_file<<"#+++++++++++covariance+++++++++++"<<std::endl;
 
@@ -263,7 +258,7 @@ namespace hso{
 
         output_file.clear();
         ////////////////write cholesky////////////////////////
-        output_file.open( dir + "/" + "cholesky.dat" );
+        output_file.open(*cov_dir / "cholesky.dat");
 
         output_file<<"#+++++++++++cholesky+++++++++++"<<std::endl;
 
@@ -285,9 +280,7 @@ namespace hso{
 
     void WriteCovarianceEigen(std::string covariance_filename) {
 
-      std::string eigen_filename(home_dir + "/cov/eigen.dat" );
-
-      bool found_covariance=false;
+      const fs::path* cov_dir = ContextRegistry::GetInstance()->RequestContext("fitter_output")->GetSubdir("cov");
 
       std::vector<double> matrix(0);
 
@@ -295,7 +288,7 @@ namespace hso{
 
       std::vector<int> col_indices(0);
       //read existing covariance matrix and fill in gsl covariance
-      found_covariance=utils::ReadSquareMatrix(covariance_filename,"#cov:", row_indices, col_indices, matrix);
+      bool found_covariance=utils::ReadSquareMatrix(covariance_filename,"#cov:", row_indices, col_indices, matrix);
 
       if(found_covariance){
 
@@ -319,7 +312,7 @@ namespace hso{
 
         gsl_eigen_symmv_free(Weigen);
         ///write eigen values and eigen vectors (matrix form)
-        std::ofstream output_file(eigen_filename);
+        std::ofstream output_file(*cov_dir / "eigen.dat");
 
         if(output_file){
 
@@ -357,7 +350,7 @@ namespace hso{
 
         else{
 
-          std::cout<<"#Warning: could not open '"<<eigen_filename<<"'. "<<std::endl;
+          std::cout<<"#Warning: could not open '"<<(*cov_dir / "eigen.dat").string()<<"'. "<<std::endl;
 
         }
 
@@ -633,7 +626,7 @@ namespace hso{
 
                  <<"', which contains "<<numofeigen<<" sets, which should be even."
 
-                 <<" Only +/- version implemented. Aborting."<<std::endl;
+                 <<" Only +/- version implemented. Quitting."<<std::endl;
 
         std::exit(0);
 
@@ -731,7 +724,7 @@ namespace hso{
 
         std::cout<<"\n#Error: directory '"<<dir<<"' does not contain a file '*"
 
-                 <<substring<<"*'. Aborting."<<std::endl;
+                 <<substring<<"*'. Quitting."<<std::endl;
 
         std::exit(0);
 
@@ -741,7 +734,7 @@ namespace hso{
 
         std::cout<<"\n#Error: file '*"<<substring<<"*' is not unique in directory '"
 
-                 <<dir<<"'. Aborting."<<std::endl;
+                 <<dir<<"'. Quitting."<<std::endl;
 
         std::exit(0);
 
@@ -784,77 +777,31 @@ namespace hso{
 
       }
 
-      std::cout<<"------------------ Aborting. ------------------\n";
+      std::cout<<"------------------ Quitting. ------------------\n";
 
       std::exit(0);
 
     }
-
-    gsl_set_error_handler_off();//WARNING: dangerous
-
+    //-- for temp backward compatibiity
     kinematics_filename.assign(argv[1]);
 
     para_filename.assign(argv[2]);
 
     home_dir = argv[3];
+    //--
+    fs::path kin_file(argv[1]);
 
-    std::filesystem::path home_dir_path(home_dir);
+    fs::path para_file(argv[2]);
 
-    if (! std::filesystem::create_directories(home_dir_path)){
+    ContextRegistry* ctx_registry = ContextRegistry::GetInstance();//Meyer singleton
 
-      std::cout<<"folder '"<<home_dir<<"' exists. Aborting"<<std::endl;
+    OutputDirectoryTree* output_ctx = ctx_registry->CreateContext("fitter_output", argv[3], {"cov", "input", "min", "stat", "status"});
 
-      std::exit(1);
+    MakeContext(output_ctx);
 
-    }
+    output_ctx->AddFile(kin_file, "kinematics", "input");
 
-    std::string input_dir = home_dir + "/input/";
-
-    std::filesystem::path input_dir_path(input_dir);
-
-    std::filesystem::create_directories(input_dir_path);
-
-    std::string para_dir(input_dir) ;
-
-    std::string line;
-    //cp input file
-    std::ifstream input_file (kinematics_filename); //open originial input file
-
-    kinematics_filename=hso::read_data::ExtractFname(kinematics_filename); //get file name without path
-
-    std::ofstream input_file_copy( input_dir + "/" + kinematics_filename); //open new file
-
-    while(getline(input_file,line))
-
-      input_file_copy<<line<<"\n";
-
-    input_file.close();
-
-    input_file.clear();
-
-    input_file_copy.close();
-
-    input_file_copy.clear();
-    //cp para file
-    input_file.open(para_filename); //open original para file
-
-    para_filename=hso::read_data::ExtractFname(para_filename); //get file name without path
-
-    input_file_copy.open(para_dir + "/" + para_filename); //open new file
-
-    while(getline(input_file,line))
-
-      input_file_copy<<line<<"\n";
-
-    input_file .close();
-
-    input_file_copy.close();
-    //to use the newly created copies.
-    kinematics_filename.assign( input_dir + "/" + kinematics_filename);
-
-    para_filename.assign( para_dir + "/" + para_filename);
-
-
+    output_ctx->AddFile(para_file, "parameters", "input");
 
   }
 
@@ -868,9 +815,13 @@ namespace hso{
 
     void *pdfset_vals[]={&lhapdf_set_member};
     //read values for lhapdf_set and lhapdf_set_member from grid.
-    read_kinematics::ReadKinematics (kinematics_filename, pdfset_names, pdfset_vals );
+    const OutputDirectoryTree* output_ctx = ContextRegistry::GetInstance()->RequestContext("fitter_output");
 
-    read_kinematics::ReadString (kinematics_filename,"lhapdf_set",lhapdf_set);
+    const std::string kin_file_name = output_ctx->GetFile("kinematics")->string();
+
+    read_kinematics::ReadKinematics (kin_file_name, pdfset_names, pdfset_vals );
+
+    read_kinematics::ReadString (kin_file_name,"lhapdf_set",lhapdf_set);
 
     hso::collinear::SetLhapdf(lhapdf_set, (int) lhapdf_set_member);
 
@@ -915,9 +866,13 @@ namespace hso{
 
     void *kin_vals_2[] ={&qT_over_Q_min ,&qT_over_Q_max ,&Ecm_min ,&Ecm_max ,&Qlow_min ,&Qlow_max };
 
-    read_kinematics::ReadKinematics(kinematics_filename, kin_names, kin_vals);
+    const OutputDirectoryTree* output_ctx = ContextRegistry::GetInstance()->RequestContext("fitter_output");
 
-    read_kinematics::ReadKinematics(kinematics_filename, kin_names_2, kin_vals_2);
+    const std::string kin_file_name = output_ctx->GetFile("kinematics")->string();
+
+    read_kinematics::ReadKinematics(kin_file_name, kin_names, kin_vals);
+
+    read_kinematics::ReadKinematics(kin_file_name, kin_names_2, kin_vals_2);
     //set qT cuts (does not update isactive in stat)
     for(auto data: hso::e288){
 
@@ -1064,15 +1019,13 @@ namespace hso{
 
     std::vector<std::string> parameter_names(theFCN.para_names_);
     /////set output dirs and streams for minuit output
-    std::string dir=home_dir + "/" + minimum_dir;
+    const OutputDirectoryTree* output_ctx = ContextRegistry::GetInstance()->RequestContext("fitter_output");
 
-    std::filesystem::path dir_path(dir);
+    const fs::path* min_dir = output_ctx->GetSubdir("min");
 
-    std::filesystem::create_directories(dir_path);
-
-    std::ofstream minimum_output_file(dir + "/" + "minimum.dat");
+    std::ofstream minimum_output_file(*min_dir / "minimum.dat");
     ///write to log file
-    std::ofstream log_file(dir + "/" + "fcn.log");
+    std::ofstream log_file(*min_dir / "fcn.log");
 
     log_file<<"#1.i\t";
 
@@ -1156,15 +1109,11 @@ namespace hso{
 
     std::cout<<std::endl;
     //print final status for the parameters in a format readable to 'read_parameters::read_para'
-    std::string final_para_dir=home_dir+"/"+"status";
+    const fs::path* status_dir = output_ctx->GetSubdir("status");
 
-    std::filesystem::path final_para_dir_path(final_para_dir);
+    const fs::path* status_file = output_ctx->GetFile("parameters");
 
-    std::filesystem::create_directories(final_para_dir_path);
-
-    std::string status_filename=hso::read_data::ExtractFname(para_filename);
-
-    std::ofstream status_output_file(final_para_dir + "/" + status_filename);
+    std::ofstream status_output_file(*status_dir / status_file->filename());
 
     status_output_file<<std::left;
 
@@ -1233,9 +1182,11 @@ namespace hso{
 
     if(number_of_varying_parameters > 0){
 
-      WriteCovariance(&min);
+      const fs::path* cov_dir = output_ctx->GetSubdir("cov");
 
-      WriteCovarianceEigen(home_dir+"/cov/covariance.dat");
+      WriteCovariance(&min);//jogh
+
+      WriteCovarianceEigen(*cov_dir / "covariance.dat");
 
 
     }
@@ -1250,40 +1201,21 @@ namespace hso{
 
     std::vector<bool > write_file(0);
 
-    std::string dir2( home_dir + "/" + subdir );
-
-    std::filesystem::path dir2_path(dir2);
-
-    std::filesystem::create_directories(dir2_path);
-
+    const fs::path* stat_base_dir = ContextRegistry::GetInstance()->RequestContext("fitter_output")->GetSubdir("stat");
     //get all names for files
-    for(auto set: *(stat_in->data_) ) {
+    for (auto set: *(stat_in->data_) ) {
 
       if(set->set_is_active_){
 
-        std::string stat_dir(set->dir_name_);
+        if(! fs::exists(*stat_base_dir / set->dir_name_)){
 
-        hso::read_data::Replace(stat_dir,"/data/","/"+subdir+"/");
+          fs::create_directory(*stat_base_dir / set->dir_name_);
 
-        hso::read_data::Replace(stat_dir,"assets/","");
+        }
 
-        std::string dir=home_dir + "/" + stat_dir ;
+        fs::path file_path = fs::path(*stat_base_dir / set->dir_name_ / set->file_name_).replace_extension(".stat");
 
-        std::cout<<"FULLDIR   - - - - -  "<<dir<<std::endl;
-
-        std::filesystem::path dir_path(dir);
-
-        std::filesystem::create_directories(dir_path);
-
-        std::string filename(set->file_name_);
-
-        size_t pos=filename.rfind(".");
-
-        if(pos!=0) filename.replace(pos,filename.length()-pos,".stat");
-
-        else filename=filename+".stat";
-
-        list_of_filenames .push_back(dir+ "/"+filename);
+        list_of_filenames.push_back(file_path.string());
 
         write_file.push_back(true);
 
@@ -1335,7 +1267,7 @@ namespace hso{
 
     double chi2_min= min.Fval();
 
-    std::string covariance_filename (home_dir + "/cov/covariance.dat");
+    std::string covariance_filename (home_dir + "/cov/covariance2.dat");
 
     std::string eigen_filename(home_dir + "/cov/eigen.dat" );
     //vectors
@@ -1509,70 +1441,37 @@ namespace hso{
 
     std::vector<std::string> expected_args {"fit_dir","output_dir"};
 
-    std::vector<std::string> optional_args {"eigen_sets_filename", "kinematics_filename"};
-
     int num_of_expected_args = expected_args.size();
 
-    int num_of_optional_args = optional_args.size();
-
-    if(argc-1<num_of_expected_args){
+    if (argc-1<num_of_expected_args){
 
       std::cout<<"------- passed "<< argc-1<<" arguments but need "
 
                << num_of_expected_args<<": -------\n";
 
-      for ( auto name: expected_args )
+      for (auto name: expected_args)
 
         std::cout<<"\t\t"<<name<<"\n";
 
-      if(num_of_optional_args>0){
-
-        std::cout<<"------- optional args "<<": -------\n";
-
-        for( auto name: optional_args )
-
-          std::cout<<"\t\t"<<name<<"\n";
-
-      }
-
-      std::cout<<"------------------ Aborting. ------------------\n";
+      std::cout<<"------------------ Quitting. ------------------\n";
 
       std::exit(0);
 
     }
 
-    gsl_set_error_handler_off();//WARNING: dangerous
-
     std::string fit_dir(argv[1]);
 
     home_dir = argv[2];
 
-
-    if(argc-1 >= 3)
-
-      eigen_filename_global.assign(argv[3]);
-
-    else {
-
-      eigen_filename_global.assign( FileInDirUnique( fit_dir + "/min/", "eigensets" ));
-
-    if(argc-1>=4)
-
-      kinematics_filename.assign(argv[4]);
-
-    else
-
-      kinematics_filename.assign( FileInDirUnique( fit_dir + "/input/", "kin" ) );
-
-    }
-
     para_filename.assign( FileInDirUnique( fit_dir + "/status/", "para" ) );
+
+    gsl_set_error_handler_off();//WARNING: dangerous
 
     std::filesystem::path home_dir_path(home_dir);
 
     if ( ! std::filesystem::create_directories(home_dir_path) ){
 
-      std::cout<<"folder "<<home_dir<<" exists. Aborting"<<std::endl;
+      std::cout<<"folder "<<home_dir<<" exists. Quitting"<<std::endl;
 
       std::exit(1);
 

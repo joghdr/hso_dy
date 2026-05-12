@@ -27,25 +27,35 @@ namespace hso {
 
     ~OutputDirectoryTree() = default;
 
+    explicit OutputDirectoryTree(const std::string &root_name);
+
     explicit OutputDirectoryTree(const std::string &root_name,
+
                                  const std::vector<std::string> &subdir_names);
 
     const path* GetRoot() const;
 
-    const std::vector<const path*> GetSubdir() const;
+    const std::vector<const path*> GetSubdirs() const;
 
     const path* GetSubdir(const std::string &subdir_name) const;
+
+    void AddFile(const path &file, const std::string &file_id, const std::string &subdir_name);
+
+    const path* GetFile(const std::string &file_id) const;
 
     void Info() const;
 
   private:
 
     static std::map<std::string, path> BuildSubdirs(const std::string &root_name,
+
                                              const std::vector<std::string> &subdir_names);
 
     path root_;
 
     std::map<std::string, path> subdirectories_;
+
+    std::map<std::string, path> files_;
 
 
 
@@ -57,6 +67,8 @@ namespace hso {
 
     using path = std::filesystem::path;
 
+    static ContextRegistry* GetInstance();
+
     ContextRegistry(ContextRegistry&&) noexcept = delete;
 
     ContextRegistry& operator=(ContextRegistry&&) noexcept = delete;
@@ -67,26 +79,24 @@ namespace hso {
 
     ~ContextRegistry() = default;
 
-    static ContextRegistry* GetInstance(const std::string &requested_base_name);
+    OutputDirectoryTree* CreateContext(const std::string &ctx_id,
 
+                                       const std::string &root_name,
 
-    OutputDirectoryTree* RequestContext(const std::string &root_name,
-                                        const std::vector<std::string> &subdir_names);
+                                       const std::vector<std::string> &subdir_names);
 
-    OutputDirectoryTree* RequestContext(const std::string &root_name);
+    OutputDirectoryTree* RequestContext(const std::string &ctx_id);
 
-    const OutputDirectoryTree* RequestContext(const std::string &root_name) const;
+    const OutputDirectoryTree* RequestContext(const std::string &ctx_id) const;
 
     void Info() const;
+
+    std::string GetFullRootName(const std::string &root_name) const;
 
   private:
 
     explicit ContextRegistry(const std::string &requested_base_name);
 
-    OutputDirectoryTree* CreateContext(const std::string &root_name,
-                                 const std::vector<std::string> &subdir_names);
-
-    std::string GetFullRootName(const std::string &root_name) const;
 
     std::string base_name_;
 

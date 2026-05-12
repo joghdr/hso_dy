@@ -12,7 +12,7 @@ namespace hso {
 
   void MakeContext(const OutputDirectoryTree* context) {
 
-    for (auto &subdir_path: context->GetSubdir()){
+    for (auto &subdir_path: context->GetSubdirs()){
 
       if(std::filesystem::exists(*subdir_path)) {
 
@@ -31,9 +31,26 @@ namespace hso {
   namespace fs = std::filesystem;
 
 //NOTE: > > OutputDirectoryTree < <
+  OutputDirectoryTree::OutputDirectoryTree(const std::string &root_name)
+
+  : root_(fs::absolute(fs::path(root_name))){
+
+    if (fs::exists(root_)) {
+
+      std::cout<<"Directory "<<root_.string()<<" exists. Quitting."<<std::endl;
+
+      exit(1);
+    }
+
+  }
+
+
   OutputDirectoryTree::OutputDirectoryTree(const std::string &root_name,
+
                                            const std::vector<std::string> &subdir_names)
+
     : root_(fs::absolute(fs::path(root_name))),
+
       subdirectories_(BuildSubdirs(root_name, subdir_names)){
 
         if (fs::exists(root_)) {
@@ -51,7 +68,7 @@ namespace hso {
 
   }
 
-  const std::vector<const fs::path*> OutputDirectoryTree::GetSubdir() const{
+  const std::vector<const fs::path*> OutputDirectoryTree::GetSubdirs() const{
 
     std::vector<const fs::path*> subdir_paths(0);
 
@@ -78,7 +95,68 @@ namespace hso {
     return &(it->second);
   }
 
+  void OutputDirectoryTree::AddFile(const fs::path &file, const std::string &file_key, const std::string &subdir_name){
+
+    const fs::path* subdir = GetSubdir(subdir_name);
+
+    if (!subdir) {
+
+      std::cout<<"Could not add "<<file.string()<<". Subdirectory "<<subdir_name<<" not in registry."<<std::endl;
+
+      return;
+
+    }
+
+    const fs::path new_file = *subdir / file.filename();
+
+    std::error_code err;
+
+    if (!std::filesystem::copy_file(file, new_file, err)){
+
+      std::cout<<"Could not copy file "<<file.string()<<": std::filesystem message:\n"<<err.message()<<std::endl;
+
+      return;
+
+    }
+
+    files_[file_key] = new_file;
+
+  }
+
+  const fs::path* OutputDirectoryTree::GetFile(const std::string &file_id) const{
+
+    auto it = files_.find(file_id);
+
+    if (it == files_.end()){
+
+      return nullptr;
+
+    }
+
+    return &(it->second);
+
+  }
+
+  void OutputDirectoryTree::Info() const {
+
+    std::cout<<"root: "<<root_.string()<<std::endl;
+
+    for (auto &subdir: subdirectories_) {
+
+      std::cout<<std::setw(10)<<std::right<<subdir.first<<": "<<std::setw(10)<<std::left<<subdir.second.string()<<std::endl;
+
+    }
+
+    for (auto &file: files_) {
+
+      std::cout<<std::setw(10)<<std::right<<file.first<<": "<<std::setw(10)<<std::left<<file.second.string()<<std::endl;
+
+    }
+
+  }
+
   std::map<std::string, fs::path> OutputDirectoryTree::BuildSubdirs(const std::string &root_name,
+
                                                                     const std::vector<std::string> &subdir_names){
 
     std::map<std::string, fs::path> directory_map;
@@ -94,23 +172,10 @@ namespace hso {
     return directory_map;
 
   }
-
-  void OutputDirectoryTree::Info() const {
-
-    std::cout<<"root: "<<root_.string()<<std::endl;
-
-    for (auto &subdir: subdirectories_) {
-
-      std::cout<<std::setw(10)<<std::right<<subdir.first<<": "<<std::setw(10)<<std::left<<subdir.second.string()<<std::endl;
-
-    }
-
-  }
-
   //NOTE: > > ContextRegistry < <
-  ContextRegistry* ContextRegistry::GetInstance(const std::string &requested_base_name){
+  ContextRegistry* ContextRegistry::GetInstance(){
 
-    static ContextRegistry unique_instance(requested_base_name);
+    static ContextRegistry unique_instance("");
 
     return &unique_instance;
 
@@ -118,16 +183,30 @@ namespace hso {
 
   ContextRegistry::ContextRegistry(const std::string &requested_base_name):base_name_(requested_base_name){}
 
-  OutputDirectoryTree* ContextRegistry::RequestContext(const std::string &root_name,
-                                  const std::vector<std::string> &subdir_names){
+  OutputDirectoryTree* ContextRegistry::CreateContext(const std::string &ctx_id,
+
+                                                      const std::string &root_name,
+
+                                                      const std::vector<std::string> &subdir_names){
 
     std::string encapsulated_root_name = GetFullRootName(root_name);
 
-    auto it = context_list_.find(encapsulated_root_name);
+    auto [it, context_inserted] = context_list_.try_emplace(ctx_id, std::make_unique<OutputDirectoryTree>(encapsulated_root_name, subdir_names));
+
+    std::cout<<"hso::ContextRegistry: Created new context: "<<ctx_id<<": "<<encapsulated_root_name<<std::endl;
+
+    return it->second.get();
+  }
+
+  OutputDirectoryTree* ContextRegistry::RequestContext(const std::string &ctx_id){
+
+    auto it = context_list_.find(ctx_id);
 
     if (it == context_list_.end()){
 
-      return CreateContext(encapsulated_root_name, subdir_names);
+      std::string encapsulated_root_name = GetFullRootName(ctx_id);
+
+      return CreateContext(ctx_id, encapsulated_root_name, {});
 
     }
 
@@ -135,36 +214,15 @@ namespace hso {
 
   }
 
-  OutputDirectoryTree* ContextRegistry::RequestContext(const std::string &root_name){
+  const OutputDirectoryTree* ContextRegistry::RequestContext(const std::string &ctx_id) const{
 
-    return RequestContext(root_name, {});
-
-  }
-
-  const OutputDirectoryTree* ContextRegistry::RequestContext(const std::string &root_name) const{
-
-    std::string  encapsulated_root_name = GetFullRootName(root_name);
-
-    auto it = context_list_.find(encapsulated_root_name);
+    auto it = context_list_.find(ctx_id);
 
     if (it == context_list_.end()){
 
       return nullptr;
 
     }
-
-    return it->second.get();
-
-  }
-
-
-  OutputDirectoryTree* ContextRegistry::CreateContext(const std::string &encapsulated_root_name,
-                                 const std::vector<std::string> &subdir_names){
-
-
-    auto [it, context_inserted] = context_list_.try_emplace(encapsulated_root_name, std::make_unique<OutputDirectoryTree>(encapsulated_root_name, subdir_names));
-
-    std::cout<<"hso::ContextRegistry: Created new context: "<<encapsulated_root_name<<std::endl;
 
     return it->second.get();
 
