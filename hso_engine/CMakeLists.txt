@@ -27,6 +27,7 @@ set(
   src/objects_data.cpp
   src/objects_stat.cpp
   src/objects_theory.cpp
+  src/output_dir_tree.cpp
   src/pdf_cutoff_from_msbar.cpp
   src/pqcd.cpp
   src/read_data.cpp

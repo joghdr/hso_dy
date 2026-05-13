@@ -1,0 +1,15 @@
+
+  Valid         : yes
+  Function calls: 16
+  Minimum value : 2.352418805
+  Edm           : 7.181936306e-10
+  Internal parameters: 	[     -1.278763694]	
+  Internal covariance matrix: 
+[[  0.00045363411]]]
+  External parameters: 
+  Pos |    Name    |  type   |      Value       |    Error +/-
+    0 |         mF |  fixed  |              0.3 |    0.0345428
+    1 |         MF |  fixed  |        0.0575412 |   0.00805857
+    2 |      MFlog |  fixed  |         0.402994 |   0.00548119
+    3 |         mK |  fixed  |              0.3 |    0.0969625
+    4 |         bK | limited |       2.11696697 |  0.306570786

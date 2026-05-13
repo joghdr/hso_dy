@@ -77,13 +77,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN \
-if [ -f "hso_engine/CMakePresets.json" ]; then \
-  cd hso_engine; \
-fi && \
-cmake --workflow --preset verify-release || \
-cmake --workflow --preset verify-release
+RUN cd hso_engine 2> /dev/null || true
 
+RUN cmake --workflow --preset verify-release
 
 # ----- hso light release image -----
 FROM ubuntu:24.04 AS hso-dy

@@ -72,7 +72,6 @@
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::eigen_filename_global
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::home_dir
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::kinematics_filename
-/home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::minimum_dir
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::para_filename
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::utils::Ecm_max
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::utils::Ecm_min

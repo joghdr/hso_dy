@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <algorithm>
+#include <filesystem>
 
 
 
@@ -22,46 +23,15 @@ namespace hso{
 
   Data DataLoader::Load(std::string fname_in){
 
-    std::string name_f(fname_in);
-
-    std::string name_d(fname_in);
-
-    std::size_t pos=name_f.rfind("/");
-
     Data data_instance;
 
-    if(pos!=std::string::npos) {
+    std::filesystem::path path_to_data_file(fname_in);
 
-      name_f.erase(0,pos+1);
+    data_instance.file_name_=path_to_data_file.filename().string();
 
-      name_d.erase(pos+1,name_d.length()-pos);
+    data_instance.name_=path_to_data_file.stem().string();
 
-    }
-
-    else {
-
-      name_d.assign("./");
-
-    }
-
-    data_instance.file_name_=name_f;
-
-    data_instance.dir_name_=name_d;
-
-    pos=name_f.rfind(".");
-
-    if (pos != std::string::npos) {
-
-      name_f.erase(pos,name_f.length()-pos);
-
-      data_instance.name_ = name_f;
-
-    }
-
-    else
-
-      data_instance.name_ = name_f;
-
+    data_instance.dir_name_=path_to_data_file.parent_path().filename().string();
 
     std::vector<std::string> comment_lines;
 
@@ -69,7 +39,7 @@ namespace hso{
 
     std::vector<int> dim(2);
 
-    std::string key = LoadFile(data_instance.dir_name_ + data_instance.file_name_, data_lines,
+    std::string key = LoadFile(path_to_data_file, data_lines,
 
                                         comment_lines, dim, data_instance.var_bin_names_,
 

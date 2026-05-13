@@ -1,0 +1,12 @@
+#name               central_valueis_freeerror        is_limitedlower_limit  upper_limit  
+
+mF                  0.3          0      0.0345428    1         0            100          
+
+MF                  0.0575412    0      0.00805857   0         0            0            
+
+MFlog               0.402994     0      0.00548119   0         -0.26        1            
+
+mK                  0.3          0      0.0969625    1         0            100          
+
+bK                  2.11697      1      0.306571     1         0            100          
+
