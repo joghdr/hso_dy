@@ -1178,21 +1178,22 @@ namespace hso{
     status_output_file.close();
 
 
-    // rerun fit with final fixed paramters. This is to store final values of theory,
-    // chi2 pt by pt (and make sure lines correspond to final status of parameters)
+    // rerun fit with final fixed paramters. This is to store final values of theory
     for (int i_parafix = 0; i_parafix < para_names_size; i_parafix++)
 
       migrad.Fix(parameter_names[i_parafix].c_str());
-
-    hso::store_values_stat = true;
 
     hso::store_values_theory = true;
 
     ROOT::Minuit2::FunctionMinimum min2 = migrad();
 
-    hso::store_values_stat = false;
-
     hso::store_values_theory = false;
+
+
+    // store chi2 pt by pt (last values of parameters taken from minimum)
+    theFCN.StoreStatValues(min);
+
+
 
     if(number_of_varying_parameters > 0){
 
@@ -1585,8 +1586,6 @@ namespace hso{
     ///@set flags to store theory/eigen theory in data objects
     hso::store_values_theory=true;//not tread safe
 
-    hso::store_values_stat=true;
-
     ROOT::Minuit2::fit_iteration_counter=-1;
     ///@fix parameters
     for (auto name : theFCN.para_names_)
@@ -1619,7 +1618,7 @@ namespace hso{
     ///@store theory central values
     ROOT::Minuit2::MnMigrad migrad0(theFCN,upar);
 
-    ROOT::Minuit2::FunctionMinimum min0 = migrad0();//TODO:remove minuit2 dependence. This is a patch
+    ROOT::Minuit2::FunctionMinimum min0 = migrad0();//TODO:remove minuit2 dependence.
     ///@store eigen theory
     std::cout << "\n# numofeigen="<<numofeigen<<"\n"<<std::endl;
 
@@ -1643,7 +1642,7 @@ namespace hso{
 
       ROOT::Minuit2::MnMigrad migrad(theFCN,upar);
 
-      ROOT::Minuit2::FunctionMinimum min = migrad();//TODO:remove minuit2 dependence. This is a patch
+      ROOT::Minuit2::FunctionMinimum min = migrad();//TODO:remove minuit2 dependence.
 
     }
 

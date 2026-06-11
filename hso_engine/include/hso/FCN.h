@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "Minuit2/FCNBase.h"
+#include "Minuit2/FunctionMinimum.h"
 
 inline constexpr double ErrorOneSigma[] = {
   1.00, //0 parameters
@@ -102,6 +103,8 @@ namespace ROOT{
       double virtual Up() const ;
 
       virtual double operator()(const std::vector<double>& Parameters) const;
+
+      void StoreStatValues(const ROOT::Minuit2::FunctionMinimum& min);
 
 
       //members
