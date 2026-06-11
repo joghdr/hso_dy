@@ -69,7 +69,8 @@ RUN ldconfig
 ##copy MMHT2014nlo68cl grids (collinear functions and other coefficients)
 COPY assets/grids/ /usr/local/share/LHAPDF/
 
-
+# --- communicate to tests that look for resolved globals
+RUN touch /etc/hso_container_marker
 # ----- hso audit and build -----
 FROM ${HSO_IMAGE_NAME}-deps:${HSO_VERSION} AS hso-dy-build
 
