@@ -539,7 +539,7 @@ namespace hso{
     penalties_exist_=true;
 
   };
-  //TODO: need to add code to save chi2 into data
+
   double StatNMin::operator()(void *para,void *){
 
     int index =0;
@@ -575,61 +575,9 @@ namespace hso{
       s2 += std::pow(theory/error,2);
 
     }
-    ////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////
-    //NOTE if N multiplies theory                ///////
-    ////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////
+
     if(!fix_norm_) norm = (1.0 + std::pow(delta_N_,2)*s1)/(1.0 + std::pow(delta_N_,2)*s2);
-    ////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////
-    //NOTE if N divides theory (as in DY pheno paper) //
-    ////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////
-    // if(!fix_norm){
-    //
-    //
-    // double norm4=0.25 - std::sqrt(0.25 + (pow(2,0.3333333333333333)*(s1*std::pow(delta_N_,2) - 4*s2*std::pow(delta_N_,2)))/
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),0.3333333333333333) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),0.3333333333333333)/
-    // (3.*std::pow(2,0.3333333333333333)))/2. +
-    // std::sqrt(0.5 - (pow(2,0.3333333333333333)*(s1*std::pow(delta_N_,2) - 4*s2*std::pow(delta_N_,2)))/
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),0.3333333333333333) -
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),0.3333333333333333)/
-    // (3.*std::pow(2,0.3333333333333333)) -
-    // (1 - 8*s1*std::pow(delta_N_,2))/
-    // (4.*std::sqrt(0.25 + (pow(2,0.3333333333333333)*(s1*std::pow(delta_N_,2) - 4*s2*std::pow(delta_N_,2)))/
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),
-    // 0.3333333333333333) + std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),
-    // 0.3333333333333333)/(3.*std::pow(2,0.3333333333333333)))))/2.;
-    //
-    // if(norm4==norm4) norm=norm4;
-    // // else {
-    // //
-    // // std::cout<<"##unused s1="<<s1<<" s2="<<s2<<": data="<<(*data_)[0]->name<<std::endl;
-    // //
-    // //
-    // // // std::exit(0);
-    // //
-    // // }
-    //
-    // }
-    /////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
+
     //compute chi2
     for(int i=0;i<length_;i++) if(point_is_active_[i]){
 
