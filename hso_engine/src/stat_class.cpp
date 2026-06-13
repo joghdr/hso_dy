@@ -346,15 +346,6 @@ namespace hso{
 
           for(int i=0;i<data_set->length_;i++)if(data_set->point_is_active_[i]){//add in quadrature
 
-            //eq 13 from lhapdf paper: DOI: 10.1140/epjc/s10052-015-3318-8
-            // double plus = Plus [i];
-            // double minus = Minus[i];
-            // double sigma2 = std::pow(Plus[i]-Minus[i],2);
-            //
-            //
-            // data_set->theory_values_err_plus_ [i] += sigma2;
-            // data_set->theory_values_err_minus_[i] += sigma2;
-
             // eqs 11 & 12 from lhapdf paper: DOI: 10.1140/epjc/s10052-015-3318-8
             double plus = Plus [i]-Central[i];
 
@@ -373,10 +364,6 @@ namespace hso{
         }
 
         for(int i=0;i<data_set->length_;i++)if(data_set->point_is_active_[i]){
-          // eq 13 from lhapdf paper : DOI: 10.1140/epjc/s10052-015-3318-8
-          // data_set->theory_values_err_plus_ [i] = std::sqrt( data_set->theory_values_err_plus_ [i])/2.0;
-          //
-          // data_set->theory_values_err_minus_[i] = std::sqrt( data_set->theory_values_err_minus_[i])/2.0;
 
           // eqs 11 & 12 from lhapdf paper : DOI: 10.1140/epjc/s10052-015-3318-8
           data_set->theory_values_err_plus_ [i] = std::sqrt( data_set->theory_values_err_plus_ [i]);
@@ -613,12 +600,12 @@ namespace hso{
     double s1=0,s2=0,norm=1.0,stat_total=0.0;
     //compute theory for every active point for every pointer in Data.
     for(auto data_set: *data_) {
-      //eval theory pts and store in temp std::vector. For inactive data points, theory = NAN
-      std::vector<double> theoryvalues_internal=theory_->operator()(*data_set,para);
+
+      theory_->StoreCentralInData(*data_set,para);//stores in data.theory_values_
 
       for(int i=0;i<data_set->length_;i++) {
 
-        TheoryValues_internal[index] = theoryvalues_internal[i];
+        TheoryValues_internal[index] = data_set->theory_values_[i];
 
         index++;
 

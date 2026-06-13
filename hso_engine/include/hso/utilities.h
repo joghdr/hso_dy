@@ -73,15 +73,17 @@ namespace hso{
 
   void SetMinuitParameters( ROOT::Minuit2::MnUserParameters & upar,
 
-                            std::vector<std::string> parameter_names);
+                            std::vector<std::string> parameter_names,
+
+                            std::string context_name);
 
   ROOT::Minuit2::FunctionMinimum *Minimize(ROOT::Minuit2::FCN &theFCN,
 
                                            ROOT::Minuit2::MnUserParameters & upar);
 
-  void Write(hso::Stat* stat,std::string subdir="stat");
+  void Write(hso::Stat* stat,std::string context_name);
 
-  void Write(std::vector<hso::Stat*> stat_pointers, std::string subdir="stat");
+  void Write(std::vector<hso::Stat*> stat_pointers, std::string context_name);
 
   void Plot(hso::Stat* stat,std::string x, std::string y, std::string err="stat+");
 
@@ -90,6 +92,10 @@ namespace hso{
   void Errors(ROOT::Minuit2::FCN &theFCN, ROOT::Minuit2::FunctionMinimum &min);
 
   void InitHessianBands( int argc, char *argv[] );
+
+  void InitCollinearHessian();
+
+  void InitKinematicsHessian();
 
   void HessianBands(ROOT::Minuit2::FCN &theFCN, ROOT::Minuit2::MnUserParameters & upar);
 

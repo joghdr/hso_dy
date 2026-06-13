@@ -4,17 +4,13 @@
 #include "Minuit2/MnUserParameters.h"
 #include <string>
 #include <iostream>
+#include <cstdlib>
 #include <vector>
 
 namespace ROOT { namespace Minuit2 { class FunctionMinimum; } }
 
 
-// #include <iostream>
-#include <cstdlib>
-// #include <string>
-
 void CheckEnvironment() {
-  // Helper to get env or return a "fallback" string
   auto get_env_safe = [](const char* var) -> std::string {
     char* val = std::getenv(var);
     return (val == nullptr) ? "NOT DEFINED (Using internal default)" : std::string(val);
@@ -35,21 +31,18 @@ int main(int argc, char *argv[]){
   hso::InitCollinear ();
 
   hso::InitKinematics();
-  ///////////////////////////////////////////////////////////////////////////////////////////////////
-  //TODO: document use of these functions
-  // hso::collinear::SetCoefficientsMode(hso::collinear::GetCoefficients::FromGrids);
-  ///////////////////////////////////////////////////////////////////////////////////////////////////
+
   extern ROOT::Minuit2::FCN theFCN;//defined in model file
 
   ROOT::Minuit2::MnUserParameters upar;
 
-  hso::SetMinuitParameters(upar,theFCN.para_names_);
+  hso::SetMinuitParameters(upar,theFCN.para_names_, "fitter_output");
 
   int num_of_free_para = hso::utils::GetFreeParaNumber(upar);
 
   ROOT::Minuit2::FunctionMinimum *min = hso::Minimize(theFCN,upar);
 
-  hso::Write(hso::chi2_total);//files with data and theory in 'stat' directory
+  hso::Write(hso::chi2_total, "fitter_output");//files with data and theory in 'stat' directory
 
   if (num_of_free_para > 0){
 

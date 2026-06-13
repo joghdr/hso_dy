@@ -18,10 +18,6 @@ namespace hso{
 
   class Data;
 
-  extern bool store_values_theory;
-
-  extern int eigen_index;
-
   enum class VariableType {Value, Integration, BinAvg, Undetermined};
 
   class Theory {
@@ -57,7 +53,11 @@ namespace hso{
 
     double Eval(Data &data,int i,void *para);
 
-    std::vector<double> operator()(Data &data,void *para,bool store_values=store_values_theory,int eigen_i=eigen_index);
+    std::vector<double> operator()(Data &data,void *para);
+
+    void StoreCentralInData(hso::Data &data,void *para);
+
+    void StoreEigenInData(hso::Data &data,void *para,int eigen_i);
 
     bool Write(Data &data,std::string fname_out,bool alldata);
 

@@ -2,6 +2,7 @@
 #include <hso/pqcd.h>
 #include <hso/math_functions.h>
 #include <hso/stat_class.h>
+#include <hso/theory_class.h>
 #include <hso/objects_stat.h>
 
 #include "Minuit2/FunctionMinimum.h"
@@ -164,7 +165,7 @@ double ROOT::Minuit2::FCN::operator()(const std::vector<double>& parameters) con
 
 }
 
-void ROOT::Minuit2::FCN::StoreStatValues(const ROOT::Minuit2::FunctionMinimum& min) {
+void ROOT::Minuit2::FCN::StoreStatValues(const ROOT::Minuit2::MnUserParameters& upar) {
 
   //NOTE: mF should always be initialized here
   //      parameters in both functions 'FtildeCore'
@@ -174,7 +175,7 @@ void ROOT::Minuit2::FCN::StoreStatValues(const ROOT::Minuit2::FunctionMinimum& m
 
   for(std::size_t i=0; i<parameter_names.size();i++){
 
-    parameters[i] = min.UserState().Value(parameter_names[i]);
+    parameters[i] = upar.Value(parameter_names[i]);
 
   }
 
@@ -235,3 +236,76 @@ void ROOT::Minuit2::FCN::StoreStatValues(const ROOT::Minuit2::FunctionMinimum& m
 
 
 }
+
+void ROOT::Minuit2::FCN::StoreEigenValues(ROOT::Minuit2::MnUserParameters& upar, int eigen_index){
+
+  std::vector<double> parameters(parameter_names.size());
+
+  for(std::size_t i=0; i<parameter_names.size();i++){
+
+    parameters[i] = upar.Value(parameter_names[i]);
+
+  }
+
+  double mF = parameters[0];
+
+  double MF = parameters[1];
+
+  double MFlog = parameters[2];
+
+  double mK = parameters[3];
+
+  double bK = parameters[4];
+
+  using namespace hso::utils;
+
+  void* scales[] = {
+    &Q0,
+    &rg_transf_Qmax,
+    &mu_over_Q0,
+    &sqrt_zeta_over_Q0,
+    &mu_over_Q,
+    &sqrt_zeta_over_Q
+  };
+  //NOTE first element of 'Ftildepara_a' should always be &mF
+  //     since this parameter is already required elsewhere in the code.
+  //     The order of remaining parameters should be the same as in
+  //     function 'FtildeCore' above
+  void* Ftildepara_a[] = {
+    &mF,
+    &MF,
+    &MFlog
+  };
+  //NOTE: first element of 'Ftildepara_b' should always be &mF
+  //      since this parameter is already required elsewhere in the code.
+  //      The order of remaining parameters should be the same as in
+  //      function 'FtildeCore' above
+  void* Ftildepara_b[] = {
+    &mF,
+    &MF,
+    &MFlog
+  };
+  //NOTE: The order of parameters in 'Ktildepara' should be the same as in
+  //      function 'KtildeInputOrder_1' above
+  void* Ktildepara[] = {
+    &mK,
+    &bK
+  };
+
+
+  ///NOTE:    remaining code would usually need no modification
+  void *para[]={scales,Ftildepara_a,Ftildepara_b,Ktildepara};
+
+
+  for(auto &stat_item: *stat_){
+
+    for(auto &data_item: *(stat_item->data_)){
+
+      stat_item->theory_->StoreEigenInData(*data_item, para, eigen_index);
+
+    }
+
+  }
+
+}
+

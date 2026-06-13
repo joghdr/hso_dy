@@ -22,11 +22,19 @@ fi
 
 
 FIT_DIR="${catch_1}"
+
 OUTPUT_DIR=results/"${catch_2}"
+
+CURRENT_VERSION="$(cat ../hso_engine/VERSION)"
+
+IMAGE=hso-dy:"$CURRENT_VERSION"
+
+echo "Running image: '$IMAGE'"
 
 docker run --rm \
 -u $(id -u):$(id -g) \
+-v $(pwd)/input:/app/input \
 -v $(pwd)/results:/app/results \
--t hso-dy:1.0.0 \
+-t "$IMAGE" \
 HSODrellYanHessian "${FIT_DIR}" "${OUTPUT_DIR}"
 

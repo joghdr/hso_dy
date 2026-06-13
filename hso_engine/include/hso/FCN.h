@@ -104,7 +104,9 @@ namespace ROOT{
 
       virtual double operator()(const std::vector<double>& Parameters) const;
 
-      void StoreStatValues(const ROOT::Minuit2::FunctionMinimum& min);
+      void StoreStatValues(const ROOT::Minuit2::MnUserParameters& upar);
+
+      void StoreEigenValues(ROOT::Minuit2::MnUserParameters& upar, int eigen_index);
 
 
       //members
