@@ -4,6 +4,7 @@ The engine was developed to produce a specific analysis of Drell-Yan for publica
 
 The main source of technical debt is the proliferation of global state, which prevents the implementation of parallelism and efficient concurrency into the engine. The following is the registry of the global state symbols currently in the engine. An incremental refactor of the code will aim at elmininating these globals.
 
+*Note: resolved globals marked with* **
 ### **Global Dependency Registry**
 | Unique ID | Symbol Name | Definition Site | Data Type | Access (R/W) | Impacted Files |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -38,7 +39,7 @@ The main source of technical debt is the proliferation of global state, which pr
 | **P1-029** | `e288_400_10` | `src/objects_data.cpp` | `hso::Data` | RW | `src/objects_data.cpp(RW)`, `src/utilities.cpp(W)` |
 | **P1-030** | `e288_400_11` | `src/objects_data.cpp` | `hso::Data` | RW | `src/objects_data.cpp(RW)`, `src/utilities.cpp(W)` |
 | **P1-031** | `e288_400_12` | `src/objects_data.cpp` | `hso::Data` | RW | `src/objects_data.cpp(RW)` |
-| **P1-032** | `e288_400_13" | `src/objects_data.cpp` | `hso::Data` | RW | `src/objects_data.cpp(RW)` |
+| **P1-032** | `e288_400_13` | `src/objects_data.cpp` | `hso::Data` | RW | `src/objects_data.cpp(RW)` |
 | **P1-033** | `e605_800_7` | `src/objects_data.cpp` | `hso::Data` | RW | `src/objects_data.cpp(RW)` |
 | **P1-034** | `e605_800_8` | `src/objects_data.cpp` | `hso::Data` | RW | `src/objects_data.cpp(RW)` |
 | **P1-035** | `e605_800_10p5` | `src/objects_data.cpp` | `hso::Data` | RW | `src/objects_data.cpp(RW)` |
@@ -61,9 +62,9 @@ The main source of technical debt is the proliferation of global state, which pr
 | **P1-052** | `hso::read_data::verbose` | `src/read_data.cpp` | `bool` | RW | `src/read_data.cpp(RW)` |
 | **P1-053** | `hso::read_kin::verbose` | `src/read_kin.cpp` | `bool` | RW | `src/read_kin.cpp(RW)` |
 | **P1-054** | `hso::read_para::verbose` | `src/read_para.cpp` | `bool` | W | `src/read_kin.cpp(W)` |
-| **P1-055** | `store_values_stat` | `src/stat_class.cpp` | `bool` | RW | `src/stat_class.cpp(W)`, `src/utilities.cpp(W)`, `include/stat_class.h(R)` |
-| **P1-056** | `store_values_theory` | `src/theory_class.cpp` | `bool` | RW | `src/theory_class.cpp(W)`, `src/utilities.cpp(W)`, `include/theory_class.h(R)` |
-| **P1-057** | `eigen_index` | `src/theory_class.cpp` | `int` | RW | `src/theory_class.cpp(W)`, `src/utilities.cpp(RW)`, `include/theory_class.h(R)` |
+| ** **P1-055** | `store_values_stat` | `src/stat_class.cpp` | `bool` | RW | `src/stat_class.cpp(W)`, `src/utilities.cpp(W)`, `include/stat_class.h(R)` |
+| ** **P1-056** | `store_values_theory` | `src/theory_class.cpp` | `bool` | RW | `src/theory_class.cpp(W)`, `src/utilities.cpp(W)`, `include/theory_class.h(R)` |
+| ** **P1-057** | `eigen_index` | `src/theory_class.cpp` | `int` | RW | `src/theory_class.cpp(W)`, `src/utilities.cpp(RW)`, `include/theory_class.h(R)` |
 | **P1-058** | `Apdf_lhapdf_pointer` | `src/collinear_factorization.cpp` | `LHAPDF::PDF*` | RW | `src/collinear_factorization.cpp(RW)` |
 | **P1-059** | `Apdf_g_lhapdf_pointer` | `src/collinear_factorization.cpp` | `LHAPDF::PDF*` | RW | `src/collinear_factorization.cpp(RW)` |
 | **P1-060** | `Bpdf_lhapdf_pointer` | `src/collinear_factorization.cpp` | `LHAPDF::PDF*` | RW | `src/collinear_factorization.cpp(RW)` |
