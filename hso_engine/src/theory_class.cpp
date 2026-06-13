@@ -18,10 +18,6 @@ typedef int (*cuba_function)(const int *ndim, const cubareal xx[], const int *nc
 
 namespace hso{
 
-  bool store_values_theory=false;
-
-  int eigen_index=0;
-
   void hso::Theory::Info(){
 
   };
@@ -291,13 +287,43 @@ namespace hso{
 
   };
 
-  std::vector<double> hso::Theory::operator()(hso::Data &data,void *para,
-
-                                              bool store_values,int eigen_i){//eigen_i=1,2,3,...
+  std::vector<double> hso::Theory::operator()(hso::Data &data,void *para){//eigen_i=1,2,3,...
 
     std::vector<double> TheoryValues_internal(data.length_,NAN);
 
-    if( store_values && (eigen_i>=1) && data.number_of_eigen_==0 ){
+    for(int i=0;i<data.length_;i++) {
+
+      if(data.point_is_active_[i])
+
+        TheoryValues_internal[i]=Eval(data,i,para);
+
+    }
+
+    return TheoryValues_internal;
+
+  };
+
+  void hso::Theory::StoreCentralInData(hso::Data &data,void *para){
+
+    std::vector<double> TheoryValues_internal(data.length_,NAN);
+
+    for(int i=0;i<data.length_;i++) {
+
+      if(data.point_is_active_[i])
+
+        TheoryValues_internal[i]=Eval(data,i,para);
+
+    }
+    //to store theory as central values
+    data.theory_values_ = TheoryValues_internal;
+
+  }
+
+  void hso::Theory::StoreEigenInData(hso::Data &data,void *para,int eigen_i){//eigen_i=1,2,3,...
+
+    std::vector<double> TheoryValues_internal(data.length_,NAN);
+
+    if( (eigen_i>=1) && data.number_of_eigen_==0 ){
 
       std::cout<<"#Error: requested to store theory in eigen_i="<<eigen_i
 
@@ -309,7 +335,7 @@ namespace hso{
 
     }
 
-    if( store_values && (eigen_i>=1) && data.number_of_eigen_%2==1 ) {
+    if( (eigen_i>=1) && data.number_of_eigen_%2==1 ) {
 
       std::cout<<"#Error: requested to store theory in eigen_i="<<eigen_i
 
@@ -330,9 +356,7 @@ namespace hso{
         TheoryValues_internal[i]=Eval(data,i,para);
 
     }
-    //to store theory as central values
     //eigen_i=1,2,3,...
-    if(store_values&&eigen_i<1) data.theory_values_ = TheoryValues_internal;
     //to store theory as eigen sets
     if(data.number_of_eigen_!=0&&(data.number_of_eigen_%2)==0&&eigen_i>=1){//eigen_i=1,2,3,...
       //initialize std::vectors that store eigen theory if they have size!=numofeigen*data.length_/2
@@ -378,11 +402,9 @@ namespace hso{
 
     }
 
-    return TheoryValues_internal;
+  }
 
-  };
-
-  bool hso::Theory::Write(hso::Data &data,std::string fname_out,bool alldata) {//NOTE: not thread safe.
+  bool hso::Theory::Write(hso::Data &data,std::string fname_out,bool alldata) {
 
     bool wrote_file=false;
 

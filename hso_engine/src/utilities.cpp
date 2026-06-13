@@ -53,14 +53,6 @@ namespace fs = std::filesystem;
 
 namespace hso{
 
-  std::string home_dir {""};
-
-  std::string eigen_filename_global {""};
-
-  std::string kinematics_filename {""};
-
-  std::string para_filename {""};
-
   namespace utils{
 
     bool verbose=true;
@@ -797,11 +789,11 @@ namespace hso{
 
     }
     //-- for temp backward compatibiity
-    kinematics_filename.assign(argv[1]);
+    std::string kinematics_filename(argv[1]);
 
-    para_filename.assign(argv[2]);
+    std::string para_filename(argv[2]);
 
-    home_dir = argv[3];
+    std::string home_dir(argv[3]);
     //--
     fs::path kin_file(argv[1]);
 
@@ -963,7 +955,9 @@ namespace hso{
 
   void SetMinuitParameters( ROOT::Minuit2::MnUserParameters & upar,
 
-                            std::vector<std::string> parameter_names) {
+                            std::vector<std::string> parameter_names,
+
+                            std::string context_name) {
 
     std::vector<double> (0).swap(para_central_value);
 
@@ -976,6 +970,10 @@ namespace hso{
     std::vector<double> (0).swap(para_lower_limit );
 
     std::vector<double> (0).swap(para_upper_limit );
+
+    const OutputDirectoryTree* output_ctx = ContextRegistry::GetInstance()->RequestContext(context_name);
+
+    const std::string para_filename=output_ctx->GetFile("parameters")->string();
 
     for (auto name : parameter_names){
 
@@ -1177,22 +1175,8 @@ namespace hso{
 
     status_output_file.close();
 
-
-    // rerun fit with final fixed paramters. This is to store final values of theory,
-    // chi2 pt by pt (and make sure lines correspond to final status of parameters)
-    for (int i_parafix = 0; i_parafix < para_names_size; i_parafix++)
-
-      migrad.Fix(parameter_names[i_parafix].c_str());
-
-    hso::store_values_stat = true;
-
-    hso::store_values_theory = true;
-
-    ROOT::Minuit2::FunctionMinimum min2 = migrad();
-
-    hso::store_values_stat = false;
-
-    hso::store_values_theory = false;
+    // set values of loss function (pt by pt) and theory. NOTE:refactor for complete minuit-independence
+    theFCN.StoreStatValues(min.UserParameters());
 
     if(number_of_varying_parameters > 0){
 
@@ -1209,13 +1193,13 @@ namespace hso{
 
   }
 
-  void Write(hso::Stat *stat_in,std::string subdir){
+  void Write(hso::Stat *stat_in,std::string context_name){
 
     std::vector<std::string> list_of_filenames(0);
 
     std::vector<bool > write_file(0);
 
-    const fs::path* stat_base_dir = ContextRegistry::GetInstance()->RequestContext("fitter_output")->GetSubdir("stat");
+    const fs::path* stat_base_dir = ContextRegistry::GetInstance()->RequestContext(context_name)->GetSubdir("stat");
     //get all names for files
     for (auto set: *(stat_in->data_) ) {
 
@@ -1258,11 +1242,11 @@ namespace hso{
 
   }
 
-  void Write(std::vector<hso::Stat*> stat_pointers,std::string subdir){
+  void Write(std::vector<hso::Stat*> stat_pointers,std::string context_name){
 
     for(auto stat: stat_pointers)
 
-      Write(stat,subdir);
+      Write(stat,context_name);
 
   }
 
@@ -1455,9 +1439,9 @@ namespace hso{
 
   }
   //HessianBands and init function: uses eigensets to get theory bands
-  void InitHessianBands( int argc, char *argv[] ){
+  void InitHessianBands(int argc, char *argv[]){
 
-    std::vector<std::string> expected_args {"fit_dir","output_dir"};
+    std::vector<std::string> expected_args {"fit_dir_path", "output_dir_path"};
 
     int num_of_expected_args = expected_args.size();
 
@@ -1479,120 +1463,173 @@ namespace hso{
 
     std::string fit_dir(argv[1]);
 
-    home_dir = argv[2];
+    std::string home_dir(argv[2]);
 
-    para_filename.assign( FileInDirUnique( fit_dir + "/status/", "para" ) );
+    std::string para_filename( FileInDirUnique( fit_dir + "/status/", "para" ) );
+
+    std::string kinematics_filename( FileInDirUnique( fit_dir + "/input/", "kin" ) );
+
+    std::string eigen_filename_global( FileInDirUnique( fit_dir + "/min/", "eigen" ) );
 
     gsl_set_error_handler_off();//WARNING: dangerous
 
-    std::filesystem::path home_dir_path(home_dir);
+    ContextRegistry* ctx_registry = ContextRegistry::GetInstance();//Meyer singleton
 
-    if ( ! std::filesystem::create_directories(home_dir_path) ){
+    OutputDirectoryTree* output_ctx = ctx_registry->CreateContext("hessian_output", argv[2], {"input", "status","stat"});
 
-      std::cout<<"folder "<<home_dir<<" exists. Quitting"<<std::endl;
+    MakeContext(output_ctx);
 
-      std::exit(1);
+    output_ctx->AddFile(kinematics_filename,"kinematics","input");
 
-    }
+    output_ctx->AddFile(para_filename,"parameters","input");
 
-    //create output directories
-    std::string input_dir;
-
-    input_dir = home_dir + "/input/" ;
-
-    std::filesystem::path input_dir_path(input_dir);
-
-    std::filesystem::create_directories(input_dir_path);
-
-    std::string para_dir ;
-
-    para_dir = home_dir + "/status/" ;
-
-    std::filesystem::path para_dir_path(para_dir);
-
-    std::filesystem::create_directories(para_dir_path);
-
-    std::string eigen_dir(para_dir);
-
-    if(0){
-
-      std::string line;
-      //cp input file
-      std::ifstream input_file (kinematics_filename); //open original input file
-
-      kinematics_filename=hso::read_data::ExtractFname(kinematics_filename); //get file name without path
-
-      std::ofstream input_file_copy( input_dir + "/" + kinematics_filename); //open new file
-
-      while(getline(input_file,line))
-
-        input_file_copy<<line<<"\n";
-
-      input_file .close();
-
-      input_file_copy.close();
-
-    }
-
-    if(0){
-
-      std::string line;
-      //cp para file
-      std::ifstream input_file (para_filename); //open original para file
-
-      para_filename=hso::read_data::ExtractFname(para_filename); //get file name without path
-
-      std::ofstream input_file_copy( para_dir + "/" + para_filename); //open new file
-
-      while(getline(input_file,line))
-
-        input_file_copy<<line<<"\n";
-
-      input_file.close();
-
-      input_file.clear();
-
-      input_file_copy.close();
-
-      input_file_copy.clear();
-      //cp eigensets file
-      input_file.open(eigen_filename_global); //open original para file
-
-      eigen_filename_global=hso::read_data::ExtractFname(eigen_filename_global); //get file name without path
-
-      input_file_copy.open(eigen_dir + "/" + eigen_filename_global); //open new file
-
-      while(getline(input_file,line))
-
-        input_file_copy<<line<<"\n";
-
-      input_file .close();
-
-      input_file_copy.close();
-
-    }
-
-    //to use the newly created copies.
-    kinematics_filename.assign(input_dir + "/" + kinematics_filename);
-
-    para_filename.assign(para_dir + "/" + para_filename);
-
-    eigen_filename_global.assign( eigen_dir + "/" + eigen_filename_global);
+    output_ctx->AddFile(eigen_filename_global,"eigensets","status");
 
   }
 
-  void HessianBands( ROOT::Minuit2::FCN &theFCN, ROOT::Minuit2::MnUserParameters & upar){
-    ///@set flags to store theory/eigen theory in data objects
-    hso::store_values_theory=true;//not tread safe
+  void InitCollinearHessian(){
+    //version for A,B,fr grids: 0=direct calc. ) 2=lhapdf grids
+    LHAPDF::setVerbosity (LHAPDF::SILENT);
 
-    hso::store_values_stat=true;
+    std::string lhapdf_set;
 
-    ROOT::Minuit2::fit_iteration_counter=-1;
-    ///@fix parameters
-    for (auto name : theFCN.para_names_)
+    std::vector<std::string> pdfset_names={"lhapdf_set_member"};
 
-      upar.Fix(name);
+    void *pdfset_vals[]={&lhapdf_set_member};
+    //read values for lhapdf_set and lhapdf_set_member from grid.
+    const OutputDirectoryTree* output_ctx = ContextRegistry::GetInstance()->RequestContext("hessian_output");
+
+    const std::string kin_file_name = output_ctx->GetFile("kinematics")->string();
+
+    read_kinematics::ReadKinematics (kin_file_name, pdfset_names, pdfset_vals );
+
+    read_kinematics::ReadString (kin_file_name,"lhapdf_set",lhapdf_set);
+
+    hso::collinear::SetLhapdf(lhapdf_set, (int) lhapdf_set_member);
+
+  }
+
+  void InitKinematicsHessian(){// reads kinematics & implements data cuts
+    ///read kin from file
+    std::vector<std::string> kin_names = {
+      "Q0",
+      "rg_transf_Qmax",
+      "mu_over_Q0",
+      "sqrt_zeta_over_Q0",
+      "mu_over_Q",
+      "sqrt_zeta_over_Q"
+    };
+
+    void *kin_vals[]={
+      &Q0,
+      &rg_transf_Qmax,
+      &mu_over_Q0,
+      &sqrt_zeta_over_Q0,
+      &mu_over_Q,
+      &sqrt_zeta_over_Q
+    };
+
+    std::vector<std::string> kin_names_2={
+      "qT_over_Q_min",
+      "qT_over_Q_max",
+      "Ecm_min",
+      "Ecm_max",
+      "Qlow_min",
+      "Qlow_max"
+    };
+
+    void *kin_vals_2[] ={&qT_over_Q_min ,&qT_over_Q_max ,&Ecm_min ,&Ecm_max ,&Qlow_min ,&Qlow_max };
+
+    const OutputDirectoryTree* output_ctx = ContextRegistry::GetInstance()->RequestContext("hessian_output");
+
+    const std::string kin_file_name = output_ctx->GetFile("kinematics")->string();
+
+    read_kinematics::ReadKinematics(kin_file_name, kin_names, kin_vals);
+
+    read_kinematics::ReadKinematics(kin_file_name, kin_names_2, kin_vals_2);
+    //set qT cuts (does not update isactive in stat)
+    for(auto data: hso::e288){
+
+      std::vector<double> Q;
+
+      data->GetVarOther("Q",Q);
+
+      double qT_min=qT_over_Q_min*Q[0];
+
+      double qT_max=qT_over_Q_max*Q[0];
+
+      std::vector<hso::Data*> data_wrapped {data};
+
+      SetRange(data_wrapped,"qT",qT_min,qT_max);
+
+    }
+
+    for(auto data: hso::e605){
+
+      std::vector<double> Q;
+
+      data->GetVarOther("Q",Q);
+
+      double qT_min=qT_over_Q_min*Q[0];
+
+      double qT_max=qT_over_Q_max*Q[0];
+
+      std::vector<hso::Data*> data_wrapped {data};
+
+      SetRange(data_wrapped,"qT",qT_min,qT_max);
+
+    }
+
+    for(auto data: hso::e605){
+
+      std::vector<double> Q;
+
+      data->GetVarOther("Q",Q);
+
+      double qT_min=qT_over_Q_min*Q[0];
+
+      double qT_max=qT_over_Q_max*Q[0];
+
+      std::vector<hso::Data*> data_wrapped {data};
+
+      SetRange(data_wrapped,"qT",qT_min,qT_max);
+
+    }
+    ///set cuts for E and Q (each call of SetRange updates isactive in stat)
+    //E288
+    hso::chi2_e288.SetRange("E" , Ecm_min , Ecm_max);
+
+    hso::chi2_e288.SetRange("Q",Qlow_min,Qlow_max);
+    //E605
+    hso::chi2_e605.SetRange("E" , Ecm_min , Ecm_max);
+
+    hso::chi2_e605.SetRange("Q",Qlow_min,Qlow_max);
+    //NOTE: skip upsilon resonance bins (does not update isactive in stat)
+    hso::e288_200_9 .set_is_active_=false;
+
+    hso::e288_300_9 .set_is_active_=false;
+
+    hso::e288_400_9 .set_is_active_=false;
+
+    hso::e288_200_10.set_is_active_=false;
+
+    hso::e288_300_10.set_is_active_=false;
+
+    hso::e288_400_10.set_is_active_=false;
+
+    hso::chi2_e288.UpdateIsActive();
+
+  }
+
+  void HessianBands(ROOT::Minuit2::FCN &theFCN, ROOT::Minuit2::MnUserParameters & upar){
+    // NOTE:refactor for complete minuit-independence
+    // set values of loss function (pt by pt) and theory.
+    theFCN.StoreStatValues(upar);
     ///@read eigensets from file
+    OutputDirectoryTree* output_ctx = ContextRegistry::GetInstance()->RequestContext("hessian_output");
+
+    std::string eigen_filename_global = output_ctx->GetFile("eigensets")->string();
+
     std::vector<std::string> eigen_para_names(0);
 
     std::vector<double> eigen_sets(0);
@@ -1602,57 +1639,43 @@ namespace hso{
     int numofpara=0;
 
     ReadEigensets(eigen_filename_global, eigen_para_names,eigen_sets,numofeigen,numofpara);
-    ///@set size in data for eigenset results
-    for(auto stat: *(theFCN.stat_))
+    //set number of eigen in FCN.stat_
+    for(auto stat: *(theFCN.stat_)){
 
-      stat->SetNumOfEigen(numofeigen);//sets numofeigen for each data in stat
-    ///@check eigensets in file match in number and names to those in upar (use Minuit error to stop program).
-    for(auto name: eigen_para_names) {
-
-      upar.Value(name);
+     stat->SetNumOfEigen(numofeigen);
 
     }
-    ///@log file must be set for FCN
-    std::ofstream hessian_log_file(home_dir + "/status/hessian.log");
+    //store theory for each eigenset
+    for(int eigen_index=1;eigen_index<=numofeigen;eigen_index++){
 
-    theFCN.log_file_=&hessian_log_file;
-    ///@store theory central values
-    ROOT::Minuit2::MnMigrad migrad0(theFCN,upar);
-
-    ROOT::Minuit2::FunctionMinimum min0 = migrad0();//TODO:remove minuit2 dependence. This is a patch
-    ///@store eigen theory
-    std::cout << "\n# numofeigen="<<numofeigen<<"\n"<<std::endl;
-
-    for(int i=1;i<=numofeigen;i++){
-
-      hso::eigen_index=i;//to store theory in correct location in std::vector
-
-      std::cout << "\n# ++++++++++++++++++++++++ hso::eigen_index="<<hso::eigen_index
+      std::cout << "\n# ++++++++++++++++++++++++ eigen_index="<<eigen_index
 
                 <<"+++++++++++++++++++++++\n"<<std::endl;
 
       std::vector<double> eigen_set_i(0);
 
-      GetEigenset(eigen_sets,numofpara,i,eigen_set_i);
+      GetEigenset(eigen_sets,numofpara,eigen_index,eigen_set_i);
 
       int eigen_para_names_size = static_cast<int>(eigen_para_names.size());
 
-      for(int j = 0; j < eigen_para_names_size; j++)
+      for(int j = 0; j < eigen_para_names_size; j++){
 
         upar.SetValue(eigen_para_names[j],eigen_set_i[j]);
 
-      ROOT::Minuit2::MnMigrad migrad(theFCN,upar);
+      }
 
-      ROOT::Minuit2::FunctionMinimum min = migrad();//TODO:remove minuit2 dependence. This is a patch
+      theFCN.StoreEigenValues(upar, eigen_index);
 
     }
-
-    hessian_log_file.close();
-    //use eigen theory to compute hessian errors
-    for( auto stat: *(theFCN.stat_) )
+    //Compute hessian errors
+    for( auto stat: *(theFCN.stat_) ){
 
       stat->EvalHessianError();
 
+    }
+
   }
+
+
 
 }//hso

@@ -58,9 +58,6 @@
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/pdf_cutoff_from_msbar.cpp.o: B hso::collinear::fr1Oas1_lhapdf_pointer
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/read_kin.cpp.o: B hso::read_kinematics::verbose
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/read_para.cpp.o: B hso::read_parameters::verbose
-/home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/stat_class.cpp.o: B hso::store_values_stat
-/home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/theory_class.cpp.o: B hso::eigen_index
-/home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/theory_class.cpp.o: B hso::store_values_theory
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: B hso::utils::lhapdf_set_member
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: B hso::utils::para_central_value
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: B hso::utils::para_error
@@ -69,10 +66,6 @@
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: B hso::utils::para_lower_limit
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: B hso::utils::para_upper_limit
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: B hso::utils::qT_over_Q_min
-/home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::eigen_filename_global
-/home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::home_dir
-/home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::kinematics_filename
-/home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::para_filename
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::utils::Ecm_max
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::utils::Ecm_min
 /home/jogh/research/hso_dy/hso_engine/build/release/CMakeFiles/hso-dy_obj.dir/src/utilities.cpp.o: D hso::utils::mu_over_Q

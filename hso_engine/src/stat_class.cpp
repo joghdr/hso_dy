@@ -14,8 +14,6 @@
 
 namespace hso{
 
-  bool store_values_stat=false;
-
   void Stat::GetBounds(int i, std::vector<double> &bounds){
 
     std::vector<double>(2).swap(bounds);
@@ -218,7 +216,7 @@ namespace hso{
 
   }
 
-  double Stat::operator()(void *para,void *pointer,bool store_values){//stat_values_ stored only if store_values = true
+  double Stat::operator()(void *para,void *pointer){
     //usually the total chi2
     double stat_total=0.0;
 
@@ -243,24 +241,52 @@ namespace hso{
           stat_total += stat_i;
 
         }
-        ///WARNING: to store statvalues into data. NOT tread safe
-        if(store_values) {
-
-          statvalues_internal[i] = stat_i;
-
-        }
 
         index++;
 
       }
-      ///WARNING: to store statvalues into data. NOT tread safe
-      if(store_values) data_set->stat_values_=statvalues_internal;
 
     }
 
     if(penalties_exist_) stat_total += EvalPenalties(pointer);
 
     return stat_total;
+
+  }
+
+  void Stat::StoreValuesInData(void *para, void* pointer){
+    //usually the total chi2
+
+    int index=0;
+    //compute theory for every active point for every pointer in Data.
+    for(auto data_set: *data_) {
+      //eval theory pts and store in temp std::vector. For inactive data points, theory = NAN
+      std::vector<double> theoryvalues_internal=theory_->operator()(*data_set,para);
+
+      std::vector<double> statvalues_internal(data_set->length_);
+
+      for(int i=0;i<data_set->length_;i++) {
+
+        double stat_i=0;
+
+        double theory_i = theoryvalues_internal[i];
+
+        if(point_is_active_[index]) {
+
+          stat_i = Eval(meas_values_[index],err_values_[index],theory_i,pointer);
+
+        }
+
+
+        statvalues_internal[i] = stat_i;
+
+        index++;
+
+      }
+
+      data_set->stat_values_=statvalues_internal;
+
+    }
 
   }
 
@@ -320,15 +346,6 @@ namespace hso{
 
           for(int i=0;i<data_set->length_;i++)if(data_set->point_is_active_[i]){//add in quadrature
 
-            //eq 13 from lhapdf paper: DOI: 10.1140/epjc/s10052-015-3318-8
-            // double plus = Plus [i];
-            // double minus = Minus[i];
-            // double sigma2 = std::pow(Plus[i]-Minus[i],2);
-            //
-            //
-            // data_set->theory_values_err_plus_ [i] += sigma2;
-            // data_set->theory_values_err_minus_[i] += sigma2;
-
             // eqs 11 & 12 from lhapdf paper: DOI: 10.1140/epjc/s10052-015-3318-8
             double plus = Plus [i]-Central[i];
 
@@ -347,10 +364,6 @@ namespace hso{
         }
 
         for(int i=0;i<data_set->length_;i++)if(data_set->point_is_active_[i]){
-          // eq 13 from lhapdf paper : DOI: 10.1140/epjc/s10052-015-3318-8
-          // data_set->theory_values_err_plus_ [i] = std::sqrt( data_set->theory_values_err_plus_ [i])/2.0;
-          //
-          // data_set->theory_values_err_minus_[i] = std::sqrt( data_set->theory_values_err_minus_[i])/2.0;
 
           // eqs 11 & 12 from lhapdf paper : DOI: 10.1140/epjc/s10052-015-3318-8
           data_set->theory_values_err_plus_ [i] = std::sqrt( data_set->theory_values_err_plus_ [i]);
@@ -513,8 +526,8 @@ namespace hso{
     penalties_exist_=true;
 
   };
-  //TODO: need to add code to save chi2 into data
-  double StatNMin::operator()(void *para,void *,bool store_values){
+
+  double StatNMin::operator()(void *para,void *){
 
     int index =0;
 
@@ -549,61 +562,72 @@ namespace hso{
       s2 += std::pow(theory/error,2);
 
     }
-    ////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////
-    //NOTE if N multiplies theory                ///////
-    ////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////
+
     if(!fix_norm_) norm = (1.0 + std::pow(delta_N_,2)*s1)/(1.0 + std::pow(delta_N_,2)*s2);
-    ////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////
-    //NOTE if N divides theory (as in DY pheno paper) //
-    ////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////
-    // if(!fix_norm){
-    //
-    //
-    // double norm4=0.25 - std::sqrt(0.25 + (pow(2,0.3333333333333333)*(s1*std::pow(delta_N_,2) - 4*s2*std::pow(delta_N_,2)))/
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),0.3333333333333333) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),0.3333333333333333)/
-    // (3.*std::pow(2,0.3333333333333333)))/2. +
-    // std::sqrt(0.5 - (pow(2,0.3333333333333333)*(s1*std::pow(delta_N_,2) - 4*s2*std::pow(delta_N_,2)))/
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),0.3333333333333333) -
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),0.3333333333333333)/
-    // (3.*std::pow(2,0.3333333333333333)) -
-    // (1 - 8*s1*std::pow(delta_N_,2))/
-    // (4.*std::sqrt(0.25 + (pow(2,0.3333333333333333)*(s1*std::pow(delta_N_,2) - 4*s2*std::pow(delta_N_,2)))/
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),
-    // 0.3333333333333333) + std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4) +
-    // std::sqrt(-4*std::pow(3*s1*std::pow(delta_N_,2) - 12*s2*std::pow(delta_N_,2),3) +
-    // std::pow(-27*s2*std::pow(delta_N_,2) + 27*std::pow(s1,2)*std::pow(delta_N_,4),2)),
-    // 0.3333333333333333)/(3.*std::pow(2,0.3333333333333333)))))/2.;
-    //
-    // if(norm4==norm4) norm=norm4;
-    // // else {
-    // //
-    // // std::cout<<"##unused s1="<<s1<<" s2="<<s2<<": data="<<(*data_)[0]->name<<std::endl;
-    // //
-    // //
-    // // // std::exit(0);
-    // //
-    // // }
-    //
-    // }
-    /////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
+
+    //compute chi2
+    for(int i=0;i<length_;i++) if(point_is_active_[i]){
+
+      double meas =meas_values_[i];
+
+      double error =err_values_[i];
+
+      double theory =TheoryValues_internal[i];
+
+      double stat_i = std::pow( (meas-theory*norm)/error , 2 );//norm multiplies theory
+
+      stat_total += stat_i;
+
+    }
+    //add penalty term from normalization (EvalPenalties is not used here)
+    if(penalties_exist_&&s1!=0&&s2!=0) {//NOTE: PATCH: s1=s2=0 when there are no active poiints
+
+      stat_total += std::pow( (norm-1.0)/delta_N_ , 2 );
+
+    }
+
+    return stat_total;
+
+  }
+
+
+  void StatNMin::StoreValuesInData(void *para, void*){
+
+    int index =0;
+
+    std::vector<double>TheoryValues_internal(length_);
+
+    double s1=0,s2=0,norm=1.0,stat_total=0.0;
+    //compute theory for every active point for every pointer in Data.
+    for(auto data_set: *data_) {
+
+      theory_->StoreCentralInData(*data_set,para);//stores in data.theory_values_
+
+      for(int i=0;i<data_set->length_;i++) {
+
+        TheoryValues_internal[index] = data_set->theory_values_[i];
+
+        index++;
+
+      }
+
+    }
+    //compute quantities needed to construct chi2 minimized respect to normalization.
+    for(int i=0;i<length_;i++) if(point_is_active_[i]){
+
+      double meas =meas_values_[i];
+
+      double error = err_values_[i];
+
+      double theory =TheoryValues_internal[i];
+
+      s1 += meas*theory/pow(error,2);
+
+      s2 += std::pow(theory/error,2);
+
+    }
+    if(!fix_norm_) norm = (1.0 + std::pow(delta_N_,2)*s1)/(1.0 + std::pow(delta_N_,2)*s2);
+
     //compute chi2
     for(int i=0;i<length_;i++) if(point_is_active_[i]){
 
@@ -617,7 +641,7 @@ namespace hso{
 
       stat_total += stat_i;
       //store stat vals if flag is true
-      if(store_values) stat_values_[i]=stat_i;
+      stat_values_[i]=stat_i;
 
     }
     //add penalty term from normalization (EvalPenalties is not used here)
@@ -627,35 +651,30 @@ namespace hso{
 
     }
 
-    if(store_values){
+    int data_size = static_cast<int>(data_ -> size());
 
-      int data_size = static_cast<int>(data_ -> size());
+    for(int i=0; i < data_size; i++){
 
-      for(int i=0; i < data_size; i++){
+      Data *data_set=(*data_)[i];
 
-        Data *data_set=(*data_)[i];
+      std::vector<double>(0).swap(data_set->stat_values_);
 
-        std::vector<double>(0).swap(data_set->stat_values_);
+      std::vector<double>(0).swap(data_set->norm_values_);
 
-        std::vector<double>(0).swap(data_set->norm_values_);
+      std::vector<double> bounds_j;
 
-        std::vector<double> bounds_j;
+      GetBounds(i,bounds_j);
 
-        GetBounds(i,bounds_j);
+      for(int j=bounds_j[0];j<=bounds_j[1];j++){
 
-        for(int j=bounds_j[0];j<=bounds_j[1];j++){
+        data_set->stat_values_.push_back(stat_values_[j]);
 
-          data_set->stat_values_.push_back(stat_values_[j]);
-
-          data_set->norm_values_.push_back(norm);
-
-        }
+        data_set->norm_values_.push_back(norm);
 
       }
 
     }
 
-    return stat_total;
 
   }
 

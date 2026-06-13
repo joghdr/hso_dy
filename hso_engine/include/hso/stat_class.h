@@ -10,8 +10,6 @@ namespace hso{
 
   class Theory;
 
-  extern bool store_values_stat;
-
   class Stat {
 
   public:
@@ -87,7 +85,9 @@ namespace hso{
 
     virtual double EvalPenalties(void *);
 
-    virtual double operator()(void *para,void *pointer,bool store_values=store_values_stat);
+    virtual double operator()(void *para,void *pointer);
+
+    virtual void StoreValuesInData(void *para, void *pointer);
 
     virtual bool Write(std::string fname_out,int i);
 
@@ -183,7 +183,9 @@ namespace hso{
     //members
     double delta_N_;
     //no need for Eval or Eval_penalties
-    virtual double operator()(void *para,void *pointer,bool store_values=store_values_stat);
+    virtual double operator()(void *para,void *pointer);
+
+    virtual void StoreValuesInData(void *para, void*);
 
   };//StatNMin
 

@@ -20,9 +20,15 @@ fi
 
 OUTPUT_DIR=results/"${catch}"
 
+CURRENT_VERSION="$(cat ../hso_engine/VERSION)"
+
+IMAGE=hso-dy:"$CURRENT_VERSION"
+
+echo "Running image: '$IMAGE'"
+
 docker run --rm \
 -u $(id -u):$(id -g) \
 -v $(pwd)/input:/app/input \
 -v $(pwd)/results:/app/results \
--t hso-dy:1.0.0 \
+-t "$IMAGE" \
 HSODrellYanFitter input/kin_drellyan.input input/para_hso.input "${OUTPUT_DIR}"

@@ -67,13 +67,13 @@ function get_globals {
 
 }
 
-function diff_with_registry {
-
-  local globals_registry_file="${1:?Not file provided}"
-
-  diff <(get_globals | awk '{ print $(NF-1), $NF }' | sort) <(cat "$globals_registry_file" | awk '{ print $(NF-1), $NF }' | sort)
-
-}
+# function diff_with_registry {
+#
+#   local globals_registry_file="${1:?Not file provided}"
+#
+#   diff <(get_globals | awk '{ print $(NF-1), $NF }' | sort) <(cat "$globals_registry_file" | awk '{ print $(NF-1), $NF }' | sort)
+#
+# }
 
 function find_new_globals {
 
@@ -115,11 +115,11 @@ function find_new_globals {
 
     hso_print_err "Found new globals in binaries:" "$new_globals"
 
-    print_msg " REGISTRY LIST IS:" "${globals_registry_file}"
+    hso_print_msg " REGISTRY LIST IS:" "${globals_registry_file}"
 
     echo "${registry_globals_clean}" >&2
 
-    print_msg " CURRENT GLOBALS:"
+    hso_print_msg " CURRENT GLOBALS:"
 
     echo "${current_globals_clean}" >&2
 
@@ -165,12 +165,13 @@ function find_resolved_globals {
 
   if [[ -n "${resolved_globals//[[:space:]]/}" ]]; then
 
-    if [ ! -f /.dockerenv ]; then
+    if [ -f /etc/hso_container_marker ]; then
+
       hso_print_soft_ok "Some globals tagged as 'resolved' while auditing in container. Ignoring (harmless)."
       return 0
     else
 
-      print_warning \
+      hso_print_err \
       "Found new resolved globals in binaries, registry must be updated," \
       "Update registry of globals by running:" \
       "   cmake --build --preset <BUILD_PRESET_NAME> --target update_registry_globals" \
@@ -357,21 +358,19 @@ function find_resolved_globals_app {
 
   if [[ -n "${resolved_globals//[[:space:]]/}" ]]; then
 
-    if [ ! -f /.dockerenv ]; then
+    if [ -f /etc/hso_container_marker ]; then
+
       hso_print_soft_ok "Some globals tagged as 'resolved' while auditing in container. Ignoring (harmless)."
       return 0
+
     else
 
-      print_warning \
+      hso_print_err \
       "Found new resolved globals in executable, registry must be updated," \
       "Update registry of globals by running:" \
       "   cmake --build --preset <BUILD_PRESET_NAME> --target update_registry_globals" \
       "Resolved globals:" \
       "${resolved_globals}"
-
-      print_msg "CURRENT" "${current_globals}"  "++++++++++"
-      print_msg "REGISTRY" "from: ${globals_registry_file_app}" "$(cat ${globals_registry_file_app} )"
-      print_msg "CURRENT CONTAINER BARE" "$(get_globals_app)"
 
       return 1
 
