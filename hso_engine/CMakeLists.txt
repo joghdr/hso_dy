@@ -21,6 +21,8 @@ set(
   src/data_class.cpp
   src/data_loader.cpp
   src/evo.cpp
+  src/experiment_class.cpp
+  src/experiment_loader.cpp
   src/FCN.cpp
   src/math_functions.cpp
   src/models_fcn-tmd-gaussx1-CS-gauss.cpp
