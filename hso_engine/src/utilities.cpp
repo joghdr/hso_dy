@@ -937,17 +937,17 @@ namespace hso{
 
     hso::chi2_e605.SetRange("Q",Qlow_min,Qlow_max);
     //NOTE: skip upsilon resonance bins (does not update isactive in stat)
-    hso::e288_200_9 .set_is_active_=false;
+    hso::e288_200_9 ->set_is_active_=false;
 
-    hso::e288_300_9 .set_is_active_=false;
+    hso::e288_300_9 ->set_is_active_=false;
 
-    hso::e288_400_9 .set_is_active_=false;
+    hso::e288_400_9 ->set_is_active_=false;
 
-    hso::e288_200_10.set_is_active_=false;
+    hso::e288_200_10->set_is_active_=false;
 
-    hso::e288_300_10.set_is_active_=false;
+    hso::e288_300_10->set_is_active_=false;
 
-    hso::e288_400_10.set_is_active_=false;
+    hso::e288_400_10->set_is_active_=false;
 
     hso::chi2_e288.UpdateIsActive();
 
@@ -1605,17 +1605,17 @@ namespace hso{
 
     hso::chi2_e605.SetRange("Q",Qlow_min,Qlow_max);
     //NOTE: skip upsilon resonance bins (does not update isactive in stat)
-    hso::e288_200_9 .set_is_active_=false;
+    hso::e288_200_9 ->set_is_active_=false;
 
-    hso::e288_300_9 .set_is_active_=false;
+    hso::e288_300_9 ->set_is_active_=false;
 
-    hso::e288_400_9 .set_is_active_=false;
+    hso::e288_400_9 ->set_is_active_=false;
 
-    hso::e288_200_10.set_is_active_=false;
+    hso::e288_200_10->set_is_active_=false;
 
-    hso::e288_300_10.set_is_active_=false;
+    hso::e288_300_10->set_is_active_=false;
 
-    hso::e288_400_10.set_is_active_=false;
+    hso::e288_400_10->set_is_active_=false;
 
     hso::chi2_e288.UpdateIsActive();
 

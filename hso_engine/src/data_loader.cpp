@@ -15,6 +15,7 @@
 #include <cmath>
 #include <algorithm>
 #include <filesystem>
+#include <memory>
 
 
 
@@ -1056,17 +1057,19 @@ namespace hso{
 
   }//anonymous namespace
 
-  Data DataLoader::Load(std::string fname_in){
+  std::unique_ptr<Data> DataLoader::Load(std::string fname_in){
 
-    Data data_instance;
+    std::cout<<"- - - Loading "<<fname_in<<std::endl;
+
+    std::unique_ptr<Data> data_pointer = std::make_unique<Data>();
 
     std::filesystem::path path_to_data_file(fname_in);
 
-    data_instance.file_name_=path_to_data_file.filename().string();
+    (*data_pointer).file_name_=path_to_data_file.filename().string();
 
-    data_instance.name_=path_to_data_file.stem().string();
+    (*data_pointer).name_=path_to_data_file.stem().string();
 
-    data_instance.dir_name_=path_to_data_file.parent_path().filename().string();
+    (*data_pointer).dir_name_=path_to_data_file.parent_path().filename().string();
 
     std::vector<std::string> comment_lines;
 
@@ -1076,95 +1079,98 @@ namespace hso{
 
     std::string key = LoadFile(path_to_data_file, data_lines,
 
-                               comment_lines, dim, data_instance.var_bin_names_,
+                               comment_lines, dim, (*data_pointer).var_bin_names_,
 
-                               data_instance.var_int_names_, data_instance.var_avg_names_, data_instance.meas_names_,
+                               (*data_pointer).var_int_names_, (*data_pointer).var_avg_names_, (*data_pointer).meas_names_,
 
-                               data_instance.err_names_, data_instance.input_column_number_);
+                               (*data_pointer).err_names_, (*data_pointer).input_column_number_);
 
     std::map<std::string,int> dictionary;
 
-    dictionary=GetDictionary(key, data_instance.var_bin_names_, data_instance.var_int_names_,
+    dictionary=GetDictionary(key, (*data_pointer).var_bin_names_, (*data_pointer).var_int_names_,
 
-                             data_instance.var_avg_names_, data_instance.meas_names_, data_instance.err_names_);
+                             (*data_pointer).var_avg_names_, (*data_pointer).meas_names_, (*data_pointer).err_names_);
 
-    while (ReadLineValues(dictionary, data_lines, data_instance.var_bin_names_,
+    while (ReadLineValues(dictionary, data_lines, (*data_pointer).var_bin_names_,
 
-      data_instance.var_int_names_,data_instance.var_avg_names_,data_instance.meas_names_,data_instance.err_names_,
+      (*data_pointer).var_int_names_,(*data_pointer).var_avg_names_,(*data_pointer).meas_names_,(*data_pointer).err_names_,
 
-      data_instance.var_bin_avg_,data_instance.var_bin_min_,data_instance.var_bin_max_,data_instance.var_int_min_,
+      (*data_pointer).var_bin_avg_,(*data_pointer).var_bin_min_,(*data_pointer).var_bin_max_,(*data_pointer).var_int_min_,
 
-      data_instance.var_int_max_,data_instance.var_avg_,data_instance.meas_values_,data_instance.err_values_)
+      (*data_pointer).var_int_max_,(*data_pointer).var_avg_,(*data_pointer).meas_values_,(*data_pointer).err_values_)
     );
 
-    data_instance.number_of_var_bin_ = data_instance.var_bin_names_.size();
+    (*data_pointer).number_of_var_bin_ = (*data_pointer).var_bin_names_.size();
 
-    data_instance.number_of_var_int_ = data_instance.var_int_names_.size();
+    (*data_pointer).number_of_var_int_ = (*data_pointer).var_int_names_.size();
 
-    data_instance.number_of_var_avg_ = data_instance.var_avg_names_.size();
+    (*data_pointer).number_of_var_avg_ = (*data_pointer).var_avg_names_.size();
 
-    data_instance.number_of_meas_ = 1;
+    (*data_pointer).number_of_meas_ = 1;
 
-    data_instance.number_of_err_=data_instance.err_names_.size();
+    (*data_pointer).number_of_err_=(*data_pointer).err_names_.size();
     //maps for easy acess to values
-    for(int j=0;j<data_instance.number_of_var_bin_;j++)
+    for(int j=0;j<(*data_pointer).number_of_var_bin_;j++)
 
-      data_instance.varbin_j_.insert({data_instance.var_bin_names_[j],j});
+      (*data_pointer).varbin_j_.insert({(*data_pointer).var_bin_names_[j],j});
 
-    for(int j=0;j<data_instance.number_of_var_int_;j++)
+    for(int j=0;j<(*data_pointer).number_of_var_int_;j++)
 
-      data_instance.varint_j_.insert({data_instance.var_int_names_[j],j});
+      (*data_pointer).varint_j_.insert({(*data_pointer).var_int_names_[j],j});
 
-    for(int j=0;j<data_instance.number_of_var_avg_;j++)
+    for(int j=0;j<(*data_pointer).number_of_var_avg_;j++)
 
-      data_instance.varavg_j_.insert({data_instance.var_avg_names_[j],j});
+      (*data_pointer).varavg_j_.insert({(*data_pointer).var_avg_names_[j],j});
 
-    for(int k=0;k<data_instance.number_of_err_ ;k++)
+    for(int k=0;k<(*data_pointer).number_of_err_ ;k++)
 
-      data_instance.err_k_.insert({data_instance.err_names_[k],k});
+      (*data_pointer).err_k_.insert({(*data_pointer).err_names_[k],k});
     //set active length, valid and active
-    data_instance.length_ = data_instance.meas_values_.size();
+    (*data_pointer).length_ = (*data_pointer).meas_values_.size();
     //mark lines that are not valid
-    std::vector<bool> (data_instance.length_,false).swap(data_instance.point_is_valid_);
+    std::vector<bool> ((*data_pointer).length_,false).swap((*data_pointer).point_is_valid_);
 
-    for(int i=0;i<data_instance.length_;i++ ) if(data_instance.meas_values_[i]==data_instance.meas_values_[i]) data_instance.point_is_valid_[i]=true;
+    for(int i=0;i<(*data_pointer).length_;i++ ) if((*data_pointer).meas_values_[i]==(*data_pointer).meas_values_[i]) (*data_pointer).point_is_valid_[i]=true;
     //mark all valid bins as active and count active bins
-    std::vector<bool> (data_instance.length_,false).swap(data_instance.point_is_active_);
+    std::vector<bool> ((*data_pointer).length_,false).swap((*data_pointer).point_is_active_);
 
-    data_instance.length_active_=0;
+    (*data_pointer).length_active_=0;
 
-    for (int i=0;i<data_instance.length_;i++ ) {
+    for (int i=0;i<(*data_pointer).length_;i++ ) {
 
-      if(data_instance.point_is_valid_[i]) {
+      if((*data_pointer).point_is_valid_[i]) {
 
-        data_instance.point_is_active_[i]=true;
+        (*data_pointer).point_is_active_[i]=true;
 
-        data_instance.length_active_++;
+        (*data_pointer).length_active_++;
 
-        data_instance.set_is_active_=true;
+        (*data_pointer).set_is_active_=true;
 
       }
 
     }
 
-    SearchOtherKeys(comment_lines, data_instance.other_vars_);
+    SearchOtherKeys(comment_lines, (*data_pointer).other_vars_);
     //Sep 2023
-    std::vector<double> (data_instance.meas_values_.size(),NAN).swap(data_instance.theory_values_);
+    std::vector<double> ((*data_pointer).meas_values_.size(),NAN).swap((*data_pointer).theory_values_);
 
-    std::vector<double> (data_instance.meas_values_.size(),1.0).swap(data_instance.norm_values_);
+    std::vector<double> ((*data_pointer).meas_values_.size(),1.0).swap((*data_pointer).norm_values_);
 
-    std::vector<double> (data_instance.meas_values_.size(),0.0).swap(data_instance.shift_values_);
+    std::vector<double> ((*data_pointer).meas_values_.size(),0.0).swap((*data_pointer).shift_values_);
 
-    data_instance.normalize_=false;
+    (*data_pointer).normalize_=false;
 
-    data_instance.shift_=false;
+    (*data_pointer).shift_=false;
 
-    SetBehavior(data_instance);
+    SetBehavior(*data_pointer);
 
-    return data_instance;
+    return data_pointer;
 
   }
 
 
 
 }//hso
+
+
+

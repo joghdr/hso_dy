@@ -2,6 +2,7 @@
 #define _DATA_LOADER_H_
 
 #include <string>
+#include <memory>
 
 namespace hso{
 
@@ -9,11 +10,19 @@ namespace hso{
 
   class DataLoader {
 
-    DataLoader() = delete;
-
   public:
 
-    static Data Load(std::string file_name_in);
+    DataLoader() = delete;
+
+    DataLoader(DataLoader& ) = delete;
+
+    DataLoader(DataLoader&& ) = delete;
+
+    DataLoader& operator=(DataLoader& ) = delete;
+
+    DataLoader& operator=(DataLoader&& ) = delete;
+
+    static std::unique_ptr<Data> Load(std::string file_name_in);
 
   };
 
