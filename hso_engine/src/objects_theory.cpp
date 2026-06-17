@@ -34,15 +34,5 @@ namespace hso{
 
   );
 
-  ////CDF_I, CDF_II, DO_I
-  //NOTE Z0 boson full propagator, integrating over Q
-  //     use RG improved version, hence namespace is csec_rg_improved
-  hso::Theory observable_drell_yan_Z0_1 (csec_rg_improved::integrand_drell_yan_Z0_1,
-
-                                         {"yh","sqrt_s","Q","qT"},
-
-                                         {VariableType::Undetermined, VariableType::Value,
-                                           VariableType::Integration, VariableType::Value}
-  );
 
 }//hso

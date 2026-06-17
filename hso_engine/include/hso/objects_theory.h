@@ -9,8 +9,6 @@ namespace hso{
 
   extern hso::Theory observable_drell_yan_4_xFavg_qTavg;
 
-  extern hso::Theory observable_drell_yan_Z0_1;
-
 }//hso
 
 #endif //_OBJECTS_Theory_H_
