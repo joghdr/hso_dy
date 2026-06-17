@@ -28,6 +28,10 @@ namespace hso {
 
     bool AddDataSet(const std::string data_id, std::unique_ptr<Data> data_pointer);
 
+    [[nodiscard]] Data* GetDataPointer(const std::string& data_id);
+
+    [[nodiscard]] const Data* GetDataPointer(const std::string& data_id) const;
+
     [[nodiscard]] std::vector<Data*> GetDataPointers();
 
     [[nodiscard]] std::vector<const Data*> GetDataPointers() const;

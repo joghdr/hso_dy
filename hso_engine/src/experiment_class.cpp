@@ -17,6 +17,34 @@ namespace hso{
 
   }
 
+  Data* Experiment::GetDataPointer(const std::string& data_id){
+
+    auto it = data_sets_.find(data_id);
+
+    if(it == data_sets_.end()){
+
+      return nullptr;
+
+    }
+
+    return it->second.get();
+
+  }
+
+  const Data* Experiment::GetDataPointer(const std::string& data_id) const{
+
+    const auto it = data_sets_.find(data_id);
+
+    if(it == data_sets_.end()){
+
+      return nullptr;
+
+    }
+
+    return (it->second).get();
+
+  }
+
   std::vector<Data*> Experiment::GetDataPointers(){
 
     std::vector<Data*> data_pointers;

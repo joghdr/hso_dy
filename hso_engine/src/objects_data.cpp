@@ -1,6 +1,8 @@
 #include <hso/objects_data.h>
 #include <hso/data_class.h>
 #include <hso/data_loader.h>
+#include <hso/experiment_class.h>
+#include <hso/experiment_loader.h>
 #include <vector>
 #include <string>
 #include <memory>
@@ -10,57 +12,10 @@ namespace hso{
   ////////////////////////////////////////////////////////////////////
   //NOTE: E288 experiment                                           //
   ////////////////////////////////////////////////////////////////////
-  std::unique_ptr<hso::Data>  e288_200_4  = DataLoader::Load( kDirData + "/E288/" + "E288_200_4-5.dat" );
-  std::unique_ptr<hso::Data>  e288_200_5  = DataLoader::Load( kDirData + "/E288/" + "E288_200_5-6.dat" );
-  std::unique_ptr<hso::Data>  e288_200_6  = DataLoader::Load( kDirData + "/E288/" + "E288_200_6-7.dat" );
-  std::unique_ptr<hso::Data>  e288_200_7  = DataLoader::Load( kDirData + "/E288/" + "E288_200_7-8.dat" );
-  std::unique_ptr<hso::Data>  e288_200_8  = DataLoader::Load( kDirData + "/E288/" + "E288_200_8-9.dat" );
-  std::unique_ptr<hso::Data>  e288_200_9  = DataLoader::Load( kDirData + "/E288/" + "E288_200_9-10.dat" );
-  std::unique_ptr<hso::Data>  e288_200_10 = DataLoader::Load( kDirData + "/E288/" + "E288_200_10-11.dat");
-  std::unique_ptr<hso::Data>  e288_300_4  = DataLoader::Load( kDirData + "/E288/" + "E288_300_4-5.dat" );
-  std::unique_ptr<hso::Data>  e288_300_5  = DataLoader::Load( kDirData + "/E288/" + "E288_300_5-6.dat" );
-  std::unique_ptr<hso::Data>  e288_300_6  = DataLoader::Load( kDirData + "/E288/" + "E288_300_6-7.dat" );
-  std::unique_ptr<hso::Data>  e288_300_7  = DataLoader::Load( kDirData + "/E288/" + "E288_300_7-8.dat" );
-  std::unique_ptr<hso::Data>  e288_300_8  = DataLoader::Load( kDirData + "/E288/" + "E288_300_8-9.dat" );
-  std::unique_ptr<hso::Data>  e288_300_9  = DataLoader::Load( kDirData + "/E288/" + "E288_300_9-10.dat" );
-  std::unique_ptr<hso::Data>  e288_300_10 = DataLoader::Load( kDirData + "/E288/" + "E288_300_10-11.dat");
-  std::unique_ptr<hso::Data>  e288_300_11 = DataLoader::Load( kDirData + "/E288/" + "E288_300_11-12.dat");
-  std::unique_ptr<hso::Data>  e288_400_5  = DataLoader::Load( kDirData + "/E288/" + "E288_400_5-6.dat" );
-  std::unique_ptr<hso::Data>  e288_400_6  = DataLoader::Load( kDirData + "/E288/" + "E288_400_6-7.dat" );
-  std::unique_ptr<hso::Data>  e288_400_7  = DataLoader::Load( kDirData + "/E288/" + "E288_400_7-8.dat" );
-  std::unique_ptr<hso::Data>  e288_400_8  = DataLoader::Load( kDirData + "/E288/" + "E288_400_8-9.dat" );
-  std::unique_ptr<hso::Data>  e288_400_9  = DataLoader::Load( kDirData + "/E288/" + "E288_400_9-10.dat" );
-  std::unique_ptr<hso::Data>  e288_400_10 = DataLoader::Load( kDirData + "/E288/" + "E288_400_10-11.dat");
-  std::unique_ptr<hso::Data>  e288_400_11 = DataLoader::Load( kDirData + "/E288/" + "E288_400_11-12.dat");
-  std::unique_ptr<hso::Data>  e288_400_12 = DataLoader::Load( kDirData + "/E288/" + "E288_400_12-13.dat");
-  std::unique_ptr<hso::Data>  e288_400_13 = DataLoader::Load( kDirData + "/E288/" + "E288_400_13-14.dat");
+  std::unique_ptr<hso::Experiment> e288_experiment = ExperimentLoader::Load(kDirData + "/E288");
 
-  std::vector<hso::Data*> e288 {
-    e288_200_4 .get(),
-    e288_200_5 .get(),
-    e288_200_6 .get(),
-    e288_200_7 .get(),
-    e288_200_8 .get(),
-    e288_200_9 .get(),
-    e288_200_10.get(),
-    e288_300_4 .get(),
-    e288_300_5 .get(),
-    e288_300_6 .get(),
-    e288_300_7 .get(),
-    e288_300_8 .get(),
-    e288_300_9 .get(),
-    e288_300_10.get(),
-    e288_300_11.get(),
-    e288_400_5 .get(),
-    e288_400_6 .get(),
-    e288_400_7 .get(),
-    e288_400_8 .get(),
-    e288_400_9 .get(),
-    e288_400_10.get(),
-    e288_400_11.get(),
-    e288_400_12.get(),
-    e288_400_13.get()
-  };
+  std::vector<hso::Data*> e288 = e288_experiment->GetDataPointers();
+  
   ////////////////////////////////////////////////////////////////////
   //NOTE: E605 experiment                                           //
   ////////////////////////////////////////////////////////////////////

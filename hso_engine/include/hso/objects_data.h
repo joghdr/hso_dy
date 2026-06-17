@@ -4,37 +4,21 @@
 #include <vector>
 #include <memory>
 
-namespace hso { class Data; }
+namespace hso {
+
+  class Data;
+
+  class Experiment;
+
+}
 
 namespace hso{
 
   inline constexpr std::string kDirData {"assets/data/"};
   ///@fix_target
   //e288
-  extern std::unique_ptr<hso::Data>  e288_200_4 ;
-  extern std::unique_ptr<hso::Data>  e288_200_5 ;
-  extern std::unique_ptr<hso::Data>  e288_200_6 ;
-  extern std::unique_ptr<hso::Data>  e288_200_7 ;
-  extern std::unique_ptr<hso::Data>  e288_200_8 ;
-  extern std::unique_ptr<hso::Data>  e288_200_9 ;
-  extern std::unique_ptr<hso::Data>  e288_200_10;
-  extern std::unique_ptr<hso::Data>  e288_300_4 ;
-  extern std::unique_ptr<hso::Data>  e288_300_5 ;
-  extern std::unique_ptr<hso::Data>  e288_300_6 ;
-  extern std::unique_ptr<hso::Data>  e288_300_7 ;
-  extern std::unique_ptr<hso::Data>  e288_300_8 ;
-  extern std::unique_ptr<hso::Data>  e288_300_9 ;
-  extern std::unique_ptr<hso::Data>  e288_300_10;
-  extern std::unique_ptr<hso::Data>  e288_300_11;
-  extern std::unique_ptr<hso::Data>  e288_400_5 ;
-  extern std::unique_ptr<hso::Data>  e288_400_6 ;
-  extern std::unique_ptr<hso::Data>  e288_400_7 ;
-  extern std::unique_ptr<hso::Data>  e288_400_8 ;
-  extern std::unique_ptr<hso::Data>  e288_400_9 ;
-  extern std::unique_ptr<hso::Data>  e288_400_10;
-  extern std::unique_ptr<hso::Data>  e288_400_11;
-  extern std::unique_ptr<hso::Data>  e288_400_12;
-  extern std::unique_ptr<hso::Data>  e288_400_13;
+  extern std::unique_ptr<hso::Experiment>  e288_experiment ;
+
   ////e605
   extern std::unique_ptr<hso::Data>  e605_800_7 ;
   extern std::unique_ptr<hso::Data>  e605_800_8 ;

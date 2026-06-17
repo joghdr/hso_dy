@@ -5,6 +5,7 @@
 #include <hso/data_class.h>
 #include <hso/theory_class.h>
 #include <hso/stat_class.h>
+#include <hso/experiment_class.h>
 #include <hso/read_para.h>
 #include <hso/read_kin.h>
 #include <hso/objects_data.h>
@@ -937,17 +938,27 @@ namespace hso{
 
     hso::chi2_e605.SetRange("Q",Qlow_min,Qlow_max);
     //NOTE: skip upsilon resonance bins (does not update isactive in stat)
-    hso::e288_200_9 ->set_is_active_=false;
+    std::vector<std::string> e288_upsilon_resonace_ids {"E288_200_9-10",
+                                                        "E288_300_9-10",
+                                                        "E288_400_9-10",
+                                                        "E288_200_10-11",
+                                                        "E288_300_10-11",
+                                                        "E288_400_10-11"
+                                                       };
 
-    hso::e288_300_9 ->set_is_active_=false;
+    for (auto &file_id: e288_upsilon_resonace_ids){
 
-    hso::e288_400_9 ->set_is_active_=false;
+      hso::Data* data_pointer = hso::e288_experiment->GetDataPointer(file_id);
 
-    hso::e288_200_10->set_is_active_=false;
+      if (data_pointer != nullptr){
 
-    hso::e288_300_10->set_is_active_=false;
+        data_pointer->set_is_active_=false;
 
-    hso::e288_400_10->set_is_active_=false;
+      }
+
+
+
+    }
 
     hso::chi2_e288.UpdateIsActive();
 
@@ -1605,17 +1616,27 @@ namespace hso{
 
     hso::chi2_e605.SetRange("Q",Qlow_min,Qlow_max);
     //NOTE: skip upsilon resonance bins (does not update isactive in stat)
-    hso::e288_200_9 ->set_is_active_=false;
+    std::vector<std::string> e288_upsilon_resonace_ids {"E288_200_9-10",
+      "E288_300_9-10",
+      "E288_400_9-10",
+      "E288_200_10-11",
+      "E288_300_10-11",
+      "E288_400_10-11"
+    };
 
-    hso::e288_300_9 ->set_is_active_=false;
+    for (auto &file_id: e288_upsilon_resonace_ids){
 
-    hso::e288_400_9 ->set_is_active_=false;
+      hso::Data* data_pointer = hso::e288_experiment->GetDataPointer(file_id);
 
-    hso::e288_200_10->set_is_active_=false;
+      if (data_pointer != nullptr){
 
-    hso::e288_300_10->set_is_active_=false;
+        data_pointer->set_is_active_=false;
 
-    hso::e288_400_10->set_is_active_=false;
+      }
+
+
+
+    }
 
     hso::chi2_e288.UpdateIsActive();
 
