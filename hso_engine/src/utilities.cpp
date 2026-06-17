@@ -8,8 +8,7 @@
 #include <hso/experiment_class.h>
 #include <hso/read_para.h>
 #include <hso/read_kin.h>
-#include <hso/objects_data.h>
-#include <hso/objects_stat.h>
+#include <hso/objects_data_theory_stat.h>
 #include <hso/FCN.h>
 #include <hso/output_dir_tree.h>
 //

@@ -1,4 +1,4 @@
-#include <hso/objects_stat.h>
+#include <hso/objects_data_theory_stat.h>
 #include <hso/FCN.h>
 #include <hso/utilities.h>
 #include "Minuit2/MnUserParameters.h"

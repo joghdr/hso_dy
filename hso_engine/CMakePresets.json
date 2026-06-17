@@ -33,7 +33,7 @@
     "name": "dev",
     "inherits": "base",
     "cacheVariables": {
-      "CMAKE_CXX_FLAGS": "-flto=auto  -Og -g -Wall  -Wshadow -Wunused-parameter -Werror ",
+      "CMAKE_CXX_FLAGS": "-Og -g -Wall  -Wshadow -Wunused-parameter -Werror ",
       "CMAKE_BUILD_TYPE": "Debug"
     }
   },
