@@ -3,7 +3,7 @@
 #include <hso/math_functions.h>
 #include <hso/stat_class.h>
 #include <hso/theory_class.h>
-#include <hso/objects_stat.h>
+#include <hso/objects_data_theory_stat.h>
 
 #include "Minuit2/FunctionMinimum.h"
 
