@@ -11,7 +11,9 @@ This framework is currently transitioning from a research prototype to an indust
 - [ ] Pillar 4: **Library Abstraction** [Planned]  
 - [ ] Pillar 5: **Modern C++20 & RAII** [Planned]  
 - [ ] Pillar 6: **High-Performance Optimization** [Planned]  
-  
+
+*For real-time progress and activity ledger, see [Development Notes](hso_engine/docs/development_notes.md).*
+
 ## Roadmap Details
 ### Pillar 1: Infrastructure Foundations
 Deployment of a modern CMake build, containerized Docker environment, and integrated CI/CD pipelines to ensure deterministic, scalable builds.
