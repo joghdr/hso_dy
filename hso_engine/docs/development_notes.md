@@ -1,4 +1,17 @@
-# Hadron Structure Oriented approach to TMD phenomenology - Drell-Yan
+## Engineering Change Log (Development Ledger)
+
+| Date | Activity | Pillars | Ref |
+| :--- | :--- | :--- | :--- |
+| 2026-06-19 | Encapsulate `Data` under `Experiment`; eliminate globals; merge units. | P2 | [PR #9] |
+| 2026-06-13 | Finalize global registry update; resolve status of eliminated symbols. | P2 | [Commit 823655] |
+| 2026-06-13 | Decouple Stat/Theory storage from `operator()`; registry-based I/O. | P2, P3 | [PR #8] |
+| 2026-05-13 | Migrate `sys/stat.h` to `std::filesystem`; implement `ContextRegistry`. | P1, P2 | [PR #7] |
+| 2026-05-04 | Migrate legacy `read_data` to `hso::DataLoader`; remove verbose globals. | P2 | [PR #6] |
+| 2026-05-03 | Decouple data loading from storage; implement factory pattern. | P2, P3 | [PR #4] |
+| 2026-05-02 | Establish v1.0.0 infrastructure (CMake, Docker, CI/CD). | P1 | [Commit b25197] |
+
+*Note: Main current focus on Pillar 2 (P2): Global State & Configuration Management*
+
 ## Current Global State Staged for Refactor
 The engine was developed to produce a specific analysis of Drell-Yan for publication. However, before more computationally intensive tasks can be made with the engine, such as analyzing all available data sets or running high-performance Montecarlo simulations, significant improvements have to be implemented.
 
