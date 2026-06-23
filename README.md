@@ -7,9 +7,9 @@ This framework is currently transitioning from a research prototype to an indust
 ## Roadmap Progress
 - [x] Pillar 1: **Infrastructure Foundations** [Stabilized]  
 - [ ] Pillar 2: **Global State & Configuration Management** [Current Focus]  
-- [ ] Pillar 3: **Architectural Decoupling** [Planned]  
+- [ ] Pillar 3: **Architectural Decoupling** [Ongoing]  
 - [ ] Pillar 4: **Library Abstraction** [Planned]  
-- [ ] Pillar 5: **Modern C++20 & RAII** [Planned]  
+- [ ] Pillar 5: **Modern C++20 & RAII** [Ongoing]  
 - [ ] Pillar 6: **High-Performance Optimization** [Planned]  
 
 *For real-time progress and activity ledger, see [Development Notes](hso_engine/docs/development_notes.md).*
